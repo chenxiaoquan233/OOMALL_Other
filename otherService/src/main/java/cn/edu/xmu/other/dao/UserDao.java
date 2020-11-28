@@ -75,4 +75,38 @@ public class UserDao {
         }
         return returnObject;
     }
+
+    public ReturnObject<Object> login(UserBo userBo) {
+        CustomerPo customerPo = userBo.createUserPo();
+        ReturnObject<VoObject> returnObject = null;
+
+        CustomerPoExample example = new CustomerPoExample();
+        CustomerPoExample.Criteria criteria = example.createCriteria();
+        criteria.andUserNameEqualTo(customerPo.getUserName());
+
+        if(customerPoMapper.selectByExample(example).size() == 0) {
+            logger.debug("User not exist:" + customerPo);
+            return new ReturnObject<>(ResponseCode.AUTH_INVALID_ACCOUNT);
+        }
+
+        CustomerPo returnCustomerPo = customerPoMapper.selectByExample(example).get(0);
+
+        if(returnCustomerPo.getPassword().contentEquals(userBo.getPassword())) {
+            if(UserBo.State.getTypeByCode(Integer.valueOf(returnCustomerPo.getState())).equals(UserBo.State.NORM)) {
+                logger.debug("User login success");
+                logger.debug("Username:" + returnCustomerPo.getUserName());
+
+                return new ReturnObject<>(returnCustomerPo);
+            } else {
+                logger.debug("User is forbidden");
+                logger.debug("Username:" + returnCustomerPo.getUserName());
+
+                return new ReturnObject<>(ResponseCode.AUTH_USER_FORBIDDEN);
+            }
+        } else {
+            logger.debug("Wrong login password, username:" + userBo.getUserName());
+
+            return new ReturnObject<>(ResponseCode.AUTH_INVALID_ACCOUNT);
+        }
+    }
 }

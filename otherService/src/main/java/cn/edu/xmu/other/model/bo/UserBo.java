@@ -48,7 +48,8 @@ public class UserBo implements VoObject {
 
     public enum Gender {
         MALE(0, "男性"),
-        FEMAIL(1, "女性");
+        FEMAIL(1, "女性"),
+        SECRET(2, "保密");
 
         private static final Map<Integer, Gender> stateMap;
 
@@ -78,7 +79,7 @@ public class UserBo implements VoObject {
     private String password;
     private String mobile;
     private String email;
-    private Gender gender;
+    private Gender gender = Gender.SECRET;
     private LocalDateTime birthday;
     private State state = State.NORM;
     private LocalDateTime gmtCreate;

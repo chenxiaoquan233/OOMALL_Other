@@ -24,8 +24,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.edu.xmu.ooad</groupId>
-            <artifactId>core</artifactId>
+            <groupId>cn.edu.xmu.other</groupId>
+            <artifactId>otherCore</artifactId>
             <version>${project.version}</version>
         </dependency>
 
