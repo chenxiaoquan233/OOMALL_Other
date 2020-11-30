@@ -109,4 +109,30 @@ public class UserDao {
             return new ReturnObject<>(ResponseCode.AUTH_INVALID_ACCOUNT);
         }
     }
+
+    public UserBo findUserById(Long id) {
+        CustomerPo customerPo = customerPoMapper.selectByPrimaryKey(id);
+
+        if(customerPo == null) {
+            logger.debug("not found user, id:" + id);
+
+            return null;
+        } else {
+            return new UserBo(customerPo);
+        }
+    }
+
+    public Boolean switchUserStateById(Long id, Byte state) {
+        CustomerPo customerPo = customerPoMapper.selectByPrimaryKey(id);
+
+        if(customerPo == null) {
+            logger.debug("user not find, id:" + id);
+
+            return false;
+        }
+
+        customerPo.setState(state);
+        customerPoMapper.updateByPrimaryKey(customerPo);
+        return true;
+    }
 }

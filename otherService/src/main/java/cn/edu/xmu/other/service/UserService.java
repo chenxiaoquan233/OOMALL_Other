@@ -6,6 +6,7 @@ import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.other.dao.UserDao;
 import cn.edu.xmu.other.model.bo.UserBo;
 import cn.edu.xmu.other.model.vo.User.UserLoginVo;
+import cn.edu.xmu.other.model.vo.User.UserModifyVo;
 import cn.edu.xmu.other.model.vo.User.UserSignUpVo;
 import cn.edu.xmu.other.otherCore.util.OtherJwtHelper;
 import org.aspectj.bridge.IMessage;
@@ -53,4 +54,36 @@ public class UserService {
         }
     }
 
+    public ReturnObject<VoObject> findUserById(Long id) {
+        UserBo userBo = userDao.findUserById(id);
+        if(userBo == null) {
+            logger.debug("not found user, id:" + id);
+
+            return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        } else {
+            return new ReturnObject<>(userBo);
+        }
+    }
+
+    public ResponseCode banUser(Long id) {
+        if(userDao.switchUserStateById(id, UserBo.State.FORBID.getCode().byteValue())) {
+            return ResponseCode.OK;
+        } else {
+            return ResponseCode.RESOURCE_ID_NOTEXIST;
+        }
+    }
+
+    public ResponseCode releaseUser(Long id) {
+        if(userDao.switchUserStateById(id, UserBo.State.NORM.getCode().byteValue())) {
+            return ResponseCode.OK;
+        } else {
+            return ResponseCode.RESOURCE_ID_NOTEXIST;
+        }
+    }
+
+    /*public ReturnObject<VoObject> modifyUserById(Long userId, UserModifyVo vo) {
+        UserBo userBo = vo.createBo();
+
+
+    }*/
 }

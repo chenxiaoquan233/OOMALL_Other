@@ -85,6 +85,22 @@ public class UserBo implements VoObject {
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
 
+    public UserBo() {}
+
+    public UserBo(CustomerPo customerPo) {
+        this.id = customerPo.getId();
+        this.userName = customerPo.getUserName();
+        this.realName = customerPo.getRealName();
+        this.password = customerPo.getPassword();
+        this.mobile = customerPo.getMobile();
+        this.email = customerPo.getEmail();
+        this.gender = UserBo.Gender.getTypeByCode(customerPo.getGender().intValue());
+        this.birthday = customerPo.getBirthday();
+        this.state = UserBo.State.getTypeByCode(customerPo.getState().intValue());
+        this.gmtCreate = customerPo.getGmtCreated();
+        this.gmtModified = customerPo.getGmtModified();
+    }
+
     public UserStateRetVo createUserStateVo() {
         UserStateRetVo userStateRetVo = new UserStateRetVo();
         userStateRetVo.setCode(this.state.code);

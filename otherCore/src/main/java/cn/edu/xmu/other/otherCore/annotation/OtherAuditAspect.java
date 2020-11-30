@@ -1,6 +1,5 @@
 package cn.edu.xmu.other.otherCore.annotation;
 
-import cn.edu.xmu.ooad.annotation.LoginUser;
 import cn.edu.xmu.ooad.util.JwtHelper;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
@@ -35,7 +34,7 @@ public class OtherAuditAspect {
     private  static  final Logger logger = LoggerFactory.getLogger(OtherAuditAspect. class);
 
     //Controller层切点
-    @Pointcut("@annotation(cn.edu.xmu.other.otherCore.annotation.Audit)")
+    @Pointcut("@annotation(cn.edu.xmu.other.otherCore.annotation.OtherAudit)")
     public void auditAspect() {
     }
 
@@ -82,7 +81,7 @@ public class OtherAuditAspect {
 
             for (Annotation annotation : paramAnn) {
                 //这里判断当前注解是否为LoginUser.class
-                if (annotation.annotationType().equals(LoginUser.class)) {
+                if (annotation.annotationType().equals(OtherLoginUser.class)) {
                     //校验该参数，验证一次退出该注解
                     args[i] = userId;
                 }

@@ -7,9 +7,9 @@ import java.lang.annotation.Target;
 
 /**
  * @author XQChen
- * @version 创建时间：2020/11/25 上午10:50
+ * @version 创建时间：2020/11/25 上午10:51
  */
-@Target({ElementType.PARAMETER, ElementType.METHOD})
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Audit {
+public @interface OtherLoginUser {
 }
