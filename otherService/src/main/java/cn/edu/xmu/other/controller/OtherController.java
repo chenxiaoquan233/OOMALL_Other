@@ -126,8 +126,8 @@ public class OtherController {
             return object;
         }
 
-        //ReturnObject<VoObject> returnObject = userService;
-        return null;
+        ReturnObject<VoObject> returnObject = userService.modifyUserById(userId, vo);
+        return Common.getRetObject(returnObject);
     }
 
     /***

@@ -1,0 +1,20 @@
+{
+  "signUp1": {
+    "userName": "testuser1",
+    "password": "123456",
+    "realName": "test",
+    "mobile": "12300010002",
+    "email": "test@test1.com",
+    "birthday": "2020-01-01",
+    "gender": 0
+  },
+  "signUp2": {
+    "userName": "testuser",
+    "password": "123456",
+    "realName": "test",
+    "mobile": "12300010002",
+    "email": "test@test1.com",
+    "birthday": "2020-01-01",
+    "gender": 0
+  }
+}

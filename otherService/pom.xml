@@ -215,7 +215,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <includes>
-                        <include>**/testdaotest.java</include>
+                        <include>**/UserTest.java</include>
                     </includes>
                 </configuration>
             </plugin>

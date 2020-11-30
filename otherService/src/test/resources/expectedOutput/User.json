@@ -1,0 +1,21 @@
+{
+  "signUp1": {
+      "errno": 0,
+      "data": {
+        "id": 17334,
+        "userName": "testuser1",
+        "realName": "test",
+        "mobile": "12300010002",
+        "email": "test@test1.com",
+        "gender": 0,
+        "birthday": "2020-01-01T00:00:00",
+        "gmtCreate": "2020-11-30T15:45:50.030396",
+        "gmtModified": null
+      },
+      "errmsg": "成功"
+  },
+  "signUp2": {
+    "errno": 731,
+    "errmsg": "用户名已被注册"
+  }
+}
