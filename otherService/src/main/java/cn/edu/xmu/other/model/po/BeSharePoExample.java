@@ -734,6 +734,66 @@ public class BeSharePoExample {
             addCriterion("gmt_modified not between", value1, value2, "gmtModified");
             return (Criteria) this;
         }
+
+        public Criteria andShareActivityIdIsNull() {
+            addCriterion("share_activity_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andShareActivityIdIsNotNull() {
+            addCriterion("share_activity_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andShareActivityIdEqualTo(Long value) {
+            addCriterion("share_activity_id =", value, "shareActivityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShareActivityIdNotEqualTo(Long value) {
+            addCriterion("share_activity_id <>", value, "shareActivityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShareActivityIdGreaterThan(Long value) {
+            addCriterion("share_activity_id >", value, "shareActivityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShareActivityIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("share_activity_id >=", value, "shareActivityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShareActivityIdLessThan(Long value) {
+            addCriterion("share_activity_id <", value, "shareActivityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShareActivityIdLessThanOrEqualTo(Long value) {
+            addCriterion("share_activity_id <=", value, "shareActivityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShareActivityIdIn(List<Long> values) {
+            addCriterion("share_activity_id in", values, "shareActivityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShareActivityIdNotIn(List<Long> values) {
+            addCriterion("share_activity_id not in", values, "shareActivityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShareActivityIdBetween(Long value1, Long value2) {
+            addCriterion("share_activity_id between", value1, value2, "shareActivityId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShareActivityIdNotBetween(Long value1, Long value2) {
+            addCriterion("share_activity_id not between", value1, value2, "shareActivityId");
+            return (Criteria) this;
+        }
     }
 
     /**
