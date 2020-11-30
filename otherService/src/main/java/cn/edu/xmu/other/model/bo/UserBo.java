@@ -97,7 +97,7 @@ public class UserBo implements VoObject {
         this.gender = UserBo.Gender.getTypeByCode(customerPo.getGender().intValue());
         this.birthday = customerPo.getBirthday();
         this.state = UserBo.State.getTypeByCode(customerPo.getState().intValue());
-        this.gmtCreate = customerPo.getGmtCreated();
+        this.gmtCreate = customerPo.getGmtCreate();
         this.gmtModified = customerPo.getGmtModified();
     }
 
@@ -119,7 +119,7 @@ public class UserBo implements VoObject {
         customerPo.setGender((byte) gender.code);
         customerPo.setBirthday(this.birthday);
         customerPo.setState((byte) state.code);
-        customerPo.setGmtCreated(this.gmtCreate);
+        customerPo.setGmtCreate(this.gmtCreate);
         customerPo.setGmtModified(this.gmtModified);
         return customerPo;
     }
