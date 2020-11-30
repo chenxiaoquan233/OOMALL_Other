@@ -9,7 +9,6 @@ import cn.edu.xmu.other.model.vo.User.UserLoginVo;
 import cn.edu.xmu.other.model.vo.User.UserModifyVo;
 import cn.edu.xmu.other.model.vo.User.UserSignUpVo;
 import cn.edu.xmu.other.otherCore.util.OtherJwtHelper;
-import org.aspectj.bridge.IMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * @author XQChen
@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    private OtherJwtHelper otherJwtHelper = new OtherJwtHelper();
+    private final OtherJwtHelper otherJwtHelper = new OtherJwtHelper();
 
     @Autowired
     private UserDao userDao;
@@ -81,9 +81,19 @@ public class UserService {
         }
     }
 
-    /*public ReturnObject<VoObject> modifyUserById(Long userId, UserModifyVo vo) {
-        UserBo userBo = vo.createBo();
+    public ReturnObject<VoObject> modifyUserById(Long userId, UserModifyVo vo) {
+        UserBo userBo = userDao.findUserById(userId);
 
+        if(userBo == null) {
+            return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        }
 
-    }*/
+        if(!(vo.getRealName().isBlank())) userBo.setRealName(vo.getRealName());
+        if(!(vo.getGender().isBlank())) userBo.setGender(UserBo.Gender.getTypeByCode(Integer.valueOf(vo.getGender())));
+        if(!(vo.getBirthday() == null)) userBo.setBirthday(LocalDateTime.of(vo.getBirthday(), LocalTime.of(0, 0)));
+
+        ResponseCode responseCode = userDao.updateUser(userBo);
+
+        return new ReturnObject<>(responseCode);
+    }
 }

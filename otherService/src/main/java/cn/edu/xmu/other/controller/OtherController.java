@@ -37,12 +37,11 @@ public class OtherController {
 
     /***
      * 获得买家的所有状态
-     * @param UserId 用户id
      * @return Object
      */
     @OtherAudit
     @GetMapping("/users/states")
-    public Object getAllUserState (@PathVariable Long UserId){
+    public Object getAllUserState (){
         return null;
     }
 

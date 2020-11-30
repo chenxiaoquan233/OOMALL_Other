@@ -135,4 +135,12 @@ public class UserDao {
         customerPoMapper.updateByPrimaryKey(customerPo);
         return true;
     }
+
+    public ResponseCode updateUser(UserBo userBo) {
+        CustomerPo customerPo = userBo.createUserPo();
+
+        customerPoMapper.updateByPrimaryKey(customerPo);
+
+        return ResponseCode.OK;
+    }
 }
