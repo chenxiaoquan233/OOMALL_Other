@@ -95,6 +95,7 @@ public class OtherController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
+    @OtherAudit
     @GetMapping("/users")
     public Object getUserSelfInfo(@OtherLoginUser Long UserId) {
         ReturnObject<VoObject> returnObject = userService.findUserById(UserId);

@@ -1,0 +1,21 @@
+{
+  "1": {
+    "errno": 0,
+    "data": {
+      "id": 17332,
+      "userName": "testuser",
+      "realName": "test",
+      "mobile": "12300010001",
+      "email": "test@test.com",
+      "gender": 0,
+      "birthday": null,
+      "gmtCreate": "2020-11-30T09:14:39",
+      "gmtModified": null
+    },
+    "errmsg": "成功"
+  },
+  "2": {
+    "errno": 704,
+    "errmsg": "需要先登录"
+  }
+}
