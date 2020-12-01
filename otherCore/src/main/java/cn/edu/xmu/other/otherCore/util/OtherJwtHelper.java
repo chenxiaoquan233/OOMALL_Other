@@ -46,18 +46,18 @@ public class OtherJwtHelper {
             map.put("alg", "HS256");
             map.put("typ", "JWT");
             String tokenId = Common.genSeqNum();
-            StringBuilder message = new StringBuilder().append("createToken: ").append("userId = ")
-                    .append(userId).append(" departId=").append(" tokenId:").append(tokenId);
+            StringBuilder message = new StringBuilder().append("createToken: ").append("userId:")
+                    .append(userId).append(" tokenId:").append(tokenId);
             logger.debug(message.toString());
             String token = JWT.create()
                     // 设置头部信息 Header
                     .withHeader(map)
                     // 设置 载荷 Payload
-                    .withClaim("userId", userId)
-                    .withClaim("tokenId",tokenId)
                     .withIssuer(ISSUSER)
                     .withSubject(SUBJECT)
                     .withAudience(AUDIENCE)
+                    .withClaim("tokenId",tokenId)
+                    .withClaim("userId", userId)
                     // 生成签名的时间
                     .withIssuedAt(nowDate)
                     // 签名过期的时间

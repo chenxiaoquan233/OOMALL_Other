@@ -65,10 +65,12 @@
     </logger>
 
     <!-- 日志输出级别 -->
-    <logger name="cn.edu.xmu.other.controller" level = "WARN"/>
-    <logger name="cn.edu.xmu.other.service" level = "WARN"/>
-    <logger name="cn.edu.xmu.other.dao" level = "WARN"/>
-    <root level="WARN">
+    <logger name="cn.edu.xmu.other.controller" level = "INFO"/>
+    <logger name="cn.edu.xmu.other.service" level = "INFO"/>
+    <logger name="cn.edu.xmu.other.dao" level = "INFO"/>
+    <logger name="cn.edu.xmu.other.model" level = "DEBUG"/>
+    <logger name="cn.edu.xmu.other.otherCore.annotation.BirthdaySerializer" level = "DEBUG"/>
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
     </root>

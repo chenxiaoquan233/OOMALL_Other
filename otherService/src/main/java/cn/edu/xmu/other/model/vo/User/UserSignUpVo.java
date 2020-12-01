@@ -1,7 +1,7 @@
 package cn.edu.xmu.other.model.vo.User;
 
 import cn.edu.xmu.other.model.bo.UserBo;
-import com.fasterxml.jackson.annotation.JsonFormat;
+//
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,7 +22,7 @@ import java.time.LocalTime;
 @Data
 public class UserSignUpVo {
     @NotBlank(message = "必须输入手机号")
-    @Pattern(regexp = "[+]?[0-9*#]+", message = "手机号码格式不正确")
+    @Pattern(regexp = "[+]?[0-9*#]*", message = "手机号码格式不正确")
     @ApiModelProperty(name = "手机号", value = "12300000000")
     private String mobile;
 
@@ -44,12 +44,11 @@ public class UserSignUpVo {
     private String realName;
 
     @NotBlank(message = "性别不能为空")
-    @Pattern(regexp = "[012]", message = "性别错误")
+    @Pattern(regexp = "[012]?", message = "性别错误")
     @ApiModelProperty(name = "性别", value = "1")
     private String gender;
 
     @NotNull(message = "生日不能为空")
-    @JsonFormat(pattern = "yyyy-MM-dd")
     @ApiModelProperty(name = "生日", value = "2020-01-01")
     private LocalDate birthday;
 

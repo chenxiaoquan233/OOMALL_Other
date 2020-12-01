@@ -96,6 +96,8 @@ public class UserDao {
                 logger.debug("User login success");
                 logger.debug("Username:" + returnCustomerPo.getUserName());
 
+                userBo.setId(returnCustomerPo.getId());
+
                 return new ReturnObject<>(returnCustomerPo);
             } else {
                 logger.debug("User is forbidden");

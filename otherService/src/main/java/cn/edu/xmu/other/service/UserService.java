@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.chrono.ChronoLocalDate;
 
 /**
  * @author XQChen
@@ -33,6 +34,10 @@ public class UserService {
 
     @Transactional
     public ReturnObject<VoObject> signUp(UserSignUpVo vo) {
+        if(vo.getBirthday().isAfter(ChronoLocalDate.from(LocalDateTime.now()))) {
+            return new ReturnObject<>(ResponseCode.FIELD_NOTVALID, "生日时间范围错误;");
+        }
+
         UserBo userBo = vo.createBo();
         userBo.setGmtCreate(LocalDateTime.now());
 
