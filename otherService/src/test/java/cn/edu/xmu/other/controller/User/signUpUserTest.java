@@ -56,7 +56,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest01() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "1");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/1");
 
         String responseString = this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -65,7 +65,7 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectString = JacksonUtil.parseSubnodeToString(expectedOutput, "1");
+        String expectString = JacksonUtil.parseSubnodeToString(expectedOutput, "/1");
 
         JSONAssert.assertEquals(responseString, expectString, new CustomComparator(JSONCompareMode.LENIENT,
                 new Customization("data.id", (o1, o2) -> true),
@@ -78,7 +78,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest02() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "2");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/2");
 
         String responseString = this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -87,7 +87,7 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "2");
+        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "/2");
 
         JSONAssert.assertEquals(responseString, expectedString, true);
     }
@@ -98,7 +98,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest03() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "3");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/3");
 
         String responseString = this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -107,7 +107,7 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "3");
+        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "/3");
 
         JSONAssert.assertEquals(responseString, expectedString, true);
     }
@@ -118,7 +118,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest04() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "4");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/4");
 
         String responseString = this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -127,7 +127,7 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "4");
+        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "/4");
 
         JSONAssert.assertEquals(responseString, expectedString, true);
     }
@@ -138,7 +138,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest05() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "5");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/5");
 
         String responseString = this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -147,7 +147,7 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "5");
+        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "/5");
 
         JSONAssert.assertEquals(responseString, expectedString, true);
     }
@@ -158,7 +158,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest06() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "6");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/6");
 
         String responseString = this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -167,7 +167,7 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "6");
+        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "/6");
 
         JSONAssert.assertEquals(responseString, expectedString, true);
     }
@@ -178,7 +178,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest07() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "7");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/7");
 
         String responseString = this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -187,7 +187,7 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "7");
+        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "/7");
 
         JSONAssert.assertEquals(responseString, expectedString, true);
     }
@@ -198,7 +198,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest08() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "8");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/8");
 
         String responseString = this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -207,7 +207,7 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "8");
+        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "/8");
 
         JSONAssert.assertEquals(responseString, expectedString, true);
     }
@@ -218,7 +218,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest09() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "9");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/9");
 
         String responseString = this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -227,7 +227,7 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "9");
+        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "/9");
 
         JSONAssert.assertEquals(responseString, expectedString, true);
     }
@@ -238,7 +238,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest10() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "10");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/10");
 
         String responseString = this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -247,7 +247,7 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "10");
+        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "/10");
 
         JSONAssert.assertEquals(responseString, expectedString, true);
     }
@@ -258,7 +258,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest11() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "11");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/11");
 
         String responseString = this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -267,7 +267,7 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "11");
+        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "/11");
 
         JSONAssert.assertEquals(responseString, expectedString, true);
     }
@@ -278,7 +278,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest12() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "12");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/12");
 
         String responseString = this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -287,7 +287,7 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "12");
+        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "/12");
 
         JSONAssert.assertEquals(responseString, expectedString, true);
     }
@@ -298,7 +298,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest13() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "13");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/13");
 
         this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -312,7 +312,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest14() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "14");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/14");
 
         String responseString = this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -321,7 +321,7 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "14");
+        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "/14");
 
         JSONAssert.assertEquals(responseString, expectedString, true);
     }
@@ -332,7 +332,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest15() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "15");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/15");
 
         String responseString = this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -341,7 +341,7 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "15");
+        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "/15");
 
         JSONAssert.assertEquals(responseString, expectedString, true);
     }
@@ -352,7 +352,7 @@ public class signUpUserTest {
      */
     @Test
     public void signUpUserTest16() throws Exception {
-        String input = JacksonUtil.parseSubnodeToString(testInput, "16");
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/16");
 
         String responseString = this.mvc.perform(post("/other/users")
                 .contentType("application/json;charset=UTF-8")
@@ -361,7 +361,7 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "16");
+        String expectedString = JacksonUtil.parseSubnodeToString(expectedOutput, "/16");
 
         JSONAssert.assertEquals(responseString, expectedString, true);
     }
