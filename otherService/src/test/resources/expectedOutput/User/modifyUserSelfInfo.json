@@ -1,0 +1,44 @@
+{
+  "1": {
+    "response": {
+      "errno": 0,
+      "errmsg": "成功"
+    },
+    "result": {
+      "errno": 0,
+      "data": {
+        "id": 17332,
+        "userName": "testuser",
+        "realName": "TEST",
+        "mobile": "12300010001",
+        "email": "test@test.com",
+        "gender": 2,
+        "birthday": "2000-01-01T00:00:00",
+        "gmtCreate": "2020-11-30T09:14:39",
+        "gmtModified": null
+      },
+      "errmsg": "成功"
+    }
+  },
+  "2": {
+    "response": {
+      "errno": 0,
+      "errmsg": "成功"
+    },
+    "result": {
+      "errno": 0,
+      "data": {
+        "id": 17332,
+        "userName": "testuser",
+        "realName": "test",
+        "mobile": "12300010001",
+        "email": "test@test.com",
+        "gender": 0,
+        "birthday": null,
+        "gmtCreate": "2020-11-30T09:14:39",
+        "gmtModified": null
+      },
+      "errmsg": "成功"
+    }
+  }
+}

@@ -141,6 +141,7 @@ public class UserDao {
     public ResponseCode updateUser(UserBo userBo) {
         CustomerPo customerPo = userBo.createUserPo();
 
+        logger.debug("userID: " + userBo.getId());
         customerPoMapper.updateByPrimaryKey(customerPo);
 
         return ResponseCode.OK;

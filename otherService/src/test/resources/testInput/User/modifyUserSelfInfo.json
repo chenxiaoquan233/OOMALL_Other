@@ -1,0 +1,12 @@
+{
+  "1": {
+    "realName": "TEST",
+    "gender": 2,
+    "birthday": "2000-01-01"
+  },
+  "2": {
+    "realName": "",
+    "gender": null,
+    "birthday": ""
+  }
+}

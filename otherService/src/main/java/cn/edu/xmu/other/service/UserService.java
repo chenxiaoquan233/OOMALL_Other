@@ -52,7 +52,7 @@ public class UserService {
 
         ReturnObject<Object> returnObject = userDao.login(userBo);
         if(returnObject.getCode().equals(ResponseCode.OK)) {
-            String token = otherJwtHelper.createToken(userBo.getId(), 200);
+            String token = otherJwtHelper.createToken(userBo.getId(), 200000);
             return new ReturnObject<>(token);
         } else {
             return returnObject;
@@ -86,19 +86,27 @@ public class UserService {
         }
     }
 
-    public ReturnObject<VoObject> modifyUserById(Long userId, UserModifyVo vo) {
+    public ResponseCode modifyUserById(Long userId, UserModifyVo vo) {
         UserBo userBo = userDao.findUserById(userId);
 
         if(userBo == null) {
-            return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+            return ResponseCode.RESOURCE_ID_NOTEXIST;
         }
 
+        logger.debug("realname:" + vo.getRealName());
+        logger.debug("gender:" + vo.getGender());
+        logger.debug("birthday:" + vo.getBirthday());
+
         if(!(vo.getRealName().isBlank())) userBo.setRealName(vo.getRealName());
-        if(!(vo.getGender().isBlank())) userBo.setGender(UserBo.Gender.getTypeByCode(Integer.valueOf(vo.getGender())));
+        logger.debug("here");
+        if(!(vo.getGender() == null) && !(vo.getGender().isBlank())) userBo.setGender(UserBo.Gender.getTypeByCode(Integer.valueOf(vo.getGender())));
+        logger.debug("here");
         if(!(vo.getBirthday() == null)) userBo.setBirthday(LocalDateTime.of(vo.getBirthday(), LocalTime.of(0, 0)));
+        logger.debug("here");
+
+        logger.debug("userId:" + userBo.getId());
 
         ResponseCode responseCode = userDao.updateUser(userBo);
-
-        return new ReturnObject<>(responseCode);
+        return responseCode;
     }
 }

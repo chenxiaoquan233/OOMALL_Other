@@ -127,8 +127,9 @@ public class OtherController {
             return object;
         }
 
-        ReturnObject<VoObject> returnObject = userService.modifyUserById(userId, vo);
-        return Common.getRetObject(returnObject);
+        ResponseCode responseCode = userService.modifyUserById(userId, vo);
+        if(responseCode.equals(ResponseCode.OK)) return ResponseUtil.ok();
+        else return ResponseUtil.fail(responseCode);
     }
 
     /***

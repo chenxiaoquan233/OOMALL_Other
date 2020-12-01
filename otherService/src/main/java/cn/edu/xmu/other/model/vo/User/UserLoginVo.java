@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 
 /**
@@ -15,11 +15,11 @@ import javax.validation.constraints.NotNull;
 @Data
 @ApiModel
 public class UserLoginVo {
-    @NotNull(message = "用户名不能为空")
+    @NotBlank(message = "用户名不能为空")
     @ApiModelProperty(name = "用户名", value = "testuser")
     private String userName;
 
-    @NotNull(message = "密码不能为空")
+    @NotBlank(message = "密码不能为空")
     @ApiModelProperty(name = "密码", value = "123456")
     private String password;
 
@@ -27,6 +27,7 @@ public class UserLoginVo {
         UserBo userBo = new UserBo();
         userBo.setUserName(this.userName);
         userBo.setPassword(this.password);
+        UserLoginVo vo = new UserLoginVo();
         return userBo;
     }
 }
