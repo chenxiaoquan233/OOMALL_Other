@@ -34,10 +34,6 @@ public class UserService {
 
     @Transactional
     public ReturnObject<VoObject> signUp(UserSignUpVo vo) {
-        if(vo.getBirthday().isAfter(ChronoLocalDate.from(LocalDateTime.now()))) {
-            return new ReturnObject<>(ResponseCode.FIELD_NOTVALID, "生日时间范围错误;");
-        }
-
         UserBo userBo = vo.createBo();
         userBo.setGmtCreate(LocalDateTime.now());
 
@@ -98,11 +94,8 @@ public class UserService {
         logger.debug("birthday:" + vo.getBirthday());
 
         if(!(vo.getRealName().isBlank())) userBo.setRealName(vo.getRealName());
-        logger.debug("here");
         if(!(vo.getGender() == null) && !(vo.getGender().isBlank())) userBo.setGender(UserBo.Gender.getTypeByCode(Integer.valueOf(vo.getGender())));
-        logger.debug("here");
         if(!(vo.getBirthday() == null)) userBo.setBirthday(LocalDateTime.of(vo.getBirthday(), LocalTime.of(0, 0)));
-        logger.debug("here");
 
         logger.debug("userId:" + userBo.getId());
 

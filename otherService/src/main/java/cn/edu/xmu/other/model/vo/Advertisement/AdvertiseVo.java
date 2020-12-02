@@ -1,4 +1,4 @@
-package cn.edu.xmu.other.model.vo;
+package cn.edu.xmu.other.model.vo.Advertisement;
 
 import cn.edu.xmu.other.model.bo.AdvertiseBo;
 import io.swagger.annotations.ApiModel;

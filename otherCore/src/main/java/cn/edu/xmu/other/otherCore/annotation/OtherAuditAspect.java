@@ -80,7 +80,7 @@ public class OtherAuditAspect {
             }
 
             for (Annotation annotation : paramAnn) {
-                //这里判断当前注解是否为OtherLoginUser.class
+                //这里判断当前注解是否为LoginUser.class
                 if (annotation.annotationType().equals(OtherLoginUser.class)) {
                     //校验该参数，验证一次退出该注解
                     args[i] = userId;

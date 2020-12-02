@@ -2,7 +2,7 @@ package cn.edu.xmu.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.other.model.po.FootPrintPo;
-import cn.edu.xmu.other.model.vo.FootPrintVo;
+import cn.edu.xmu.other.model.vo.FootPrint.FootPrintVo;
 import lombok.Data;
 
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package cn.edu.xmu.other.model.vo;
+package cn.edu.xmu.other.model.vo.ShoppingCart;
 
 import lombok.Data;
 import java.time.LocalDateTime;

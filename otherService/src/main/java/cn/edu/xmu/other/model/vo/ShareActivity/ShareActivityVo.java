@@ -1,4 +1,4 @@
-package cn.edu.xmu.other.model.vo;
+package cn.edu.xmu.other.model.vo.ShareActivity;
 
 import cn.edu.xmu.other.model.bo.ShareActivityBo;
 import io.swagger.annotations.ApiModel;

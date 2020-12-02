@@ -1,7 +1,11 @@
 package cn.edu.xmu.other.model.vo.User;
 
 import cn.edu.xmu.other.model.bo.UserBo;
+import cn.edu.xmu.other.otherCore.annotation.Birthday;
+import cn.edu.xmu.other.otherCore.annotation.BirthdayDeserializer;
+import cn.edu.xmu.other.otherCore.annotation.DateBefore;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -27,7 +31,8 @@ public class UserModifyVo {
     @ApiModelProperty(name = "性别", value = "1")
     private String gender;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @DateBefore(message = "生日时间范围错误;")
+    @JsonDeserialize(using = BirthdayDeserializer.class)
     @ApiModelProperty(name = "生日", value = "2020-01-01")
     private LocalDate birthday;
 

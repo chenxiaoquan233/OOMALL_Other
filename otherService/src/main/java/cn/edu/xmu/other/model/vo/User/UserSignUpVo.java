@@ -6,10 +6,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -21,34 +18,35 @@ import java.time.LocalTime;
 @ApiModel
 @Data
 public class UserSignUpVo {
-    @NotBlank(message = "必须输入手机号")
-    @Pattern(regexp = "[+]?[0-9*#]*", message = "手机号码格式不正确")
+    @NotBlank
+    @Pattern(regexp = "[+]?[0-9*#]*")
     @ApiModelProperty(name = "手机号", value = "12300000000")
     private String mobile;
 
-    @NotBlank(message = "必须输入邮箱")
-    @Email(message = "Email 格式不正确")
+    @NotBlank
+    @Email
     @ApiModelProperty(name = "邮箱", value = "testuser@test.com")
     private String email;
 
-    @NotBlank(message = "必须输入用户名")
+    @NotBlank
     @ApiModelProperty(name = "用户名", value = "testuser")
     private String userName;
 
-    @NotBlank(message = "必须输入密码")
+    @NotBlank
     @ApiModelProperty(name = "密码", value = "123456")
     private String password;
 
-    @NotBlank(message = "必须输入真实姓名")
+    @NotBlank
     @ApiModelProperty(name = "真实姓名", value = "陈xx")
     private String realName;
 
-    @NotBlank(message = "性别不能为空")
-    @Pattern(regexp = "[012]?", message = "性别错误")
+    @NotBlank
+    @Pattern(regexp = "[012]?")
     @ApiModelProperty(name = "性别", value = "1")
     private String gender;
 
-    @NotNull(message = "生日不能为空")
+    @NotNull
+    @Past
     @ApiModelProperty(name = "生日", value = "2020-01-01")
     private LocalDate birthday;
 

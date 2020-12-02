@@ -2,7 +2,7 @@ package cn.edu.xmu.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.other.model.po.AdvertisementPo;
-import cn.edu.xmu.other.model.vo.AdvertiseVo;
+import cn.edu.xmu.other.model.vo.Advertisement.AdvertiseVo;
 import lombok.Data;
 
 import java.time.LocalDateTime;

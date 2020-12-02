@@ -2,7 +2,7 @@ package cn.edu.xmu.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.other.model.po.ShareActivityPo;
-import cn.edu.xmu.other.model.vo.ShareActivityVo;
+import cn.edu.xmu.other.model.vo.ShareActivity.ShareActivityVo;
 import lombok.Data;
 
 import java.time.LocalDateTime;

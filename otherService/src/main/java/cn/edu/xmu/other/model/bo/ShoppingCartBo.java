@@ -2,7 +2,7 @@ package cn.edu.xmu.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.other.model.po.ShoppingCartPo;
-import cn.edu.xmu.other.model.vo.ShoppingCartRetVo;
+import cn.edu.xmu.other.model.vo.ShoppingCart.ShoppingCartRetVo;
 import lombok.Data;
 import java.time.LocalDateTime;
 
