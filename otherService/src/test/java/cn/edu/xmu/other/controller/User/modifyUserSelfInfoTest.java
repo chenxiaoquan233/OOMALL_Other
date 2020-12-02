@@ -150,4 +150,54 @@ public class modifyUserSelfInfoTest {
         JSONAssert.assertEquals(result, expectResult, true);
     }
 
+    /***
+     * 性别有误
+     * @throws Exception
+     */
+    @Test
+    public void modifyUserSelfInfoTest3() throws Exception{
+        String token = login("testuser", "123456");
+
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/3");
+
+        this.mvc.perform(put("/other/users")
+                .header("authorization", token)
+                .contentType("application/json;charset=UTF-8")
+                .content(input))
+                .andExpect(status().isBadRequest());
+    }
+
+    /***
+     * 生日范围错误
+     * @throws Exception
+     */
+    @Test
+    public void modifyUserSelfInfoTest4() throws Exception{
+        String token = login("testuser", "123456");
+
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/4");
+
+        this.mvc.perform(put("/other/users")
+                .header("authorization", token)
+                .contentType("application/json;charset=UTF-8")
+                .content(input))
+                .andExpect(status().isBadRequest());
+    }
+
+    /***
+     * 生日格式错误
+     * @throws Exception
+     */
+    @Test
+    public void modifyUserSelfInfoTest5() throws Exception{
+        String token = login("testuser", "123456");
+
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/5");
+
+        this.mvc.perform(put("/other/users")
+                .header("authorization", token)
+                .contentType("application/json;charset=UTF-8")
+                .content(input))
+                .andExpect(status().isBadRequest());
+    }
 }
