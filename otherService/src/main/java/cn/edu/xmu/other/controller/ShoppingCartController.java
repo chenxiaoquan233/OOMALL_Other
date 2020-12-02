@@ -39,15 +39,15 @@ public class ShoppingCartController {
     @ApiOperation(value = "买家获得购物车列表", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true),
-            @ApiImplicitParam(paramType = "query", dataType = "Integer", name = "page", value = "用户token", required = true),
-            @ApiImplicitParam(paramType = "query", dataType = "Integer", name = "pageSize", value = "用户token", required = true)
+            @ApiImplicitParam(paramType = "query", dataType = "Integer", name = "page", value = "用户token"),
+            @ApiImplicitParam(paramType = "query", dataType = "Integer", name = "pageSize", value = "用户token")
     })
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
     @OtherAudit
     @GetMapping("")
-    public Object getUserSelfInfo(@OtherLoginUser Long UserId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
+    public Object getCarts(@OtherLoginUser Long UserId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
         System.out.println(pageSize);
         ReturnObject<PageInfo<VoObject>> returnObject = shoppingCartService.getCarts(UserId,page,pageSize);
         return Common.getPageRetObject(returnObject);
