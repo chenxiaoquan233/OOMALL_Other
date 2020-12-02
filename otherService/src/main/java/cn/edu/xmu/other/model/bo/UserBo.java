@@ -21,8 +21,9 @@ public class UserBo implements VoObject {
      * 买家状态
      */
     public enum State {
-        NORM(0, "正常"),
-        FORBID(1, "封禁");
+        BACK(0, "后台"),
+        NORM(4, "正常"),
+        FORBID(6, "封禁");
 
         private static final Map<Integer, State> stateMap;
 
