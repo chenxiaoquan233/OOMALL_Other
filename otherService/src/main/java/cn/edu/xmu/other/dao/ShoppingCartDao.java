@@ -41,8 +41,12 @@ public class ShoppingCartDao {
         return ResponseCode.OK;
     }
 
-    public ResponseCode deleteCart(Long cartId){
-        shoppingCartPoMapper.deleteByPrimaryKey(cartId);
+    public ResponseCode deleteCart(Long userId,Long cartId){
+        ShoppingCartPoExample shoppingCartPoExample=new ShoppingCartPoExample();
+        ShoppingCartPoExample.Criteria criteria=shoppingCartPoExample.createCriteria();
+        criteria.andCustomerIdEqualTo(userId);
+        criteria.andIdEqualTo(cartId);
+        shoppingCartPoMapper.deleteByExample(shoppingCartPoExample);
         return ResponseCode.OK;
     }
 
@@ -50,15 +54,15 @@ public class ShoppingCartDao {
         ShoppingCartPoExample shoppingCartPoExample=new ShoppingCartPoExample();
         ShoppingCartPoExample.Criteria criteria=shoppingCartPoExample.createCriteria();
         criteria.andCustomerIdEqualTo(userId);
-        PageHelper.startPage(page==null?1:page, pageSize==null?10:page);
         List<ShoppingCartPo> cartPos = null;
+        PageHelper.startPage(page,pageSize,true,true,null);
         try {
             cartPos = shoppingCartPoMapper.selectByExample(shoppingCartPoExample);
         }catch (DataAccessException e){
             logger.error("findCarts: DataAccessException:" + e.getMessage());
             return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
         }
-        List<VoObject> ret = cartPos.stream().map(x->new ShoppingCartBo(x)).collect(Collectors.toList());
+        List<VoObject> ret = cartPos.stream().map(ShoppingCartBo::new).collect(Collectors.toList());
         PageInfo<ShoppingCartPo> cartPoPage = PageInfo.of(cartPos);
         PageInfo<VoObject> cartPage = new PageInfo<>(ret);
         cartPage.setPages(cartPoPage.getPages());

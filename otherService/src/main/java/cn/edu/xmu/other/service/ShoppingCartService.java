@@ -28,8 +28,8 @@ public class ShoppingCartService {
         return shoppingCartDao.clearCart(userId);
     }
 
-    public ResponseCode deleteCart(Long cartId){
-        return shoppingCartDao.deleteCart(cartId);
+    public ResponseCode deleteCart(Long userId,Long cartId){
+        return shoppingCartDao.deleteCart(userId,cartId);
     }
 
     public ReturnObject<PageInfo<VoObject>> getCarts(Long userId, Integer page, Integer pageSize){
