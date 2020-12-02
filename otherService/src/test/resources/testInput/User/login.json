@@ -1,0 +1,26 @@
+{
+  "1": {
+    "userName": "testuser",
+    "password": "123456"
+  },
+  "2": {
+    "userName": "testuser",
+    "password": "1234567"
+  },
+  "3": {
+    "userName": "banuser",
+    "password": "123456"
+  },
+  "4": {
+    "userName": "notexist",
+    "password": "123456"
+  },
+  "5": {
+    "userName": "",
+    "password": "123456"
+  },
+  "6": {
+    "userName": "testuser",
+    "password": ""
+  }
+}
