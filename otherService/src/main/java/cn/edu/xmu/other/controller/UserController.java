@@ -25,9 +25,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController /*Restful的Controller对象*/
-@RequestMapping(value = "/other", produces = "application/json;charset=UTF-8")
-public class OtherController {
-    private static final Logger logger = LoggerFactory.getLogger(OtherController.class);
+@RequestMapping(value = "/users", produces = "application/json;charset=UTF-8")
+public class UserController {
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private HttpServletResponse httpServletResponse;
@@ -96,7 +96,7 @@ public class OtherController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @OtherAudit
-    @GetMapping("/users")
+    @GetMapping("")
     public Object getUserSelfInfo(@OtherLoginUser Long UserId) {
         ReturnObject<VoObject> returnObject = userService.findUserById(UserId);
 
@@ -117,7 +117,7 @@ public class OtherController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @OtherAudit
-    @PutMapping("/users")
+    @PutMapping("")
     public Object modifyUserSelfInfo(@OtherLoginUser Long userId, @Validated @RequestBody UserModifyVo vo, BindingResult bindingResult) {
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(null != object) {
@@ -136,7 +136,7 @@ public class OtherController {
      * 用户修改密码
      * @return Object
      */
-    @PutMapping("/users/password")
+    @PutMapping("/password")
     public Object modifyUserSelfPassword() {
         return null;
     }
@@ -145,7 +145,7 @@ public class OtherController {
      * 用户重置密码
      * @return Object
      */
-    @PutMapping("/users/password/reset")
+    @PutMapping("/password/reset")
     public Object resetUserSelfPassword() {
         return null;
     }
@@ -154,7 +154,7 @@ public class OtherController {
      * 平台管理员获取所有用户列表
      * @return Object
      */
-    @GetMapping("/users/all")
+    @GetMapping("/all")
     public Object getAllUser() {
         return null;
     }
@@ -174,7 +174,7 @@ public class OtherController {
             @ApiResponse(code = 700, message = "用户名不存在或密码错误"),
             @ApiResponse(code = 702, message = "用户被禁止登录")
     })
-    @PostMapping("/users/login")
+    @PostMapping("/login")
     public Object loginUser(@Validated @RequestBody UserLoginVo vo, BindingResult bindingResult) {
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(null != object) {
@@ -210,7 +210,7 @@ public class OtherController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @GetMapping("/users/logout")
+    @GetMapping("/logout")
     @OtherAudit
     public Object logoutUser(@OtherLoginUser Long id) {
         return ResponseUtil.ok();
@@ -229,7 +229,7 @@ public class OtherController {
             @ApiResponse(code = 0,   message = "成功"),
             @ApiResponse(code = 504, message = "操作的资源id不存在")
     })
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     @OtherAudit
     public Object findUserInfo(@LoginUser Long adminId, @PathVariable("id") Long id) {
         return Common.getRetObject(userService.findUserById(id));
@@ -249,7 +249,7 @@ public class OtherController {
             @ApiResponse(code = 504, message = "操作的资源id不存在")
     })
     @Audit
-    @PutMapping("/users/{id}/ban")
+    @PutMapping("/{id}/ban")
     public Object banUser(@LoginUser Long adminId, @PathVariable("id") Long id) {
         ResponseCode responseCode = userService.banUser(id);
 
@@ -275,7 +275,7 @@ public class OtherController {
             @ApiResponse(code = 504, message = "操作的资源id不存在")
     })
     @Audit
-    @PutMapping("/users/{id}/release")
+    @PutMapping("/{id}/release")
     public Object releaseUser(@LoginUser Long adminId, @PathVariable("id") Long id) {
         ResponseCode responseCode = userService.releaseUser(id);
 

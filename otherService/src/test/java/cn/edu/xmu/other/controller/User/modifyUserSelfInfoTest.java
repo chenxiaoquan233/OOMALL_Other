@@ -3,7 +3,7 @@ package cn.edu.xmu.other.controller.User;
 import cn.edu.xmu.ooad.util.JacksonUtil;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.other.OtherServiceApplication;
-import cn.edu.xmu.other.controller.OtherController;
+import cn.edu.xmu.other.controller.UserController;
 import cn.edu.xmu.other.model.vo.User.UserLoginVo;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.Customization;
@@ -38,7 +38,7 @@ public class modifyUserSelfInfoTest {
     @Autowired
     private MockMvc mvc;
 
-    private static final Logger logger = LoggerFactory.getLogger(OtherController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private String testInput;
     private String expectedOutput;
@@ -61,7 +61,7 @@ public class modifyUserSelfInfoTest {
         vo.setPassword(password);
 
         String requireJson = JacksonUtil.toJson(vo);
-        String response = this.mvc.perform(post("/other/users/login")
+        String response = this.mvc.perform(post("/users/login")
                 .contentType("application/json;charset=UTF-8")
                 .content(requireJson)).andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -77,7 +77,7 @@ public class modifyUserSelfInfoTest {
     public String getUserSelfInfo(String userName, String password) throws Exception{
         String token = login(userName, password);
 
-        String responseString = this.mvc.perform(get("/other/users")
+        String responseString = this.mvc.perform(get("/users")
                 .header("authorization", token)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
@@ -100,7 +100,7 @@ public class modifyUserSelfInfoTest {
 
         logger.debug("input :" + input);
 
-        String responseString = this.mvc.perform(put("/other/users")
+        String responseString = this.mvc.perform(put("/users")
                 .header("authorization", token)
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
@@ -130,7 +130,7 @@ public class modifyUserSelfInfoTest {
 
         String input = JacksonUtil.parseSubnodeToString(testInput, "/2");
 
-        String responseString = this.mvc.perform(put("/other/users")
+        String responseString = this.mvc.perform(put("/users")
                 .header("authorization", token)
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
@@ -160,7 +160,7 @@ public class modifyUserSelfInfoTest {
 
         String input = JacksonUtil.parseSubnodeToString(testInput, "/3");
 
-        this.mvc.perform(put("/other/users")
+        this.mvc.perform(put("/users")
                 .header("authorization", token)
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
@@ -177,7 +177,7 @@ public class modifyUserSelfInfoTest {
 
         String input = JacksonUtil.parseSubnodeToString(testInput, "/4");
 
-        this.mvc.perform(put("/other/users")
+        this.mvc.perform(put("/users")
                 .header("authorization", token)
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
@@ -194,7 +194,7 @@ public class modifyUserSelfInfoTest {
 
         String input = JacksonUtil.parseSubnodeToString(testInput, "/5");
 
-        this.mvc.perform(put("/other/users")
+        this.mvc.perform(put("/users")
                 .header("authorization", token)
                 .contentType("application/json;charset=UTF-8")
                 .content(input))

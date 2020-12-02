@@ -2,7 +2,7 @@ package cn.edu.xmu.other.controller.User;
 
 import cn.edu.xmu.ooad.util.JacksonUtil;
 import cn.edu.xmu.other.OtherServiceApplication;
-import cn.edu.xmu.other.controller.OtherController;
+import cn.edu.xmu.other.controller.UserController;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -36,7 +36,7 @@ public class signUpUserTest {
     @Autowired
     private MockMvc mvc;
 
-    private static final Logger logger = LoggerFactory.getLogger(OtherController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private String testInput;
     private String expectedOutput;
@@ -58,7 +58,7 @@ public class signUpUserTest {
     public void signUpUserTest01() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/1");
 
-        String responseString = this.mvc.perform(post("/other/users")
+        String responseString = this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isCreated())
@@ -80,7 +80,7 @@ public class signUpUserTest {
     public void signUpUserTest02() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/2");
 
-        String responseString = this.mvc.perform(post("/other/users")
+        String responseString = this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isOk())
@@ -100,7 +100,7 @@ public class signUpUserTest {
     public void signUpUserTest03() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/3");
 
-        String responseString = this.mvc.perform(post("/other/users")
+        String responseString = this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isOk())
@@ -120,7 +120,7 @@ public class signUpUserTest {
     public void signUpUserTest04() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/4");
 
-        String responseString = this.mvc.perform(post("/other/users")
+        String responseString = this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isOk())
@@ -140,7 +140,7 @@ public class signUpUserTest {
     public void signUpUserTest05() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/5");
 
-        this.mvc.perform(post("/other/users")
+        this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isBadRequest());
@@ -154,7 +154,7 @@ public class signUpUserTest {
     public void signUpUserTest06() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/6");
 
-        this.mvc.perform(post("/other/users")
+        this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isBadRequest());
@@ -168,7 +168,7 @@ public class signUpUserTest {
     public void signUpUserTest07() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/7");
 
-        this.mvc.perform(post("/other/users")
+        this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isBadRequest());
@@ -182,7 +182,7 @@ public class signUpUserTest {
     public void signUpUserTest08() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/8");
 
-        this.mvc.perform(post("/other/users")
+        this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isBadRequest());
@@ -196,7 +196,7 @@ public class signUpUserTest {
     public void signUpUserTest09() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/9");
 
-        this.mvc.perform(post("/other/users")
+        this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isBadRequest());
@@ -210,7 +210,7 @@ public class signUpUserTest {
     public void signUpUserTest10() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/10");
 
-        this.mvc.perform(post("/other/users")
+        this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isBadRequest());
@@ -224,7 +224,7 @@ public class signUpUserTest {
     public void signUpUserTest11() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/11");
 
-        this.mvc.perform(post("/other/users")
+        this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isBadRequest());
@@ -238,7 +238,7 @@ public class signUpUserTest {
     public void signUpUserTest12() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/12");
 
-        this.mvc.perform(post("/other/users")
+        this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isBadRequest());
@@ -252,7 +252,7 @@ public class signUpUserTest {
     public void signUpUserTest13() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/13");
 
-        this.mvc.perform(post("/other/users")
+        this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isBadRequest());
@@ -266,7 +266,7 @@ public class signUpUserTest {
     public void signUpUserTest14() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/14");
 
-        this.mvc.perform(post("/other/users")
+        this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isBadRequest());
@@ -280,7 +280,7 @@ public class signUpUserTest {
     public void signUpUserTest15() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/15");
 
-        this.mvc.perform(post("/other/users")
+        this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isBadRequest());
@@ -294,7 +294,7 @@ public class signUpUserTest {
     public void signUpUserTest16() throws Exception {
         String input = JacksonUtil.parseSubnodeToString(testInput, "/16");
 
-        this.mvc.perform(post("/other/users")
+        this.mvc.perform(post("/users")
                 .contentType("application/json;charset=UTF-8")
                 .content(input))
                 .andExpect(status().isBadRequest());

@@ -3,7 +3,7 @@ package cn.edu.xmu.other.controller.User;
 import cn.edu.xmu.ooad.util.JacksonUtil;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.other.OtherServiceApplication;
-import cn.edu.xmu.other.controller.OtherController;
+import cn.edu.xmu.other.controller.UserController;
 import cn.edu.xmu.other.model.vo.User.UserLoginVo;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.Customization;
@@ -37,7 +37,7 @@ public class getUserSelfInfoTest {
     @Autowired
     private MockMvc mvc;
 
-    private static final Logger logger = LoggerFactory.getLogger(OtherController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private String expectedOutput;
 
@@ -58,7 +58,7 @@ public class getUserSelfInfoTest {
         vo.setPassword(password);
 
         String requireJson = JacksonUtil.toJson(vo);
-        String response = this.mvc.perform(post("/other/users/login")
+        String response = this.mvc.perform(post("/users/login")
                 .contentType("application/json;charset=UTF-8")
                 .content(requireJson)).andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -76,7 +76,7 @@ public class getUserSelfInfoTest {
     public void getUserSelfInfoTest1() throws Exception{
         String token = login("testuser", "123456");
 
-        String responseString = this.mvc.perform(get("/other/users")
+        String responseString = this.mvc.perform(get("/users")
                 .header("authorization", token)
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
@@ -97,7 +97,7 @@ public class getUserSelfInfoTest {
     public void getUserSelfInfoTest2() throws Exception{
         String token = login("testuser", "123456");
 
-        String responseString = this.mvc.perform(get("/other/users")
+        String responseString = this.mvc.perform(get("/users")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
