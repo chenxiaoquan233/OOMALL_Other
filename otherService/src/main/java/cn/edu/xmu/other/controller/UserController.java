@@ -61,7 +61,7 @@ public class UserController {
             @ApiResponse(code = 732, message = "邮箱已被注册"),
             @ApiResponse(code = 733, message = "电话已被注册")
     })
-    @PostMapping("/users")
+    @PostMapping("")
     public Object signUpUser(@Validated @RequestBody UserSignUpVo vo, BindingResult bindingResult) {
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(null != object) {

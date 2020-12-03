@@ -3,7 +3,7 @@
     "userName": "testuser1",
     "password": "123456",
     "realName": "test",
-    "mobile": "12300010002",
+    "mobile": "12300010003",
     "email": "test@test1.com",
     "birthday": "2020-01-01",
     "gender": 0
@@ -12,7 +12,7 @@
     "userName": "testuser",
     "password": "123456",
     "realName": "test",
-    "mobile": "12300010002",
+    "mobile": "12300010003",
     "email": "test@test1.com",
     "birthday": "2020-01-01",
     "gender": 0
@@ -30,7 +30,7 @@
     "userName": "testuser1",
     "password": "123456",
     "realName": "test",
-    "mobile": "12300010002",
+    "mobile": "12300010003",
     "email": "test@test.com",
     "birthday": "2020-01-01",
     "gender": 0
