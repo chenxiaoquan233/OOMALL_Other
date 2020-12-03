@@ -6,6 +6,7 @@
     <modules>
         <module>otherService</module>
         <module>otherCore</module>
+        <module>otherGateway</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
