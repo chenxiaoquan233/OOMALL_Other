@@ -1,7 +1,9 @@
 package cn.edu.xmu.other.model.vo.ShoppingCart;
 
+import cn.edu.xmu.ooad.model.VoObject;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author Jx
@@ -11,10 +13,11 @@ import java.time.LocalDateTime;
 @Data
 public class ShoppingCartRetVo {
     private Long id;
-    private Long customerId;
     private Long goodsSkuId;
+    private String skuName; //dispatch goods module
+    private String spuName; //dispatch goods module
     private Integer quantity;
-    private Long price;
-    private LocalDateTime gmtCreate;
-    private LocalDateTime gmtModified;
+    private LocalDateTime addTime;
+    private Long price;     //? history or now
+    private List<VoObject> couponActivity; //dispatch goods module
 }

@@ -35,4 +35,12 @@ public class ShoppingCartService {
     public ReturnObject<PageInfo<VoObject>> getCarts(Long userId, Integer page, Integer pageSize){
         return shoppingCartDao.getCartByUserId(userId,page,pageSize);
     }
+
+    public ReturnObject<VoObject> addTocart(Long userId, Long goodsSkuId, Integer quantity){
+        return null;
+    }
+
+    public ResponseCode changeCartInfo(Long userId, Long cartId,Long goodsSkuId, Integer quantity){
+        return null;
+    }
 }

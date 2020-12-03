@@ -34,12 +34,10 @@ public class ShoppingCartBo implements VoObject {
     public Object createVo() {
         ShoppingCartRetVo shoppingCartRetVo=new ShoppingCartRetVo();
         shoppingCartRetVo.setId(this.id);
-        shoppingCartRetVo.setCustomerId(this.customerId);
         shoppingCartRetVo.setGoodsSkuId(this.goodsSkuId);
         shoppingCartRetVo.setQuantity(this.quantity);
         shoppingCartRetVo.setPrice(this.price);
-        shoppingCartRetVo.setGmtCreate(this.gmtCreate);
-        shoppingCartRetVo.setGmtModified(this.gmtModified);
+        shoppingCartRetVo.setAddTime(this.gmtCreate);
         return shoppingCartRetVo;
     }
 

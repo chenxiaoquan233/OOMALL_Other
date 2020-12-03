@@ -5,10 +5,10 @@ import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
+import cn.edu.xmu.other.model.vo.ShoppingCart.*;
 import cn.edu.xmu.other.otherCore.annotation.OtherAudit;
 import cn.edu.xmu.other.otherCore.annotation.OtherLoginUser;
 import cn.edu.xmu.other.service.ShoppingCartService;
-import cn.edu.xmu.other.service.UserService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletResponse;
 
 @RestController /*Restful的Controller对象*/
@@ -99,5 +98,45 @@ public class ShoppingCartController {
         } else {
             return ResponseUtil.fail(responseCode);
         }
+    }
+
+    /***
+     * 买家将商品加入购物车
+     * @param UserId 用户id
+     * @param vo 购物车视图
+     * @return Object
+     */
+    @ApiOperation(value = "买家将商品加入购物车", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @OtherAudit
+    @PostMapping
+    public Object addToCart(@OtherLoginUser Long UserId,@RequestBody ShoppingCartVo vo) {
+        return null;
+    }
+
+    /***
+     * 买家修改购物车单个商品的数量或规格
+     * @param UserId 用户id
+     * @param id 购物车Id
+     * @param vo 购物车视图
+     * @return Object
+     */
+    @ApiOperation(value = "买家修改购物车单个商品的数量或规格", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path", dataType = "Long", name = "id", value = "购物车id", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @OtherAudit
+    @PutMapping
+    public Object changeCartInfo(@OtherLoginUser Long UserId,@PathVariable("id") Long id,@RequestBody ShoppingCartVo vo) {
+        return null;
     }
 }
