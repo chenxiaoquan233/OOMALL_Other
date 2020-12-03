@@ -5,7 +5,10 @@ import cn.edu.xmu.other.OtherServiceApplication;
 import cn.edu.xmu.other.controller.UserController;
 import cn.edu.xmu.other.model.vo.User.UserLoginVo;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +20,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author XQChen
- * @version 创建时间：2020/12/3 上午10:55
+ * @version 创建时间：2020/12/3 上午11:06
  */
 @SpringBootTest(classes = OtherServiceApplication.class)   //标识本类是一个SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class banUserTest {
+public class releaseUserTest {
 
     @Autowired
     private MockMvc mvc;
@@ -37,8 +42,8 @@ public class banUserTest {
     private String expectedOutput;
     private String adminToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0aGlzIGlzIGEgdG9rZW4iLCJhdWQiOiJNSU5JQVBQIiwidG9rZW5JZCI6IjIwMjAxMjAzMTA0MjU2M0lXIiwiaXNzIjoiT09BRCIsImRlcGFydElkIjowLCJleHAiOjE2MDY5NjY5NzYsInVzZXJJZCI6MSwiaWF0IjoxNjA2OTYzMzc2fQ.zmLc4N3qbmN8ln5t8KBSIkIAoDI7oswWjVIpzqSutkg";
 
-    public banUserTest() throws Exception {
-        expectedOutput = new String(Files.readAllBytes(Paths.get("src/test/resources/expectedOutput/User/banUser.json")));
+    public releaseUserTest() throws Exception {
+        expectedOutput = new String(Files.readAllBytes(Paths.get("src/test/resources/expectedOutput/User/releaseUser.json")));
     }
 
     /***
@@ -59,12 +64,12 @@ public class banUserTest {
     }
 
     /***
-     * 成功封禁用户
+     * 成功解禁用户
      * @throws Exception
      */
     @Test
-    public void banUserTest1() throws Exception {
-        String response = this.mvc.perform(put("/users/17332/ban")
+    public void releaseUserTest1() throws Exception {
+        String response = this.mvc.perform(put("/users/17382/release")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -74,20 +79,21 @@ public class banUserTest {
 
         JSONAssert.assertEquals(expect, response, true);
 
-        String result = loginResponse("testuser", "123456");
+        String result = loginResponse("banuser", "123456");
 
         String expectResult = JacksonUtil.parseSubnodeToString(expectedOutput, "/1/result");
 
-        JSONAssert.assertEquals(expectResult, result, true);
+        JSONAssert.assertEquals(expectResult, result, new CustomComparator(JSONCompareMode.LENIENT,
+                new Customization("data", (o1, o2) -> true)));
     }
 
     /***
-     * 封禁不存在用户
+     * 解禁不存在的用户
      * @throws Exception
      */
     @Test
-    public void banUserTest2() throws Exception {
-        String response = this.mvc.perform(put("/users/20000/ban")
+    public void releaseUserTest2() throws Exception {
+        String response = this.mvc.perform(put("/users/20000/release")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
