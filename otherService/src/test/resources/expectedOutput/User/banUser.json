@@ -1,0 +1,16 @@
+{
+  "1": {
+    "response": {
+      "errno": 0,
+      "errmsg": "成功"
+    },
+    "result": {
+      "errno": 702,
+      "errmsg": "用户被禁止登录"
+    }
+  },
+  "2": {
+    "errno": 504,
+    "errmsg": "操作的资源id不存在"
+  }
+}
