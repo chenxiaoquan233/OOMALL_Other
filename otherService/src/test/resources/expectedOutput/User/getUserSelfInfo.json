@@ -13,9 +13,5 @@
       "gmtModified": null
     },
     "errmsg": "成功"
-  },
-  "2": {
-    "errno": 704,
-    "errmsg": "需要先登录"
   }
 }

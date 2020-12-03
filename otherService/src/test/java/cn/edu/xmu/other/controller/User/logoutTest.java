@@ -6,10 +6,7 @@ import cn.edu.xmu.other.OtherServiceApplication;
 import cn.edu.xmu.other.controller.UserController;
 import cn.edu.xmu.other.model.vo.User.UserLoginVo;
 import org.junit.jupiter.api.Test;
-import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +18,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 /**
  * @author XQChen
- * @version 创建时间：2020/12/1 下午2:54
+ * @version 创建时间：2020/12/2 下午9:13
  */
 @SpringBootTest(classes = OtherServiceApplication.class)   //标识本类是一个SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class getUserSelfInfoTest {
+public class logoutTest {
     @Autowired
     private MockMvc mvc;
 
@@ -41,9 +38,9 @@ public class getUserSelfInfoTest {
 
     private String expectedOutput;
 
-    public getUserSelfInfoTest() {
+    public logoutTest() {
         try {
-            expectedOutput = new String(Files.readAllBytes(Paths.get("src/test/resources/expectedOutput/User/getUserSelfInfo.json")));
+            expectedOutput = new String(Files.readAllBytes(Paths.get("src/test/resources/expectedOutput/User/logout.json")));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -69,23 +66,21 @@ public class getUserSelfInfoTest {
     }
 
     /***
-     * 正常获取个人信息
+     * 正常登出
      * @throws Exception
      */
     @Test
-    public void getUserSelfInfoTest1() throws Exception{
+    public void logoutTest1() throws Exception {
         String token = login("testuser", "123456");
 
-        String responseString = this.mvc.perform(get("/users")
-                .header("authorization", token)
-                .contentType("application/json;charset=UTF-8"))
+        String response = this.mvc.perform(get("/users/logout")
+                .header("authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
-        String expectString = JacksonUtil.parseSubnodeToString(expectedOutput, "/1");
+        String expect = JacksonUtil.parseSubnodeToString(expectedOutput, "/1");
 
-        JSONAssert.assertEquals(responseString, expectString, new CustomComparator(JSONCompareMode.LENIENT,
-                new Customization("data.gmtModified", (o1, o2) -> true)));
+        JSONAssert.assertEquals(expect, response,  true);
     }
 }
