@@ -2,8 +2,10 @@ package cn.edu.xmu.other.service;
 
 
 import cn.edu.xmu.ooad.model.VoObject;
+import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.other.dao.FavoriteDao;
+import cn.edu.xmu.other.model.bo.FavoriteBo;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,5 +25,13 @@ public class FavoriteService {
 
     public ReturnObject<PageInfo<VoObject>> getFavorites(Long userId, int page, int pageSize) {
         return favoriteDao.getFavoritesByUserId(userId,page,pageSize);
+    }
+
+    public ReturnObject<VoObject> addFavorites(Long userId, Long spuId) {
+        return favoriteDao.addFavorites(userId, spuId);
+    }
+
+    public ResponseCode deleteFavorites(Long userId,Long id){
+        return favoriteDao.deletefavorites(userId,id);
     }
 }

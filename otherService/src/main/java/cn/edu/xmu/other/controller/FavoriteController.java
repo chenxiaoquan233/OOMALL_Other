@@ -2,6 +2,8 @@ package cn.edu.xmu.other.controller;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.Common;
+import cn.edu.xmu.ooad.util.ResponseCode;
+import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.other.otherCore.annotation.OtherAudit;
 import cn.edu.xmu.other.otherCore.annotation.OtherLoginUser;
@@ -12,10 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -53,10 +52,53 @@ public class FavoriteController {
     })
     @OtherAudit
     @GetMapping
-    public Object getCarts(@OtherLoginUser Long UserId, @RequestParam(required = true) Integer page, @RequestParam(required = true) Integer pageSize) {
+    public Object getFavorites(@OtherLoginUser Long UserId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
         ReturnObject<PageInfo<VoObject>> returnObject = favoriteService.getFavorites(UserId,page==null?1:page, pageSize==null?10:pageSize);
         return Common.getPageRetObject(returnObject);
     }
 
+    /***
+     * 买家收藏商品
+     * @param UserId 用户id
+     * @param spuId 商品spuId
+     * @return Object
+     */
+    @ApiOperation(value = "买家收藏商品", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path", dataType = "Long", name = "spuId", value = "商品spuId")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @OtherAudit
+    @PostMapping("/goods/{spuId}")
+    public Object addFavorites(@OtherLoginUser Long UserId, @PathVariable("spuId") Long spuId) {
+        return Common.getRetObject(favoriteService.addFavorites(UserId,spuId));
+    }
 
+    /***
+     * 买家删除收藏商品
+     * @param UserId 用户id
+     * @param id 收藏id
+     * @return Object
+     */
+    @ApiOperation(value = "买家删除收藏商品", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path", dataType = "Long", name = "id", value = "id")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @OtherAudit
+    @DeleteMapping("/{id}")
+    public Object deleteFavorites(@OtherLoginUser Long UserId, @PathVariable("id") Long id) {
+        ResponseCode responseCode = favoriteService.deleteFavorites(UserId,id);
+        if(responseCode.equals(ResponseCode.OK)){
+            return ResponseUtil.ok();
+        } else {
+            return ResponseUtil.fail(responseCode);
+        }
+    }
 }

@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,5 +53,33 @@ public class FavoriteDao {
         favoritesPage.setPageSize(favoritesPoPage.getPageSize());
         favoritesPage.setTotal(favoritesPoPage.getTotal());
         return new ReturnObject<>(favoritesPage);
+    }
+
+    public ReturnObject<VoObject> addFavorites(Long userId, Long spuId) {
+        /*判断是否已经有此收藏*/
+        FavouriteGoodsPoExample favouriteGoodsPoExample=new FavouriteGoodsPoExample();
+        FavouriteGoodsPoExample.Criteria criteria=favouriteGoodsPoExample.createCriteria();
+        criteria.andCustomerIdEqualTo(userId);
+        criteria.andGoodsSpuIdEqualTo(spuId);
+        List<FavouriteGoodsPo> favoritesPos = favouriteGoodsPoMapper.selectByExample(favouriteGoodsPoExample);
+        /*若有，返回*/
+        if(favoritesPos.size()>0)
+            return new ReturnObject<>(new FavoriteBo(favoritesPos.get(0)));
+        /*若没有，插入*/
+        FavouriteGoodsPo record=new FavouriteGoodsPo();
+        record.setCustomerId(userId);
+        record.setGoodsSpuId(spuId);
+        record.setGmtCreate(LocalDateTime.now());
+        favouriteGoodsPoMapper.insertSelective(record);
+        return new ReturnObject<>(new FavoriteBo(record));
+    }
+
+    public ResponseCode deletefavorites(Long userId, Long id){
+        FavouriteGoodsPoExample favouriteGoodsPoExample=new FavouriteGoodsPoExample();
+        FavouriteGoodsPoExample.Criteria criteria=favouriteGoodsPoExample.createCriteria();
+        criteria.andCustomerIdEqualTo(userId);
+        criteria.andIdEqualTo(id);
+        favouriteGoodsPoMapper.deleteByExample(favouriteGoodsPoExample);
+        return ResponseCode.OK;
     }
 }

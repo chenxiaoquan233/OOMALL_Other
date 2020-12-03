@@ -47,8 +47,7 @@ public class ShoppingCartController {
     })
     @OtherAudit
     @GetMapping
-    public Object getCarts(@OtherLoginUser Long UserId, @RequestParam(required = true) Integer page, @RequestParam(required = true
-    ) Integer pageSize) {
+    public Object getCarts(@OtherLoginUser Long UserId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
         ReturnObject<PageInfo<VoObject>> returnObject = shoppingCartService.getCarts(UserId,page==null?1:page, pageSize==null?10:pageSize);
         return Common.getPageRetObject(returnObject);
     }
