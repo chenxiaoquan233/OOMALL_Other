@@ -220,7 +220,7 @@ public class UserController {
      * 管理员查看任意买家信息
      * @return Object
      */
-    @ApiOperation(value = "用户登出", produces = "application/json")
+    @ApiOperation(value = "查找特定用户信息", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String",  name = "authorization", value = "用户token", required = true),
             @ApiImplicitParam(paramType = "path",   dataType = "Integer", name = "id",            value = "用户id",    required = true)
@@ -230,7 +230,7 @@ public class UserController {
             @ApiResponse(code = 504, message = "操作的资源id不存在")
     })
     @GetMapping("/{id}")
-    @OtherAudit
+    @Audit
     public Object findUserInfo(@LoginUser Long adminId, @PathVariable("id") Long id) {
         return Common.getRetObject(userService.findUserById(id));
     }
