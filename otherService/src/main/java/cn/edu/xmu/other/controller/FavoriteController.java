@@ -53,9 +53,8 @@ public class FavoriteController {
     })
     @OtherAudit
     @GetMapping
-    public Object getCarts(@OtherLoginUser Long UserId, @RequestParam(required = true) Integer page, @RequestParam(required = true
-    ) Integer pageSize) {
-        ReturnObject<PageInfo<VoObject>> returnObject = FavoriteService.getFavorites(UserId,page==null?1:page, pageSize==null?10:pageSize);
+    public Object getCarts(@OtherLoginUser Long UserId, @RequestParam(required = true) Integer page, @RequestParam(required = true) Integer pageSize) {
+        ReturnObject<PageInfo<VoObject>> returnObject = favoriteService.getFavorites(UserId,page==null?1:page, pageSize==null?10:pageSize);
         return Common.getPageRetObject(returnObject);
     }
 
