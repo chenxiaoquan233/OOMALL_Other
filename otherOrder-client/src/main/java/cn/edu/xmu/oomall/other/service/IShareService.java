@@ -1,5 +1,7 @@
 package cn.edu.xmu.oomall.other.service;
 
+import cn.edu.xmu.oomall.other.dto.OrderItem;
+
 /**
  * @author xincong yao
  * @date 2020-11-17

@@ -80,6 +80,7 @@ public class UserBo implements VoObject {
     private String password;
     private String mobile;
     private String email;
+    private Integer point;
     private Gender gender = Gender.SECRET;
     private LocalDateTime birthday;
     private State state = State.NORM;
@@ -122,6 +123,8 @@ public class UserBo implements VoObject {
         customerPo.setState((byte) state.code);
         customerPo.setGmtCreate(this.gmtCreate);
         customerPo.setGmtModified(this.gmtModified);
+        customerPo.setPoint(this.point);
+
         return customerPo;
     }
 
