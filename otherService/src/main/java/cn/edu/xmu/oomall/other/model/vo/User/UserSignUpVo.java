@@ -41,7 +41,7 @@ public class UserSignUpVo {
     private String realName;
 
     @NotBlank
-    @Pattern(regexp = "[012]")
+    @Pattern(regexp = "[01]")
     @ApiModelProperty(name = "性别", value = "1")
     private String gender;
 

@@ -21,7 +21,7 @@ public class UserModifyVo {
     @ApiModelProperty(name = "真实姓名", value = "陈xx")
     private String realName;
 
-    @Pattern(regexp = "[012]", message = "性别错误")
+    @Pattern(regexp = "[01]", message = "性别错误")
     @ApiModelProperty(name = "性别", value = "1")
     private String gender;
 
