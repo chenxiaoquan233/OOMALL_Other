@@ -7,8 +7,7 @@
         <module>otherService</module>
         <module>otherCore</module>
         <module>otherGateway</module>
-        <module>otherOrder</module>
-        <module>otherOrder-client</module>
+        <module>otherOrderInterface</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
