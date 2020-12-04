@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
+import cn.edu.xmu.oomall.other.dto.Customer;
 import cn.edu.xmu.oomall.other.model.po.CustomerPo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserRetVo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserStateRetVo;
@@ -175,5 +176,14 @@ public class UserBo implements VoObject {
     @Override
     public Object createSimpleVo() {
         return null;
+    }
+
+    public Customer createCustomer() {
+        Customer customer = new Customer();
+        customer.setId(this.id);
+        customer.setRealName(this.realName);
+        customer.setUserName(this.userName);
+
+        return customer;
     }
 }
