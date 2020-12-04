@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>other</artifactId>
-        <groupId>cn.edu.xmu</groupId>
+        <groupId>cn.edu.xmu.oomall</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -16,7 +16,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.edu.xmu.other</groupId>
+            <groupId>cn.edu.xmu.oomall.other</groupId>
             <artifactId>otherCore</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>

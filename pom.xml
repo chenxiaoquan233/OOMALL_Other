@@ -7,6 +7,7 @@
         <module>otherService</module>
         <module>otherCore</module>
         <module>otherGateway</module>
+        <module>otherOrder-client</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -14,7 +15,7 @@
         <version>2.3.3.RELEASE</version>
     </parent>
 
-    <groupId>cn.edu.xmu</groupId>
+    <groupId>cn.edu.xmu.oomall</groupId>
     <artifactId>other</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
