@@ -24,7 +24,7 @@ public class FavoriteBo implements VoObject {
     public FavoriteBo(FavouriteGoodsPo favouriteGoodsPo){
         this.id=favouriteGoodsPo.getId();
         this.customerId=favouriteGoodsPo.getCustomerId();
-        this.goodsSkuId=favouriteGoodsPo.getGoodsSpuId();
+        this.goodsSkuId=favouriteGoodsPo.getGoodsSkuId();
         this.gmtCreate=favouriteGoodsPo.getGmtCreate();
         this.gmtModified=favouriteGoodsPo.getGmtModified();
     }

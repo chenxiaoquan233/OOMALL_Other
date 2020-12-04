@@ -6,6 +6,7 @@ import cn.edu.xmu.oomall.other.model.vo.User.UserRetVo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserStateRetVo;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -108,7 +109,7 @@ public class UserBo implements VoObject {
     private Integer point;
     private Gender gender;
     private Deleted deleted = Deleted.NOT_DELETED;
-    private LocalDateTime birthday;
+    private LocalDate birthday;
     private State state = State.NORM;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;

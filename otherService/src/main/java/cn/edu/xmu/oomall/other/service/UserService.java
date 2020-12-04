@@ -95,7 +95,7 @@ public class UserService {
 
         if(!(vo.getRealName().isBlank())) userBo.setRealName(vo.getRealName());
         if(!(vo.getGender() == null) && !(vo.getGender().isBlank())) userBo.setGender(UserBo.Gender.getTypeByCode(Integer.valueOf(vo.getGender())));
-        if(!(vo.getBirthday() == null)) userBo.setBirthday(LocalDateTime.of(vo.getBirthday(), LocalTime.of(0, 0)));
+        if(!(vo.getBirthday() == null)) userBo.setBirthday(vo.getBirthday());
 
         logger.debug("userId:" + userBo.getId());
 

@@ -24,7 +24,7 @@ public class FootPrintBo implements VoObject {
     public FootPrintBo(FootPrintPo footPrintPo){
         this.id=footPrintPo.getId();
         this.customerId=footPrintPo.getCustomerId();
-        this.goodSkuId=footPrintPo.getGoodsSpuId();
+        this.goodSkuId=footPrintPo.getGoodsSkuId();
         this.gmtCreate=footPrintPo.getGmtCreate();
         this.gmtModified=footPrintPo.getGmtModified();
     }

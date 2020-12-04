@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.other.model.vo.User;
 import cn.edu.xmu.oomall.other.model.bo.UserBo;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -17,7 +18,7 @@ public class UserRetVo {
     private String mobile;
     private String email;
     private Integer gender;
-    private LocalDateTime birthday;
+    private LocalDate birthday;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
 }

@@ -55,12 +55,12 @@ public class FavoriteDao {
         return new ReturnObject<>(favoritesPage);
     }
 
-    public ReturnObject<VoObject> addFavorites(Long userId, Long spuId) {
+    public ReturnObject<VoObject> addFavorites(Long userId, Long skuId) {
         /*判断是否已经有此收藏*/
         FavouriteGoodsPoExample favouriteGoodsPoExample=new FavouriteGoodsPoExample();
         FavouriteGoodsPoExample.Criteria criteria=favouriteGoodsPoExample.createCriteria();
         criteria.andCustomerIdEqualTo(userId);
-        criteria.andGoodsSpuIdEqualTo(spuId);
+        criteria.andGoodsSkuIdEqualTo(skuId);
         List<FavouriteGoodsPo> favoritesPos = favouriteGoodsPoMapper.selectByExample(favouriteGoodsPoExample);
         /*若有，返回*/
         if(favoritesPos.size()>0)
@@ -68,7 +68,7 @@ public class FavoriteDao {
         /*若没有，插入*/
         FavouriteGoodsPo record=new FavouriteGoodsPo();
         record.setCustomerId(userId);
-        record.setGoodsSpuId(spuId);
+        record.setGoodsSkuId(skuId);
         record.setGmtCreate(LocalDateTime.now());
         favouriteGoodsPoMapper.insertSelective(record);
         return new ReturnObject<>(new FavoriteBo(record));

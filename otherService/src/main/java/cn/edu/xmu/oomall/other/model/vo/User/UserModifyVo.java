@@ -34,7 +34,7 @@ public class UserModifyVo {
 
         userBo.setRealName(this.realName);
         userBo.setGender(UserBo.Gender.getTypeByCode(Integer.valueOf(this.gender)));
-        userBo.setBirthday(LocalDateTime.of(this.birthday, LocalTime.of(0, 0)));
+        userBo.setBirthday(this.birthday);
 
         return userBo;
     }
