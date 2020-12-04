@@ -7,6 +7,7 @@
         <module>otherService</module>
         <module>otherCore</module>
         <module>otherGateway</module>
+        <module>otherOrder</module>
         <module>otherOrder-client</module>
     </modules>
     <parent>

@@ -74,6 +74,32 @@ public class UserBo implements VoObject {
         public String getDescription() { return description; }
     }
 
+    public enum Deleted {
+        NOT_DELETED(0, "未删除"),
+        DELETED(1, "已删除");
+
+        private static final Map<Integer, Deleted> stateMap;
+
+        static {
+            stateMap = new HashMap();
+            Arrays.stream(Deleted.values()).forEach(enumitem -> stateMap.put(enumitem.code, enumitem));
+        }
+
+        private int code;
+        private String description;
+
+        Deleted(int code, String description) {
+            this.code = code;
+            this.description = description;
+        }
+
+        public static UserBo.Deleted getTypeByCode(Integer code) { return stateMap.get(code); }
+
+        public Integer getCode() { return code; }
+
+        public String getDescription() { return description; }
+    }
+
     private Long id;
     private String userName;
     private String realName;
@@ -82,6 +108,7 @@ public class UserBo implements VoObject {
     private String email;
     private Integer point;
     private Gender gender = Gender.SECRET;
+    private Deleted deleted = Deleted.NOT_DELETED;
     private LocalDateTime birthday;
     private State state = State.NORM;
     private LocalDateTime gmtCreate;
@@ -101,6 +128,8 @@ public class UserBo implements VoObject {
         this.state = UserBo.State.getTypeByCode(customerPo.getState().intValue());
         this.gmtCreate = customerPo.getGmtCreate();
         this.gmtModified = customerPo.getGmtModified();
+        this.deleted = UserBo.Deleted.getTypeByCode(customerPo.getBeDeleted().intValue());
+        this.point = customerPo.getPoint();
     }
 
     public UserStateRetVo createUserStateVo() {

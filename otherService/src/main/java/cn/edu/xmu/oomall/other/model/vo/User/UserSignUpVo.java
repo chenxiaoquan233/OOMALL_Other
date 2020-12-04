@@ -59,7 +59,8 @@ public class UserSignUpVo {
         userBo.setRealName(this.realName);
         userBo.setGender(UserBo.Gender.getTypeByCode(Integer.valueOf(this.gender)));
         userBo.setBirthday(LocalDateTime.of(birthday, LocalTime.of(0, 0)));
-
+        userBo.setPoint(0);
+        userBo.setDeleted(UserBo.Deleted.getTypeByCode(0));
         return userBo;
     }
 }

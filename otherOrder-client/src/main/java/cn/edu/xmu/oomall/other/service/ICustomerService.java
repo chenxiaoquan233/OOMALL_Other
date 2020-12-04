@@ -1,6 +1,6 @@
 package cn.edu.xmu.oomall.other.service;
 
-import cn.edu.xmu.oomall.other.bo.Customer;
+import cn.edu.xmu.oomall.other.dto.Customer;
 
 /**
  * @author xincong yao
