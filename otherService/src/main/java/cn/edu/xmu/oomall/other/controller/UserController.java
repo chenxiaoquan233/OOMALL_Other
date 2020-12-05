@@ -13,6 +13,7 @@ import cn.edu.xmu.ooad.annotation.LoginUser;
 import cn.edu.xmu.oomall.other.annotation.OtherAudit;
 import cn.edu.xmu.oomall.other.annotation.OtherLoginUser;
 import cn.edu.xmu.oomall.other.service.UserService;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,9 +155,36 @@ public class UserController {
      * 平台管理员获取所有用户列表
      * @return Object
      */
+    @ApiOperation(value = "平台管理员获取所有用户列表", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String",  name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "query",  dataType = "String",  name = "userName",      value = "testuser"),
+            @ApiImplicitParam(paramType = "query",  dataType = "String",  name = "email",         value = "test@test.com"),
+            @ApiImplicitParam(paramType = "query",  dataType = "String",  name = "mobile",        value = "12300010002"),
+            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "page",          value = "1"),
+            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "pageSize",      value = "10")
+    })
     @GetMapping("/all")
-    public Object getAllUser() {
-        return null;
+    @Audit
+    public Object getAllUser(
+            @LoginUser    Long    adminId,
+            @RequestParam String  userName,
+            @RequestParam String  email,
+            @RequestParam String  mobile,
+            @RequestParam Integer page,
+            @RequestParam Integer pageSize
+    ) {
+        Object object = null;
+
+        if(page <= 0 || pageSize <= 0) {
+            object = Common.getNullRetObj(new ReturnObject<>(ResponseCode.FIELD_NOTVALID), httpServletResponse);
+        } else {
+            ReturnObject<PageInfo<VoObject>> returnObject = userService.getAllUsers(userName, email, mobile, page, pageSize);
+            logger.debug("fingUserById: getUsers = " + returnObject);
+            object = Common.getPageRetObject(returnObject);
+        }
+
+        return object;
     }
 
     /***

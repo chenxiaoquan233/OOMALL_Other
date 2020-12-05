@@ -5,10 +5,13 @@ import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.dao.UserDao;
 import cn.edu.xmu.oomall.other.model.bo.UserBo;
+import cn.edu.xmu.oomall.other.model.po.CustomerPo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserLoginVo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserModifyVo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserSignUpVo;
 import cn.edu.xmu.oomall.other.otherCore.util.OtherJwtHelper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.chrono.ChronoLocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author XQChen
@@ -101,5 +106,21 @@ public class UserService {
 
         ResponseCode responseCode = userDao.updateUser(userBo);
         return responseCode;
+    }
+
+    public ReturnObject<PageInfo<VoObject>> getAllUsers(String userName, String email, String mobile, Integer page, Integer pageSize) {
+
+        PageHelper.startPage(page, pageSize);
+        PageInfo<CustomerPo> customerPos = userDao.getAllUsers(userName, email, mobile);
+
+        List<VoObject> users = customerPos.getList().stream().map(UserBo::new).collect(Collectors.toList());
+
+        PageInfo<VoObject> returnObject = new PageInfo<>(users);
+        returnObject.setPages(customerPos.getPages());
+        returnObject.setPageNum(customerPos.getPageNum());
+        returnObject.setPageSize(customerPos.getPageSize());
+        returnObject.setTotal(customerPos.getTotal());
+
+        return new ReturnObject<>(returnObject);
     }
 }
