@@ -1,0 +1,37 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: other-gateway
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - HEAD
+              - OPTIONS
+      routes:
+        - id: login
+          uri: http://localhost:9999/
+          predicates:
+            - Path=/users/login
+            - Method=POST
+
+        - id: adminusers
+          uri: http://localhost:9999/
+          predicates:
+            - Path=/users
+            - Method=GET
+          filters:
+            - Auth=authorization
+management:
+  endpoint:
+    gateway:
+      enabled: true
