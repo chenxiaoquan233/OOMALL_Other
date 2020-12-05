@@ -53,6 +53,7 @@ public class FavoriteController {
     @Audit
     @GetMapping
     public Object getFavorites(@LoginUser Long UserId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
+        logger.debug("userID:" + UserId);
         ReturnObject<PageInfo<VoObject>> returnObject = favoriteService.getFavorites(UserId,page==null?1:page, pageSize==null?10:pageSize);
         return Common.getPageRetObject(returnObject);
     }
