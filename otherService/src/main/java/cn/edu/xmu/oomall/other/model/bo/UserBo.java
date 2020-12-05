@@ -148,7 +148,8 @@ public class UserBo implements VoObject {
         customerPo.setPassword(this.password);
         customerPo.setMobile(this.mobile);
         customerPo.setEmail(this.email);
-        customerPo.setGender((byte) gender.code);
+        if(this.gender!=null)
+            customerPo.setGender((byte) gender.code);
         customerPo.setBirthday(this.birthday);
         customerPo.setState((byte) state.code);
         customerPo.setGmtCreate(this.gmtCreate);
