@@ -146,4 +146,21 @@ public class UserDao {
 
         return ResponseCode.OK;
     }
+
+    public Integer useDebate(Long userId, Integer num) {
+        CustomerPo customerPo = customerPoMapper.selectByPrimaryKey(userId);
+
+        if(customerPo == null) return null;
+
+        int point = customerPo.getPoint();
+        if(point >= num) {
+            customerPo.setPoint(point - num);
+            customerPoMapper.updateByPrimaryKey(customerPo);
+            return num;
+        } else {
+            customerPo.setPoint(0);
+            customerPoMapper.updateByPrimaryKey(customerPo);
+            return point;
+        }
+    }
 }
