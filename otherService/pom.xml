@@ -16,8 +16,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.edu.xmu.oomall.other</groupId>
-            <artifactId>otherCore</artifactId>
+            <groupId>cn.edu.xmu.ooad</groupId>
+            <artifactId>core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

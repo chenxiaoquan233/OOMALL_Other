@@ -10,8 +10,6 @@ import cn.edu.xmu.oomall.other.model.vo.User.UserLoginVo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserModifyVo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserSignUpVo;
 import cn.edu.xmu.ooad.annotation.LoginUser;
-import cn.edu.xmu.oomall.other.annotation.OtherAudit;
-import cn.edu.xmu.oomall.other.annotation.OtherLoginUser;
 import cn.edu.xmu.oomall.other.service.UserService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
@@ -40,7 +38,7 @@ public class UserController {
      * 获得买家的所有状态
      * @return Object
      */
-    @OtherAudit
+    @Audit
     @GetMapping("/users/states")
     public Object getAllUserState (){
         return null;
@@ -96,9 +94,9 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @OtherAudit
+    @Audit
     @GetMapping("")
-    public Object getUserSelfInfo(@OtherLoginUser Long UserId) {
+    public Object getUserSelfInfo(@LoginUser Long UserId) {
         ReturnObject<VoObject> returnObject = userService.findUserById(UserId);
 
         return Common.getRetObject(returnObject);
@@ -117,9 +115,9 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @OtherAudit
+    @Audit
     @PutMapping("")
-    public Object modifyUserSelfInfo(@OtherLoginUser Long userId, @Validated @RequestBody UserModifyVo vo, BindingResult bindingResult) {
+    public Object modifyUserSelfInfo(@LoginUser Long userId, @Validated @RequestBody UserModifyVo vo, BindingResult bindingResult) {
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(null != object) {
             logger.debug("Validate failed");
@@ -239,8 +237,8 @@ public class UserController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @GetMapping("/logout")
-    @OtherAudit
-    public Object logoutUser(@OtherLoginUser Long id) {
+    @Audit
+    public Object logoutUser(@LoginUser Long id) {
         return ResponseUtil.ok();
     }
 

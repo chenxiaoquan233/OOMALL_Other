@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.other.service;
 
 import cn.edu.xmu.ooad.model.VoObject;
+import cn.edu.xmu.ooad.util.JwtHelper;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.dao.UserDao;
@@ -19,8 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.chrono.ChronoLocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +32,8 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final OtherJwtHelper otherJwtHelper = new OtherJwtHelper();
+
+    private JwtHelper jwtHelper = new JwtHelper();
 
     @Autowired
     private UserDao userDao;
@@ -53,7 +54,7 @@ public class UserService {
 
         ReturnObject<Object> returnObject = userDao.login(userBo);
         if(returnObject.getCode().equals(ResponseCode.OK)) {
-            String token = otherJwtHelper.createToken(userBo.getId(), 200000);
+            String token = jwtHelper.createToken(userBo.getId(), -2L,200000);
             return new ReturnObject<>(token);
         } else {
             return returnObject;
