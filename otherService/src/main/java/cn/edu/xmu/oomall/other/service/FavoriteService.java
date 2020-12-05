@@ -27,8 +27,8 @@ public class FavoriteService {
         return favoriteDao.getFavoritesByUserId(userId,page,pageSize);
     }
 
-    public ReturnObject<VoObject> addFavorites(Long userId, Long spuId) {
-        return favoriteDao.addFavorites(userId, spuId);
+    public ReturnObject<VoObject> addFavorites(Long userId, Long skuId) {
+        return favoriteDao.addFavorites(userId, skuId);
     }
 
     public ResponseCode deleteFavorites(Long userId,Long id){

@@ -1,6 +1,6 @@
 package cn.edu.xmu.oomall.other.model.vo.Share;
 
-import cn.edu.xmu.oomall.other.model.bo.SharesBo;
+import cn.edu.xmu.oomall.other.model.bo.ShareBo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,8 +22,8 @@ public class SharesVo {
     @ApiModelProperty(name = "goodsSpuId", value = "0")
     private Long goodSpuId;
 
-    public SharesBo createBo(){
-        SharesBo sharesBo = new SharesBo();
+    public ShareBo createBo(){
+        ShareBo sharesBo = new ShareBo();
         sharesBo.setSharerId(this.sharerId);
         sharesBo.setGoodsSpuId(this.goodSpuId);
         return sharesBo;

@@ -7,6 +7,7 @@ import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.mapper.CustomerPoMapper;
 import cn.edu.xmu.oomall.other.mapper.ShoppingCartPoMapper;
 import cn.edu.xmu.oomall.other.model.bo.ShoppingCartBo;
+import cn.edu.xmu.oomall.other.model.po.FavouriteGoodsPo;
 import cn.edu.xmu.oomall.other.model.po.ShoppingCartPo;
 import cn.edu.xmu.oomall.other.model.po.ShoppingCartPoExample;
 import com.github.pagehelper.PageInfo;
@@ -42,12 +43,17 @@ public class ShoppingCartDao {
     }
 
     public ResponseCode deleteCart(Long userId,Long cartId){
-        ShoppingCartPoExample shoppingCartPoExample=new ShoppingCartPoExample();
-        ShoppingCartPoExample.Criteria criteria=shoppingCartPoExample.createCriteria();
-        criteria.andCustomerIdEqualTo(userId);
-        criteria.andIdEqualTo(cartId);
-        shoppingCartPoMapper.deleteByExample(shoppingCartPoExample);
-        return ResponseCode.OK;
+        ShoppingCartPo po=shoppingCartPoMapper.selectByPrimaryKey(cartId);
+        /*资源不存在*/
+        if(po==null)
+            return ResponseCode.RESOURCE_ID_NOTEXIST;
+        /*资源id非自己对象*/
+        if(po.getCustomerId()!=userId)
+            return ResponseCode.RESOURCE_ID_OUTSCOPE;
+        /*开始删除*/
+        if(shoppingCartPoMapper.deleteByPrimaryKey(cartId)==1)
+            return ResponseCode.OK;
+        else return ResponseCode.INTERNAL_SERVER_ERR;
     }
 
     public ReturnObject<PageInfo<VoObject>> getCartByUserId(Long userId, Integer page, Integer pageSize){
