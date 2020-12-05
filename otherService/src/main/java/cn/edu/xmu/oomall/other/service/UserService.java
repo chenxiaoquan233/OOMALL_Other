@@ -1,14 +1,18 @@
 package cn.edu.xmu.oomall.other.service;
 
 import cn.edu.xmu.ooad.model.VoObject;
+import cn.edu.xmu.ooad.util.JwtHelper;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.dao.UserDao;
 import cn.edu.xmu.oomall.other.model.bo.UserBo;
+import cn.edu.xmu.oomall.other.model.po.CustomerPo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserLoginVo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserModifyVo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserSignUpVo;
 import cn.edu.xmu.oomall.other.otherCore.util.OtherJwtHelper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.chrono.ChronoLocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author XQChen
@@ -28,6 +32,8 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final OtherJwtHelper otherJwtHelper = new OtherJwtHelper();
+
+    private JwtHelper jwtHelper = new JwtHelper();
 
     @Autowired
     private UserDao userDao;
@@ -48,7 +54,7 @@ public class UserService {
 
         ReturnObject<Object> returnObject = userDao.login(userBo);
         if(returnObject.getCode().equals(ResponseCode.OK)) {
-            String token = otherJwtHelper.createToken(userBo.getId(), 200000);
+            String token = jwtHelper.createToken(userBo.getId(), -2L,200000);
             return new ReturnObject<>(token);
         } else {
             return returnObject;
@@ -101,5 +107,21 @@ public class UserService {
 
         ResponseCode responseCode = userDao.updateUser(userBo);
         return responseCode;
+    }
+
+    public ReturnObject<PageInfo<VoObject>> getAllUsers(String userName, String email, String mobile, Integer page, Integer pageSize) {
+
+        PageHelper.startPage(page, pageSize);
+        PageInfo<CustomerPo> customerPos = userDao.getAllUsers(userName, email, mobile);
+
+        List<VoObject> users = customerPos.getList().stream().map(UserBo::new).collect(Collectors.toList());
+
+        PageInfo<VoObject> returnObject = new PageInfo<>(users);
+        returnObject.setPages(customerPos.getPages());
+        returnObject.setPageNum(customerPos.getPageNum());
+        returnObject.setPageSize(customerPos.getPageSize());
+        returnObject.setTotal(customerPos.getTotal());
+
+        return new ReturnObject<>(returnObject);
     }
 }

@@ -7,12 +7,14 @@ import cn.edu.xmu.oomall.other.mapper.CustomerPoMapper;
 import cn.edu.xmu.oomall.other.model.bo.UserBo;
 import cn.edu.xmu.oomall.other.model.po.CustomerPo;
 import cn.edu.xmu.oomall.other.model.po.CustomerPoExample;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -145,5 +147,37 @@ public class UserDao {
         customerPoMapper.updateByPrimaryKey(customerPo);
 
         return ResponseCode.OK;
+    }
+
+    public Integer useDebate(Long userId, Integer num) {
+        CustomerPo customerPo = customerPoMapper.selectByPrimaryKey(userId);
+
+        if(customerPo == null) return null;
+
+        int point = customerPo.getPoint();
+        if(point >= num) {
+            customerPo.setPoint(point - num);
+            customerPoMapper.updateByPrimaryKey(customerPo);
+            return num;
+        } else {
+            customerPo.setPoint(0);
+            customerPoMapper.updateByPrimaryKey(customerPo);
+            return point;
+        }
+    }
+
+    public PageInfo<CustomerPo> getAllUsers(String userName, String email, String mobile) {
+        CustomerPoExample example = new CustomerPoExample();
+        CustomerPoExample.Criteria criteria = example.createCriteria();
+
+        if(!userName.isBlank()) criteria.andUserNameEqualTo(userName);
+        if(!email.isBlank()) criteria.andEmailEqualTo(email);
+        if(!mobile.isBlank()) criteria.andMobileEqualTo(mobile);
+
+        List<CustomerPo> customers = customerPoMapper.selectByExample(example);
+
+        logger.debug("getUserById: retUsers = " + customers);
+
+        return new PageInfo<>(customers);
     }
 }
