@@ -7,11 +7,17 @@ import cn.edu.xmu.oomall.other.model.po.BeSharePoExample;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 
+/**
+ * @author Jx
+ * @version 创建时间：2020/12/5 下午3:10
+ */
+@Repository
 public class ShareDao {
     private static final Logger logger = LoggerFactory.getLogger(ShareDao.class);
 
