@@ -1,20 +1,19 @@
 package cn.edu.xmu.oomall.other.controller;
 
+import cn.edu.xmu.ooad.annotation.Audit;
+import cn.edu.xmu.ooad.annotation.LoginUser;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.model.vo.ShoppingCart.*;
-import cn.edu.xmu.oomall.other.annotation.OtherAudit;
-import cn.edu.xmu.oomall.other.annotation.OtherLoginUser;
 import cn.edu.xmu.oomall.other.service.ShoppingCartService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,9 +44,9 @@ public class ShoppingCartController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @OtherAudit
+    @Audit
     @GetMapping
-    public Object getCarts(@OtherLoginUser Long UserId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
+    public Object getCarts(@LoginUser Long UserId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
         ReturnObject<PageInfo<VoObject>> returnObject = shoppingCartService.getCarts(UserId,page==null?1:page, pageSize==null?10:pageSize);
         return Common.getPageRetObject(returnObject);
     }
@@ -64,9 +63,9 @@ public class ShoppingCartController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @OtherAudit
+    @Audit
     @DeleteMapping
-    public Object clearCarts(@OtherLoginUser Long UserId) {
+    public Object clearCarts(@LoginUser Long UserId) {
         ResponseCode responseCode = shoppingCartService.clearCart(UserId);
         if(responseCode.equals(ResponseCode.OK)){
             return ResponseUtil.ok();
@@ -88,9 +87,9 @@ public class ShoppingCartController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @OtherAudit
+    @Audit
     @DeleteMapping("/{id}")
-    public Object deleteCart(@OtherLoginUser Long UserId,@PathVariable("id") Long id) {
+    public Object deleteCart(@LoginUser Long UserId,@PathVariable("id") Long id) {
         ResponseCode responseCode = shoppingCartService.deleteCart(UserId,id);
         if(responseCode.equals(ResponseCode.OK)){
             return ResponseUtil.ok();
@@ -112,9 +111,9 @@ public class ShoppingCartController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @OtherAudit
+    @Audit
     @PostMapping
-    public Object addToCart(@OtherLoginUser Long UserId,@RequestBody ShoppingCartVo vo) {
+    public Object addToCart(@LoginUser Long UserId,@RequestBody ShoppingCartVo vo) {
         return null;
     }
 
@@ -133,9 +132,9 @@ public class ShoppingCartController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @OtherAudit
+    @Audit
     @PutMapping
-    public Object changeCartInfo(@OtherLoginUser Long UserId,@PathVariable("id") Long id,@RequestBody ShoppingCartVo vo) {
+    public Object changeCartInfo(@LoginUser Long UserId, @PathVariable("id") Long id, @RequestBody ShoppingCartVo vo) {
         return null;
     }
 }

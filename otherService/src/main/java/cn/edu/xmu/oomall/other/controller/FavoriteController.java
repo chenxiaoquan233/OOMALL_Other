@@ -1,12 +1,12 @@
 package cn.edu.xmu.oomall.other.controller;
 
+import cn.edu.xmu.ooad.annotation.Audit;
+import cn.edu.xmu.ooad.annotation.LoginUser;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
-import cn.edu.xmu.oomall.other.annotation.OtherAudit;
-import cn.edu.xmu.oomall.other.annotation.OtherLoginUser;
 import cn.edu.xmu.oomall.other.service.FavoriteService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
@@ -50,9 +50,9 @@ public class FavoriteController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @OtherAudit
+    @Audit
     @GetMapping
-    public Object getFavorites(@OtherLoginUser Long UserId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
+    public Object getFavorites(@LoginUser Long UserId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
         ReturnObject<PageInfo<VoObject>> returnObject = favoriteService.getFavorites(UserId,page==null?1:page, pageSize==null?10:pageSize);
         return Common.getPageRetObject(returnObject);
     }
@@ -71,9 +71,9 @@ public class FavoriteController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @OtherAudit
+    @Audit
     @PostMapping("/goods/{spuId}")
-    public Object addFavorites(@OtherLoginUser Long UserId, @PathVariable("spuId") Long spuId) {
+    public Object addFavorites(@LoginUser Long UserId, @PathVariable("spuId") Long spuId) {
         return Common.getRetObject(favoriteService.addFavorites(UserId,spuId));
     }
 
@@ -91,9 +91,9 @@ public class FavoriteController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @OtherAudit
+    @Audit
     @DeleteMapping("/{id}")
-    public Object deleteFavorites(@OtherLoginUser Long UserId, @PathVariable("id") Long id) {
+    public Object deleteFavorites(@LoginUser Long UserId, @PathVariable("id") Long id) {
         ResponseCode responseCode = favoriteService.deleteFavorites(UserId,id);
         if(responseCode.equals(ResponseCode.OK)){
             return ResponseUtil.ok();

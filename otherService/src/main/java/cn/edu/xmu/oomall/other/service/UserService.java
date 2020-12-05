@@ -10,7 +10,6 @@ import cn.edu.xmu.oomall.other.model.po.CustomerPo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserLoginVo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserModifyVo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserSignUpVo;
-import cn.edu.xmu.oomall.other.otherCore.util.OtherJwtHelper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
@@ -30,8 +29,6 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
-    private final OtherJwtHelper otherJwtHelper = new OtherJwtHelper();
 
     private JwtHelper jwtHelper = new JwtHelper();
 
