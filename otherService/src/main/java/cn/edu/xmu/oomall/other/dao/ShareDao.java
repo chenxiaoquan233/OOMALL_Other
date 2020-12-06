@@ -159,6 +159,14 @@ public class ShareDao {
     }
 
     /*新建分享活动：默认为下架*/
+    ShareActivityPo insertShareActivity(ShareActivityBo shareActivity){
+        ShareActivityPo record=shareActivity.createPo();
+        record.setGmtCreate(LocalDateTime.now());
+        shareActivityPoMapper.insertSelective(record);
+        return record;
+    }
+
+
 
 
 

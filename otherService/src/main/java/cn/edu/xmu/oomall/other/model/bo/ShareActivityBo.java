@@ -54,4 +54,19 @@ public class ShareActivityBo implements VoObject {
     public Object createSimpleVo() {
         return null;
     }
+
+    public ShareActivityPo createPo(){
+        ShareActivityPo po=new ShareActivityPo();
+        po.setId(this.id);
+        po.setShopId(this.shopId);
+        po.setGoodsSpuId(this.goodSpuId);
+        po.setBeginTime(this.beginTime);
+        po.setEndTime(this.endTime);
+        po.setStrategy(this.strategy);
+        po.setState(this.state);
+        po.setBeDeleted(this.beDeleted);
+        po.setGmtCreate(this.gmtCreate);
+        po.setGmtModified(this.gmtModified);
+        return po;
+    }
 }
