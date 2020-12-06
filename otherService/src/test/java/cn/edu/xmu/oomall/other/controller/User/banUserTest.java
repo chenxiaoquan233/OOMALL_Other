@@ -4,6 +4,7 @@ import cn.edu.xmu.ooad.util.JacksonUtil;
 import cn.edu.xmu.oomall.other.OtherServiceApplication;
 import cn.edu.xmu.oomall.other.controller.UserController;
 import cn.edu.xmu.oomall.other.model.vo.User.UserLoginVo;
+import cn.edu.xmu.oomall.other.util.TestStub;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
@@ -35,14 +36,15 @@ public class banUserTest {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private String expectedOutput;
-    private String adminToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0aGlzIGlzIGEgdG9rZW4iLCJhdWQiOiJNSU5JQVBQIiwidG9rZW5JZCI6IjIwMjAxMjAzMTA0MjU2M0lXIiwiaXNzIjoiT09BRCIsImRlcGFydElkIjowLCJleHAiOjE2MDY5NjY5NzYsInVzZXJJZCI6MSwiaWF0IjoxNjA2OTYzMzc2fQ.zmLc4N3qbmN8ln5t8KBSIkIAoDI7oswWjVIpzqSutkg";
+    private String adminToken;
 
     public banUserTest() throws Exception {
         expectedOutput = new String(Files.readAllBytes(Paths.get("src/test/resources/expectedOutput/User/banUser.json")));
+        adminToken = TestStub.createToken(1L, 0L, 3600);
     }
 
     /***
-     * 获取token
+     * 获取登录response
      */
     public String loginResponse(String userName, String password) throws Exception {
         UserLoginVo vo = new UserLoginVo();
@@ -64,7 +66,7 @@ public class banUserTest {
      */
     @Test
     public void banUserTest1() throws Exception {
-        String response = this.mvc.perform(put("/users/17332/ban")
+        String response = this.mvc.perform(put("/users/20000/ban")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -87,7 +89,7 @@ public class banUserTest {
      */
     @Test
     public void banUserTest2() throws Exception {
-        String response = this.mvc.perform(put("/users/20000/ban")
+        String response = this.mvc.perform(put("/users/200000/ban")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))

@@ -4,6 +4,7 @@ import cn.edu.xmu.ooad.util.JacksonUtil;
 import cn.edu.xmu.oomall.other.OtherServiceApplication;
 import cn.edu.xmu.oomall.other.controller.UserController;
 import cn.edu.xmu.oomall.other.model.vo.User.UserLoginVo;
+import cn.edu.xmu.oomall.other.util.TestStub;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -40,10 +41,11 @@ public class releaseUserTest {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private String expectedOutput;
-    private String adminToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0aGlzIGlzIGEgdG9rZW4iLCJhdWQiOiJNSU5JQVBQIiwidG9rZW5JZCI6IjIwMjAxMjAzMTA0MjU2M0lXIiwiaXNzIjoiT09BRCIsImRlcGFydElkIjowLCJleHAiOjE2MDY5NjY5NzYsInVzZXJJZCI6MSwiaWF0IjoxNjA2OTYzMzc2fQ.zmLc4N3qbmN8ln5t8KBSIkIAoDI7oswWjVIpzqSutkg";
+    private String adminToken;
 
     public releaseUserTest() throws Exception {
         expectedOutput = new String(Files.readAllBytes(Paths.get("src/test/resources/expectedOutput/User/releaseUser.json")));
+        adminToken = TestStub.createToken(1L, 0L, 3600);
     }
 
     /***
@@ -69,7 +71,7 @@ public class releaseUserTest {
      */
     @Test
     public void releaseUserTest1() throws Exception {
-        String response = this.mvc.perform(put("/users/17382/release")
+        String response = this.mvc.perform(put("/users/20001/release")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -93,7 +95,7 @@ public class releaseUserTest {
      */
     @Test
     public void releaseUserTest2() throws Exception {
-        String response = this.mvc.perform(put("/users/20000/release")
+        String response = this.mvc.perform(put("/users/99999/release")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))

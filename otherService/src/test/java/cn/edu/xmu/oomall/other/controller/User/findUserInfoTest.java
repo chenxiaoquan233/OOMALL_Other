@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.other.controller.User;
 import cn.edu.xmu.ooad.util.JacksonUtil;
 import cn.edu.xmu.oomall.other.OtherServiceApplication;
 import cn.edu.xmu.oomall.other.controller.UserController;
+import cn.edu.xmu.oomall.other.util.TestStub;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
@@ -34,10 +35,10 @@ public class findUserInfoTest {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private String expectedOutput;
-    private String adminToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0aGlzIGlzIGEgdG9rZW4iLCJhdWQiOiJNSU5JQVBQIiwidG9rZW5JZCI6IjIwMjAxMjAzMTA0MjU2M0lXIiwiaXNzIjoiT09BRCIsImRlcGFydElkIjowLCJleHAiOjE2MDY5NjY5NzYsInVzZXJJZCI6MSwiaWF0IjoxNjA2OTYzMzc2fQ.zmLc4N3qbmN8ln5t8KBSIkIAoDI7oswWjVIpzqSutkg";
-
+    private String adminToken;
     public findUserInfoTest() throws Exception {
         expectedOutput = new String(Files.readAllBytes(Paths.get("src/test/resources/expectedOutput/User/findUserInfo.json")));
+        adminToken = TestStub.createToken(1L, 0L, 3600);
     }
 
     /***
@@ -47,7 +48,7 @@ public class findUserInfoTest {
     @Test
     public void findUserInfoTest1() throws Exception {
 
-        String response = this.mvc.perform(get("/users/17332")
+        String response = this.mvc.perform(get("/users/20000")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -65,7 +66,7 @@ public class findUserInfoTest {
     @Test
     public void findUserInfoTest2() throws Exception {
 
-        String response = this.mvc.perform(get("/users/200000")
+        String response = this.mvc.perform(get("/users/2000000")
                 .header("authorization", adminToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
