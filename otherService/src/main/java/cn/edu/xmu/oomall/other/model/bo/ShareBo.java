@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @version 创建时间：2020/12/2 下午6:12
  */
 @Data
-public class SharesBo implements VoObject {
+public class ShareBo implements VoObject {
     private Long id;
     private Long sharerId;
     private Long goodsSpuId;
@@ -21,8 +21,8 @@ public class SharesBo implements VoObject {
     private LocalDateTime gmtModified;
     private Long shareActivityId;
 
-    public SharesBo(){}
-    public SharesBo(SharePo sharePo){
+    public ShareBo(){}
+    public ShareBo(SharePo sharePo){
         this.id= sharePo.getId();
         this.sharerId=sharePo.getSharerId();
         this.goodsSpuId=sharePo.getGoodsSpuId();
