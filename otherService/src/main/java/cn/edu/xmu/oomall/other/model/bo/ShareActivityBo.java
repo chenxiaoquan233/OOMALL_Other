@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.other.model.po.ShareActivityPo;
+import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityRetVo;
 import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityVo;
 import lombok.Data;
 
@@ -20,6 +21,7 @@ public class ShareActivityBo implements VoObject {
     private LocalDateTime endTime;
     private String strategy;
     private Byte beDeleted;
+    private Byte state;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
 
@@ -32,17 +34,20 @@ public class ShareActivityBo implements VoObject {
         this.endTime=shareActivityPo.getEndTime();
         this.strategy= shareActivityPo.getStrategy();
         this.beDeleted= shareActivityPo.getBeDeleted();
+        this.state=shareActivityPo.getState();
         this.gmtCreate= shareActivityPo.getGmtCreate();
         this.gmtModified= shareActivityPo.getGmtModified();
     }
 
     @Override
     public Object createVo() {
-        ShareActivityVo shareActivityVo=new ShareActivityVo();
-        shareActivityVo.setBeginTime(this.beginTime);
-        shareActivityVo.setEndTime(this.endTime);
-        shareActivityVo.setStrategy(this.strategy);
-        return shareActivityVo;
+        ShareActivityRetVo shareActivityRetVo=new ShareActivityRetVo();
+        shareActivityRetVo.setBeginTime(this.beginTime);
+        shareActivityRetVo.setEndTime(this.endTime);
+        shareActivityRetVo.setId(this.id);
+        shareActivityRetVo.setShopId(this.shopId);
+        shareActivityRetVo.setState(this.state.intValue());
+        return shareActivityRetVo;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.other.service;
 
+import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.oomall.other.dao.FavoriteDao;
 import cn.edu.xmu.oomall.other.dao.ShareDao;
 import cn.edu.xmu.oomall.other.model.bo.BeSharedBo;
