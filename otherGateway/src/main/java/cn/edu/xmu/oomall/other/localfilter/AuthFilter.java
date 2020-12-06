@@ -11,6 +11,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -18,6 +19,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.Date;
+import java.util.function.Consumer;
 
 /**
  * 2 * @author: LiangJi3229
@@ -56,6 +58,18 @@ public class AuthFilter implements GatewayFilter, Ordered {
         Date nowTime=new Date();
         Long gapTime=expireTime.getTime()-nowTime.getTime();
         logger.debug("当前token过期时间-现在时间= "+gapTime+"millis");
+
+        //此处为增加userid到header
+        Consumer<HttpHeaders> httpHeadersConsumer=httpHeaders -> {
+            httpHeaders.add("userid",userId.toString());
+        };
+        ServerHttpRequest serverHttpRequest = exchange.getRequest().mutate().headers(httpHeadersConsumer).build();
+        logger.debug(serverHttpRequest.getHeaders().toString());
+        exchange.mutate().request(serverHttpRequest).build();
+        //request.getHeaders().add("userid",userId.toString());
+        //*******************
+
+
         if(gapTime<0){
             return getErrorResponse(HttpStatus.UNAUTHORIZED,ResponseCode.AUTH_INVALID_JWT,response,"token过期");
         }
