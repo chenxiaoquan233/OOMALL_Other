@@ -8,7 +8,7 @@
       "mobile": "12300010003",
       "email": "test@test1.com",
       "gender": 0,
-      "birthday": "2020-01-01T00:00:00",
+      "birthday": "2020-01-01",
       "gmtCreate": "2020-11-30T15:45:50.030396",
       "gmtModified": null
     },

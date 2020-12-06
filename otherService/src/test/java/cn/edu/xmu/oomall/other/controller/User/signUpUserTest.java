@@ -65,6 +65,8 @@ public class signUpUserTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
+        logger.debug(responseString);
+
         String expectString = JacksonUtil.parseSubnodeToString(expectedOutput, "/1");
 
         JSONAssert.assertEquals(responseString, expectString, new CustomComparator(JSONCompareMode.LENIENT,
