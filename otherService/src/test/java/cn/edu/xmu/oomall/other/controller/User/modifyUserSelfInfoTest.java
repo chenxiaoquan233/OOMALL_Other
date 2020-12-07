@@ -56,6 +56,9 @@ public class modifyUserSelfInfoTest {
      * 获取token
      */
     public String login(String userName, String password) throws Exception {
+
+        logger.debug("userName: " + userName + "password: " + password);
+
         UserLoginVo vo = new UserLoginVo();
         vo.setUserName(userName);
         vo.setPassword(password);
@@ -73,9 +76,12 @@ public class modifyUserSelfInfoTest {
 
     /***
      * 获取用户信息
+     * @throws Exception
      */
     public String getUserSelfInfo(String userName, String password) throws Exception{
         String token = login(userName, password);
+
+        logger.debug("token:" + token);
 
         String responseString = this.mvc.perform(get("/users")
                 .header("authorization", token)
@@ -84,9 +90,18 @@ public class modifyUserSelfInfoTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
 
+        logger.debug(responseString);
+
         return responseString;
     }
 
+    @Test
+    public void ttt() throws Exception {
+        String response = getUserSelfInfo("testuser", "123456");
+        logger.debug("response:" + response);
+
+        return;
+    }
 
     /***
      * 成功修改个人信息

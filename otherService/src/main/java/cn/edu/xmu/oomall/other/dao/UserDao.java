@@ -122,6 +122,8 @@ public class UserDao {
 
             return null;
         } else {
+            logger.debug("customerPo: " + customerPo);
+
             return new UserBo(customerPo);
         }
     }
