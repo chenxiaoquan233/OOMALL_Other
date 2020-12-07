@@ -119,11 +119,9 @@ public class UserDao {
 
         if(customerPo == null) {
             logger.debug("not found user, id:" + id);
-
             return null;
         } else {
-            logger.debug("customerPo: " + customerPo);
-
+            logger.debug("customerPo: " + customerPo.getId());
             return new UserBo(customerPo);
         }
     }
@@ -138,7 +136,7 @@ public class UserDao {
         }
 
         customerPo.setState(state);
-        customerPoMapper.updateByPrimaryKey(customerPo);
+        customerPoMapper.updateByPrimaryKeySelective(customerPo);
         return true;
     }
 
@@ -146,8 +144,8 @@ public class UserDao {
         CustomerPo customerPo = userBo.createUserPo();
 
         logger.debug("userID: " + userBo.getId());
-        customerPoMapper.updateByPrimaryKey(customerPo);
-
+        customerPoMapper.updateByPrimaryKeySelective(customerPo);
+        logger.debug("finished update");
         return ResponseCode.OK;
     }
 

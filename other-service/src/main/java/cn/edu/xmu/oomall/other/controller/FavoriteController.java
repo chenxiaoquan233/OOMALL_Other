@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jx
  * @version 创建时间：2020/12/3 上午8:56
  */
-@Service
 @RestController /*Restful的Controller对象*/
 @RequestMapping(value = "/favorites", produces = "application/json;charset=UTF-8")
 public class FavoriteController {
