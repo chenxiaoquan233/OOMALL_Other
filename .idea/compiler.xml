@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="other-order-interface" />
+        <module name="other-service" />
+        <module name="other-goods-client" />
+        <module name="other-gateway" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="other" target="11" />
+      <module name="other-gateway" target="11" />
+      <module name="other-goods-client" target="11" />
+      <module name="other-order-interface" target="11" />
+      <module name="other-service" target="11" />
+      <module name="otherCore" target="11" />
+      <module name="othergateway" target="11" />
+      <module name="otherOrder" target="11" />
+      <module name="otherOrder-client" target="11" />
+      <module name="otherOrderInterface" target="11" />
+      <module name="otherService" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="other-gateway" options="-parameters" />
+      <module name="other-goods-client" options="-parameters" />
+      <module name="other-order-interface" options="-parameters" />
+      <module name="other-service" options="-parameters" />
+      <module name="otherCore" options="-parameters" />
+      <module name="otherOrder" options="-parameters" />
+      <module name="otherOrder-client" options="-parameters" />
+      <module name="otherOrderInterface" options="-parameters" />
+      <module name="otherService" options="-parameters" />
+      <module name="othergateway" options="-parameters" />
+    </option>
+  </component>
+</project>
