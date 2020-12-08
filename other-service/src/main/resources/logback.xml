@@ -74,6 +74,7 @@
     <logger name="cn.edu.xmu.oomall.other.service" level = "DEBUG"/>
     <logger name="cn.edu.xmu.oomall.other.dao" level = "DEBUG"/>
     <logger name="cn.edu.xmu.oomall.other.model" level = "DEBUG"/>
+    <logger name="cn.edu.xmu.oomall.other.controller.User" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />

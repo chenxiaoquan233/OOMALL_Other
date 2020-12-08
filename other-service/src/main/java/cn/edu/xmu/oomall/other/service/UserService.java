@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.other.service;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.JwtHelper;
+import cn.edu.xmu.ooad.util.RandomCaptcha;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.dao.UserDao;
@@ -9,17 +10,22 @@ import cn.edu.xmu.oomall.other.model.bo.UserBo;
 import cn.edu.xmu.oomall.other.model.po.CustomerPo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserLoginVo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserModifyVo;
+import cn.edu.xmu.oomall.other.model.vo.User.UserResetPasswordVo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserSignUpVo;
+import cn.edu.xmu.oomall.other.util.MailUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -34,6 +40,11 @@ public class UserService {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private RedisTemplate<String, Serializable> redisTemplate;
+
+    private final MailUtil mailUtil = new MailUtil();
 
     @Transactional
     public ReturnObject<VoObject> signUp(UserSignUpVo vo) {
@@ -120,5 +131,37 @@ public class UserService {
         returnObject.setTotal(customerPos.getTotal());
 
         return new ReturnObject<>(returnObject);
+    }
+
+    @Transactional
+    public ReturnObject<Object> resetPassword(UserResetPasswordVo vo, String ip) {
+
+        //防止重复请求验证码
+        if(redisTemplate.hasKey("ip_" + ip))
+            return new ReturnObject<>(ResponseCode.AUTH_USER_FORBIDDEN);
+        else {
+            //1 min中内不能重复请求
+            redisTemplate.opsForValue().set("ip_"+ip,ip);
+            redisTemplate.expire("ip_" + ip, 0, TimeUnit.MILLISECONDS);
+        }
+
+        UserBo userBo = vo.createUserBo();
+        ReturnObject<Object> returnObject = userDao.resetPassword(userBo);
+
+        if(!returnObject.getCode().equals(ResponseCode.OK)) return returnObject;
+
+        //随机生成验证码
+        String captcha = RandomCaptcha.getRandomString(6);
+        while(redisTemplate.hasKey(captcha))
+            captcha = RandomCaptcha.getRandomString(6);
+
+        String id = userBo.getId().toString();
+        String key = "cp_" + captcha;
+        //key:验证码,value:id存入redis
+        redisTemplate.opsForValue().set(key,id);
+        //五分钟后过期
+        redisTemplate.expire("cp_" + captcha, 5 * 60 * 1000, TimeUnit.MILLISECONDS);
+
+        return new ReturnObject<>(mailUtil.sendEmail(userBo.getEmail(), userBo.getUserName(), "您的验证码是：" + captcha + "，5分钟内有效。"));
     }
 }

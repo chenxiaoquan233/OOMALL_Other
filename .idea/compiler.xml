@@ -19,12 +19,6 @@
       <module name="other-goods-client" target="11" />
       <module name="other-order-interface" target="11" />
       <module name="other-service" target="11" />
-      <module name="otherCore" target="11" />
-      <module name="othergateway" target="11" />
-      <module name="otherOrder" target="11" />
-      <module name="otherOrder-client" target="11" />
-      <module name="otherOrderInterface" target="11" />
-      <module name="otherService" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -33,12 +27,6 @@
       <module name="other-goods-client" options="-parameters" />
       <module name="other-order-interface" options="-parameters" />
       <module name="other-service" options="-parameters" />
-      <module name="otherCore" options="-parameters" />
-      <module name="otherOrder" options="-parameters" />
-      <module name="otherOrder-client" options="-parameters" />
-      <module name="otherOrderInterface" options="-parameters" />
-      <module name="otherService" options="-parameters" />
-      <module name="othergateway" options="-parameters" />
     </option>
   </component>
 </project>

@@ -6,13 +6,17 @@ import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
-import cn.edu.xmu.oomall.other.model.vo.User.UserLoginVo;
-import cn.edu.xmu.oomall.other.model.vo.User.UserModifyVo;
-import cn.edu.xmu.oomall.other.model.vo.User.UserSignUpVo;
+import cn.edu.xmu.oomall.other.model.bo.UserBo;
+import cn.edu.xmu.oomall.other.model.vo.User.*;
 import cn.edu.xmu.ooad.annotation.LoginUser;
 import cn.edu.xmu.oomall.other.service.UserService;
+import cn.edu.xmu.oomall.other.util.IpUtil;
+import cn.xmu.edu.goods.client.IGoodsService;
+import cn.xmu.edu.goods.client.IShopService;
+import cn.xmu.edu.goods.client.dubbo.ShopDTO;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +25,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController /*Restful的Controller对象*/
 @RequestMapping(value = "/users", produces = "application/json;charset=UTF-8")
@@ -34,14 +42,21 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @DubboReference(version = "0.0.1-SNAPSHOT")
+    private IShopService shopService;
+
+    @DubboReference(version = "0.0.1-SNAPSHOT")
+    private IGoodsService goodsService;
+
     /***
      * 获得买家的所有状态
      * @return Object
      */
     @Audit
-    @GetMapping("/users/states")
+    @GetMapping("/states")
     public Object getAllUserState (){
-        return null;
+        List<UserStateRetVo> states = Arrays.stream(UserBo.State.values()).map(UserBo.State::getCode).map(UserStateRetVo::new).collect(Collectors.toList());
+        return ResponseUtil.ok(states);
     }
 
     /***
@@ -146,9 +161,37 @@ public class UserController {
      * 用户重置密码
      * @return Object
      */
+    @ApiOperation(value = "用户重置密码", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "body", dataType = "UserResetPasswordVo", name = "vo", value = "邮箱和用户名", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功"),
+            @ApiResponse(code = 745, message = "与系统预留的邮箱不一致"),
+            @ApiResponse(code = 746, message = "与系统预留的电话不一致")
+    })
     @PutMapping("/password/reset")
-    public Object resetUserSelfPassword() {
-        return null;
+    public Object resetUserSelfPassword(
+            @RequestBody UserResetPasswordVo vo,
+            BindingResult bindingResult,
+            HttpServletResponse httpServletResponse,
+            HttpServletRequest httpServletRequest) {
+
+
+
+        /* 处理参数校验错误 */
+        Object o = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if(o != null){
+            return o;
+        }
+
+        logger.debug("email:" + vo.getEmail() + "userName:" + vo.getUserName());
+
+        String ip = IpUtil.getIpAddr(httpServletRequest);
+
+        ReturnObject returnObject = userService.resetPassword(vo,ip);
+        return Common.decorateReturnObject(returnObject);
     }
 
     /***
@@ -312,5 +355,12 @@ public class UserController {
         } else {
             return ResponseUtil.fail(responseCode);
         }
+    }
+
+    @GetMapping("/test")
+    public Object test() {
+        ShopDTO shop = shopService.getShopById(0L);
+        goodsService.getPrice(1L);
+        return new ReturnObject<>(shop);
     }
 }

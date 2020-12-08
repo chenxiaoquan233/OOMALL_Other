@@ -1,8 +1,10 @@
-package cn.xmu.edu.goodscilent.dubbo;
+package cn.xmu.edu.goods.client.dubbo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * @Author: Yifei Wang
@@ -11,12 +13,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Customer {
+public class CustomerDTO implements Serializable {
 	private Long id;
 	private String userName;
 	private String realName;
 
-	public Customer(Long id) {
+	public CustomerDTO(Long id) {
 		this.id = id;
 	}
 }

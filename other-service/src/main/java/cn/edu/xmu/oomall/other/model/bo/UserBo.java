@@ -4,7 +4,6 @@ import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.other.dto.Customer;
 import cn.edu.xmu.oomall.other.model.po.CustomerPo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserRetVo;
-import cn.edu.xmu.oomall.other.model.vo.User.UserStateRetVo;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -131,13 +130,6 @@ public class UserBo implements VoObject {
         this.gmtModified = customerPo.getGmtModified();
         this.deleted = UserBo.Deleted.getTypeByCode(customerPo.getBeDeleted().intValue());
         this.point = customerPo.getPoint();
-    }
-
-    public UserStateRetVo createUserStateVo() {
-        UserStateRetVo userStateRetVo = new UserStateRetVo();
-        userStateRetVo.setCode(this.state.code);
-        userStateRetVo.setName(this.userName);
-        return userStateRetVo;
     }
 
     public CustomerPo createUserPo() {

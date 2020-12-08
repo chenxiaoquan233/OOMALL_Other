@@ -1,8 +1,8 @@
-package cn.xmu.edu.goodscilent;
+package cn.xmu.edu.goods.client;
 
 
 
-import cn.xmu.edu.goodscilent.dubbo.OrderItem;
+import cn.xmu.edu.goods.client.dubbo.OrderItemDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -15,9 +15,9 @@ public interface IDiscountService {
 
 	/**
 	 * 计算折扣
-	 * @param orderItems
+	 * @param orderItemDTOS
 	 * @return skuId到discount的映射
 	 */
-	Map<Long, Long> calcDiscount(List<OrderItem> orderItems);
+	Map<Long, Long> calcDiscount(List<OrderItemDTO> orderItemDTOS);
 
 }

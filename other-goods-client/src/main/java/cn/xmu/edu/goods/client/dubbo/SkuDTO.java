@@ -1,10 +1,11 @@
-package cn.xmu.edu.goodscilent.dubbo;
+package cn.xmu.edu.goods.client.dubbo;
 
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Sku {
+public class SkuDTO implements Serializable {
 
     /**
      * 后台Sku状态
@@ -24,7 +25,7 @@ public class Sku {
         private static final Map<Integer, State> stateMap;
 
         static { //由类加载机制，静态块初始加载对应的枚举属性到map中，而不用每次取属性时，遍历一次所有枚举值
-            stateMap = new HashMap();
+            stateMap = new HashMap<>();
             for (State enum1 : values()) {
                 stateMap.put(enum1.code, enum1);
             }

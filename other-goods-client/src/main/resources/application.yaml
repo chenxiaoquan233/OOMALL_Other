@@ -1,46 +1,19 @@
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-
 server:
-  port: 8080
-  tomcat:
-    threads:
-      max: 1000
-
-dubbo:
-  # 配置服务信息
-  application:
-    name: other-client
-    # 禁用QOS同一台机器可能会有端口冲突现象
-    qos-enable: false
-    qos-accept-foreign-ip: false
-  # 配置注册中心
-  registry:
-    address: nacos://47.115.162.144:8848
-  # 设置协议-协议由提供方指定消费方被动接受
-  protocol:
-    name: dubbo
-    port: 20880
-    # 设置超时时间
-  consumer:
-    timeout: 4000
-    check: false
+  port: 8088
 
 spring:
-  main:
-    # 解决Bean重复定义问题
-    allow-bean-definition-overriding: true
   application:
-    name: privilege-service
+    name: goods-service
   profiles:
     active: dev
+  servlet:
+    multipart:
+      enabled: true
+      max-request-size: 10MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
-    initialization-mode: never
+    initialization-mode: always
     schema: classpath:schema.sql
     data: classpath:data.sql
     druid:
@@ -75,18 +48,42 @@ spring:
         max-wait: -1
     # 连接超时时间（毫秒）
     timeout: 5000
+  cloud:
+    nacos:
+      server-addr: 47.115.162.144:8848
+
+
+goodsservice:
+  webdav:
+    username: oomall
+    password: 123465
+    baseUrl: http://localhost:8088/web/
+brandservice:
+  webdav:
+    username: oomall
+    password: 123465
+    baseUrl: http://localhost:8088/web/
 
 mybatis:
-  #po对象的包
-  type-aliases-package: cn.edu.xmu.other.model.po
-  #mapper.xml所在的位置
-  mapper-locations: classpath*:cn.edu.xmu.other.mapper/*.xml
-  #自动将SQL中查出来的带下划线的字段，转换为驼峰标志，再去匹配类中的属性
+  # 将包中的类添加为类型别名
+  type-aliases-package: com.xmu.oomall.domain
+  # mapper.xml所在的位置
+  mapper-locations: classpath:mapper/*.xml
   configuration:
-    #输出产生的SQL
-    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 是否开启驼峰命名自动映射，即从经典数据库列名 A_COLUMN 映射到经典 Java 属性名 aColumn。
     map-underscore-to-camel-case: true
 
 #pagehelper分页插件配置
 pagehelper:
   helper-dialect: mysql
+
+dubbo:
+  application:
+    name: dubbo-goods
+  scan:
+    base-packages: cn.edu.xmu.goods.client
+  registry:
+    address: nacos://47.115.162.144:8848
+  protocol:
+    name: dubbo
+    port: 28088

@@ -1,21 +1,31 @@
 package cn.edu.xmu.oomall.other.dao;
 
 import cn.edu.xmu.ooad.model.VoObject;
+import cn.edu.xmu.ooad.util.RandomCaptcha;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
+import cn.edu.xmu.ooad.util.encript.AES;
 import cn.edu.xmu.oomall.other.mapper.CustomerPoMapper;
 import cn.edu.xmu.oomall.other.model.bo.UserBo;
 import cn.edu.xmu.oomall.other.model.po.CustomerPo;
 import cn.edu.xmu.oomall.other.model.po.CustomerPoExample;
+import cn.edu.xmu.oomall.other.model.vo.User.UserResetPasswordVo;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Repository;
 
+import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author XQChen
@@ -179,5 +189,22 @@ public class UserDao {
         logger.debug("getUserById: retUsers = " + customers);
 
         return new PageInfo<>(customers);
+    }
+
+    public ReturnObject<Object> resetPassword(UserBo userBo) {
+
+        //根据用户名获取用户
+        CustomerPoExample userPoExample1 = new CustomerPoExample();
+        CustomerPoExample.Criteria criteria = userPoExample1.createCriteria();
+        criteria.andUserNameEqualTo(userBo.getUserName());
+        List<CustomerPo> userPo1 = customerPoMapper.selectByExample(userPoExample1);
+
+        if(userPo1.isEmpty()) return new ReturnObject<>(ResponseCode.AUTH_INVALID_ACCOUNT);
+        if(!userPo1.get(0).getEmail().equals(userBo.getEmail())) return new ReturnObject<>(ResponseCode.EMAIL_WRONG);
+        if(!userPo1.get(0).getMobile().equals(userBo.getMobile())) return new ReturnObject<>(ResponseCode.MOBILE_WRONG);
+
+        userBo.setId(userPo1.get(0).getId());
+
+        return new ReturnObject<>(ResponseCode.OK);
     }
 }
