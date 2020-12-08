@@ -21,14 +21,10 @@ public class UserResetPasswordVo {
     @Email
     private String email;
 
-    @NotBlank
-    private String mobile;
-
     public UserBo createUserBo() {
         UserBo userBo = new UserBo();
         userBo.setUserName(this.userName);
         userBo.setEmail(this.email);
-        userBo.setMobile(this.mobile);
         return userBo;
     }
 }

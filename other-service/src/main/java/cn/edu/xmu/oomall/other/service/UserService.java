@@ -8,10 +8,7 @@ import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.dao.UserDao;
 import cn.edu.xmu.oomall.other.model.bo.UserBo;
 import cn.edu.xmu.oomall.other.model.po.CustomerPo;
-import cn.edu.xmu.oomall.other.model.vo.User.UserLoginVo;
-import cn.edu.xmu.oomall.other.model.vo.User.UserModifyVo;
-import cn.edu.xmu.oomall.other.model.vo.User.UserResetPasswordVo;
-import cn.edu.xmu.oomall.other.model.vo.User.UserSignUpVo;
+import cn.edu.xmu.oomall.other.model.vo.User.*;
 import cn.edu.xmu.oomall.other.util.MailUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -80,6 +77,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public ResponseCode banUser(Long id) {
         if(userDao.switchUserStateById(id, UserBo.State.FORBID.getCode().byteValue())) {
             return ResponseCode.OK;
@@ -88,6 +86,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public ResponseCode releaseUser(Long id) {
         if(userDao.switchUserStateById(id, UserBo.State.NORM.getCode().byteValue())) {
             return ResponseCode.OK;
@@ -96,6 +95,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public ResponseCode modifyUserById(Long userId, UserModifyVo vo) {
         UserBo userBo = userDao.findUserById(userId);
 
@@ -134,11 +134,11 @@ public class UserService {
     }
 
     @Transactional
-    public ReturnObject<Object> resetPassword(UserResetPasswordVo vo, String ip) {
+    public ResponseCode resetPassword(UserResetPasswordVo vo, String ip) {
 
         //防止重复请求验证码
         if(redisTemplate.hasKey("ip_" + ip))
-            return new ReturnObject<>(ResponseCode.AUTH_USER_FORBIDDEN);
+            return ResponseCode.AUTH_USER_FORBIDDEN;
         else {
             //1 min中内不能重复请求
             redisTemplate.opsForValue().set("ip_"+ip,ip);
@@ -146,9 +146,9 @@ public class UserService {
         }
 
         UserBo userBo = vo.createUserBo();
-        ReturnObject<Object> returnObject = userDao.resetPassword(userBo);
+        ResponseCode responseCode = userDao.resetPassword(userBo);
 
-        if(!returnObject.getCode().equals(ResponseCode.OK)) return returnObject;
+        if(!responseCode.equals(ResponseCode.OK)) return responseCode;
 
         //随机生成验证码
         String captcha = RandomCaptcha.getRandomString(6);
@@ -160,8 +160,25 @@ public class UserService {
         //key:验证码,value:id存入redis
         redisTemplate.opsForValue().set(key,id);
         //五分钟后过期
-        redisTemplate.expire("cp_" + captcha, 5 * 60 * 1000, TimeUnit.MILLISECONDS);
+        redisTemplate.expire(key, 5 * 60 * 1000, TimeUnit.MILLISECONDS);
 
-        return new ReturnObject<>(mailUtil.sendEmail(userBo.getEmail(), userBo.getUserName(), "您的验证码是：" + captcha + "，5分钟内有效。"));
+        return mailUtil.sendEmail(userBo.getEmail(), userBo.getUserName(), "您的验证码是：" + captcha + "，5分钟内有效。");
+    }
+
+    @Transactional
+    public ResponseCode modifyUserSelfPassword(UserModifyPasswordVo vo) {
+        if(!redisTemplate.hasKey("cp_" + vo.getCaptcha())) return ResponseCode.AUTH_INVALID_ACCOUNT;
+
+        Long id = Long.valueOf(redisTemplate.opsForValue().get("cp_" + vo.getCaptcha()).toString());
+
+        UserBo userBo = userDao.findUserById(id);
+
+        if(userBo.getPassword().equals(vo.getNewPassword())) return ResponseCode.PASSWORD_SAME;
+
+        userBo.setPassword(vo.getNewPassword());
+
+        userDao.updateUser(userBo);
+
+        return ResponseCode.OK;
     }
 }

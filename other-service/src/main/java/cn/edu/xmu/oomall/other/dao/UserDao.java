@@ -191,7 +191,7 @@ public class UserDao {
         return new PageInfo<>(customers);
     }
 
-    public ReturnObject<Object> resetPassword(UserBo userBo) {
+    public ResponseCode resetPassword(UserBo userBo) {
 
         //根据用户名获取用户
         CustomerPoExample userPoExample1 = new CustomerPoExample();
@@ -199,12 +199,13 @@ public class UserDao {
         criteria.andUserNameEqualTo(userBo.getUserName());
         List<CustomerPo> userPo1 = customerPoMapper.selectByExample(userPoExample1);
 
-        if(userPo1.isEmpty()) return new ReturnObject<>(ResponseCode.AUTH_INVALID_ACCOUNT);
-        if(!userPo1.get(0).getEmail().equals(userBo.getEmail())) return new ReturnObject<>(ResponseCode.EMAIL_WRONG);
-        if(!userPo1.get(0).getMobile().equals(userBo.getMobile())) return new ReturnObject<>(ResponseCode.MOBILE_WRONG);
+        if(userPo1.isEmpty()) return ResponseCode.AUTH_INVALID_ACCOUNT;
+        if(!userPo1.get(0).getEmail().equals(userBo.getEmail())) return ResponseCode.EMAIL_WRONG;
 
         userBo.setId(userPo1.get(0).getId());
 
-        return new ReturnObject<>(ResponseCode.OK);
+        return ResponseCode.OK;
     }
+
+
 }

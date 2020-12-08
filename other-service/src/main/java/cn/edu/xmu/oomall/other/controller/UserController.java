@@ -152,9 +152,25 @@ public class UserController {
      * 用户修改密码
      * @return Object
      */
+    @ApiOperation(value = "用户修改密码", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "body", dataType = "UserModifyPasswordVo", name = "vo", value = "验证码和新密码", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功"),
+            @ApiResponse(code = 741, message = "不能与旧密码相同")
+    })
     @PutMapping("/password")
-    public Object modifyUserSelfPassword() {
-        return null;
+    public Object modifyUserSelfPassword(@Validated @RequestBody UserModifyPasswordVo vo, BindingResult bindingResult) {
+        Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if(null != object) {
+            logger.debug("Validate failed");
+            logger.debug("UserModifyPasswordVo:" + vo);
+
+            return object;
+        }
+
+        return userService.modifyUserSelfPassword(vo);
     }
 
     /***
@@ -168,8 +184,7 @@ public class UserController {
     })
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功"),
-            @ApiResponse(code = 745, message = "与系统预留的邮箱不一致"),
-            @ApiResponse(code = 746, message = "与系统预留的电话不一致")
+            @ApiResponse(code = 745, message = "与系统预留的邮箱不一致")
     })
     @PutMapping("/password/reset")
     public Object resetUserSelfPassword(
@@ -190,8 +205,8 @@ public class UserController {
 
         String ip = IpUtil.getIpAddr(httpServletRequest);
 
-        ReturnObject returnObject = userService.resetPassword(vo,ip);
-        return Common.decorateReturnObject(returnObject);
+        ResponseCode responseCode = userService.resetPassword(vo,ip);
+        return Common.decorateReturnObject(new ReturnObject<>(responseCode));
     }
 
     /***

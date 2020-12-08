@@ -63,7 +63,7 @@ public class resetUserSelfPasswordTest {
     }
 
     /***
-     * 手机号不正确
+     * 邮箱不正确
      * @throws Exception
      */
     @Test
@@ -85,7 +85,7 @@ public class resetUserSelfPasswordTest {
     }
 
     /***
-     * 邮箱不正确
+     * 用户名不存在
      * @throws Exception
      */
     @Test
@@ -102,28 +102,6 @@ public class resetUserSelfPasswordTest {
                 .andReturn().getResponse().getContentAsString();
 
         String expect = JacksonUtil.parseSubnodeToString(expectedOutput, "/3");
-
-        JSONAssert.assertEquals(expect, response, true);
-    }
-
-    /***
-     * 用户名不存在
-     * @throws Exception
-     */
-    @Test
-    public void resetUserSelfPasswordTest4() throws Exception{
-        String token = TestStub.createToken(1L, 0L, 2000);
-
-        String input = JacksonUtil.parseSubnodeToString(testInput, "/4");
-
-        String response = this.mvc.perform(put("/users/password/reset")
-                .header("authorization", token)
-                .content(input).contentType("application/json;charset=UTF-8"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andReturn().getResponse().getContentAsString();
-
-        String expect = JacksonUtil.parseSubnodeToString(expectedOutput, "/4");
 
         JSONAssert.assertEquals(expect, response, true);
     }
