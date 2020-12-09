@@ -74,7 +74,7 @@ public class TimeSegmentController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @GetMapping("/advertisement/timesegements")
+    @GetMapping("/flashsale/timesegements")
     public Object getAllFlashTimeSegement() {
         return null;
     }

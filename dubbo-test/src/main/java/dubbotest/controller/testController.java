@@ -1,5 +1,6 @@
 package dubbotest.controller;
 
+import cn.edu.xmu.oomall.impl.ITimeSegmentService;
 import cn.edu.xmu.oomall.other.dto.CustomerDTO;
 import cn.edu.xmu.oomall.other.impl.ICustomerService;
 import cn.edu.xmu.oomall.other.impl.IRebateService;
@@ -22,6 +23,9 @@ public class testController {
     @DubboReference
     private IRebateService rebateService;
 
+    @DubboReference
+    private ITimeSegmentService timeSegmentService;
+
     @GetMapping("customer")
     public Object customer() {
         CustomerDTO customer = customerService.getCustomer(20000L);
@@ -33,5 +37,10 @@ public class testController {
         rebateService.useRebate(20000L, 20);
         CustomerDTO customerDTO = customerService.getCustomer(20000L);
         return customerDTO;
+    }
+
+    @GetMapping("flash")
+    public Object flash() {
+        return timeSegmentService.getFlashSaleSegmentById(1L);
     }
 }

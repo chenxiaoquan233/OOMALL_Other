@@ -8,6 +8,7 @@
         <module>other-gateway</module>
         <module>order-other-client</module>
         <module>other-goods-client</module>
+        <module>goods-other-client</module>
         <module>dubbo-test</module>
     </modules>
     <parent>

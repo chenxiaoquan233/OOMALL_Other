@@ -27,6 +27,12 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>cn.edu.xmu.oomall</groupId>
+            <artifactId>goods-other-client</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <!-- Dubbo依赖 -->
         <dependency>
             <groupId>org.apache.dubbo</groupId>
@@ -111,6 +117,12 @@
             <version>2.1.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+            <version>1.5.1.RELEASE</version>
+            <type>pom</type>
+        </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
