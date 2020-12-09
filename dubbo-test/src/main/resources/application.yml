@@ -1,0 +1,29 @@
+server:
+  port: 8088
+  tomcat:
+    threads:
+      max: 1000
+
+spring:
+  main:
+    # 解决Bean重复定义问题
+    allow-bean-definition-overriding: true
+
+dubbo:
+  # 配置服务信息
+  application:
+    name: other
+    # 禁用QOS同一台机器可能会有端口冲突现象
+    qos-enable: false
+    qos-accept-foreign-ip: false
+  # 配置注册中心
+  # 设置协议-协议由提供方指定消费方被动接受
+  protocol:
+    name: dubbo
+    port: 20880
+    # 设置超时时间
+  consumer:
+    timeout: 4000
+    check: false
+  registry:
+    address: nacos://domi.xqchen.site:8848

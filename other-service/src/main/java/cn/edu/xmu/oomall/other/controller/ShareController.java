@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
  * @version 创建时间：2020/12/5 下午2:57
  */
 @RestController /*Restful的Controller对象*/
-@RequestMapping(produces = "application/json;charset=UTF-8")
+@RequestMapping(value="/share", produces = "application/json;charset=UTF-8")
 public class ShareController {
     private static final Logger logger = LoggerFactory.getLogger(ShareController.class);
 

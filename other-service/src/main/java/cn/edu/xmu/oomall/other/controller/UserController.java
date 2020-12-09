@@ -42,10 +42,10 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @DubboReference(version = "0.0.1-SNAPSHOT")
+    @DubboReference(version = "0.0.1-SNAPSHOT", registry = {"provider1"})
     private IShopService shopService;
 
-    @DubboReference(version = "0.0.1-SNAPSHOT")
+    @DubboReference(version = "0.0.1-SNAPSHOT", registry = {"provider1"})
     private IGoodsService goodsService;
 
     /***

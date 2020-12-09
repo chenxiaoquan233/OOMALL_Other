@@ -1,6 +1,6 @@
-package cn.edu.xmu.oomall.other.service;
+package cn.edu.xmu.oomall.other.impl;
 
-import cn.edu.xmu.oomall.other.dto.OrderItem;
+import cn.edu.xmu.oomall.other.dto.OrderItemDTO;
 
 /**
  * @author xincong yao
@@ -13,7 +13,7 @@ public interface IShareService {
 	 * 其他模块提供接口还是发消息队列，待决定
 	 * @param orderItem
 	 */
-	void sendShareMessage(OrderItem orderItem);
+	void sendShareMessage(OrderItemDTO orderItem);
 
 	/**
 	 * 获取点击记录

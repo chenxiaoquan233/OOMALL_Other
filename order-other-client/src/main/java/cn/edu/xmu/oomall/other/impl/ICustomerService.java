@@ -1,6 +1,6 @@
-package cn.edu.xmu.oomall.other.service;
+package cn.edu.xmu.oomall.other.impl;
 
-import cn.edu.xmu.oomall.other.dto.Customer;
+import cn.edu.xmu.oomall.other.dto.CustomerDTO;
 
 /**
  * @author xincong yao
@@ -13,5 +13,5 @@ public interface ICustomerService {
 	 * @param customerId
 	 * @return
 	 */
-	Customer getCustomer(Long customerId);
+	CustomerDTO getCustomer(Long customerId);
 }

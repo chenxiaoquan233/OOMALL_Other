@@ -11,8 +11,15 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Customer {
+public class OrderItemDTO {
 	private Long id;
-	private String userName;
-	private String realName;
+	private Long skuId;
+	private Long orderId;
+	private String name;
+	private Integer quantity;
+	private Long price;
+	private Long discount;
+	private Long couponActivityId;
+	private Long beShareId;
+
 }

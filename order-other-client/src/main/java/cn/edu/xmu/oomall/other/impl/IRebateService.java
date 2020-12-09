@@ -1,4 +1,4 @@
-package cn.edu.xmu.oomall.other.service;
+package cn.edu.xmu.oomall.other.impl;
 
 /**
  * @author xincong yao

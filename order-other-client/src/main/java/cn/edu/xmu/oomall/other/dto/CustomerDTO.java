@@ -11,9 +11,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Shop {
+public class CustomerDTO {
 	private Long id;
-	private String name;
-	private String gmtCreateTime;
-	private String gmtModiTime;
+	private String userName;
+	private String realName;
 }

@@ -38,12 +38,12 @@ public class ShareDao {
     private Byte online = 1;
 
     /*在下单时查找第一个有效的分享成功记录*/
-    public BeSharedBo getFirstBeShared(Long customerId,Long skuId,Long shareActicityId){
+    public BeSharedBo getFirstBeShared(Long customerId, Long skuId) {
         BeSharePoExample example=new BeSharePoExample();
         BeSharePoExample.Criteria criteria=example.createCriteria();
         criteria.andCustomerIdEqualTo(customerId);
         criteria.andGoodsSpuIdEqualTo(skuId);
-        criteria.andShareActivityIdEqualTo(shareActicityId);
+        criteria.andOrderItemIdEqualTo(0L);
         List<BeSharePo> beSharePos=beSharePoMapper.selectByExample(example);
         return new BeSharedBo(beSharePos.get(0));
     }
@@ -143,7 +143,7 @@ public class ShareDao {
     }
 
     /*判断该时间段是否与已有时间段冲突*/
-    Boolean ifTimeConflict(Long shopId,Long goodsSkuId,LocalDateTime beginTime,LocalDateTime endTime){
+    private Boolean ifTimeConflict(Long shopId,Long goodsSkuId,LocalDateTime beginTime,LocalDateTime endTime){
         ShareActivityPoExample example=new ShareActivityPoExample();
         ShareActivityPoExample.Criteria criteria=example.createCriteria();
         /*冲突活动的要求:开始时间在新活动的结束时间之前，结束时间在新活动的开始活动之后*/
@@ -159,17 +159,11 @@ public class ShareDao {
     }
 
     /*新建分享活动：默认为下架*/
-    ShareActivityPo insertShareActivity(ShareActivityBo shareActivity){
+    public ShareActivityPo insertShareActivity(ShareActivityBo shareActivity){
         ShareActivityPo record=shareActivity.createPo();
         record.setGmtCreate(LocalDateTime.now());
         shareActivityPoMapper.insertSelective(record);
         return record;
     }
-
-
-
-
-
-
 
 }

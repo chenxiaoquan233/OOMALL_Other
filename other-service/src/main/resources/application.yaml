@@ -13,13 +13,11 @@ server:
 dubbo:
   # 配置服务信息
   application:
-    name: other-client
+    name: other
     # 禁用QOS同一台机器可能会有端口冲突现象
     qos-enable: false
     qos-accept-foreign-ip: false
   # 配置注册中心
-  registry:
-    address: nacos://47.115.162.144:8848
   # 设置协议-协议由提供方指定消费方被动接受
   protocol:
     name: dubbo
@@ -28,13 +26,16 @@ dubbo:
   consumer:
     timeout: 4000
     check: false
+  registries:
+    provider1:
+      address: nacos://47.115.162.144:8848
+    provider2:
+      address: nacos://domi.xqchen.site:8848
 
 spring:
   main:
     # 解决Bean重复定义问题
     allow-bean-definition-overriding: true
-  application:
-    name: privilege-service
   profiles:
     active: dev
   datasource:

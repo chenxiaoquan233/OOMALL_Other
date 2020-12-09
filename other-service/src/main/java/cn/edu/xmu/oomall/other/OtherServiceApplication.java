@@ -9,7 +9,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication(scanBasePackages = {"cn.edu.xmu.ooad", "cn.edu.xmu.oomall.other"})
 @MapperScan("cn.edu.xmu.oomall.other.mapper")
 @EnableSwagger2
-@EnableDubbo(scanBasePackages = "cn.edu.xmu.goodsclient")
+@EnableDubbo
 public class OtherServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(OtherServiceApplication.class, args);

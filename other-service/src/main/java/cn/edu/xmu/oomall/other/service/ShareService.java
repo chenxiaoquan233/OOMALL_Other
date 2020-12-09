@@ -35,7 +35,7 @@ public class ShareService {
         if(shareActivityBo==null)
             return null;
         /*查找点击者在该活动内第一个分享成功记录*/
-        BeSharedBo beSharedBo=shareDao.getFirstBeShared(customerId,skuId,shareActivityBo.getId());
+        BeSharedBo beSharedBo=shareDao.getFirstBeShared(customerId, skuId);
         return beSharedBo;
     }
 

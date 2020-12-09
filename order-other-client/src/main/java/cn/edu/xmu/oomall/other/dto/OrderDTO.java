@@ -14,12 +14,12 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order {
+public class OrderDTO {
 	private Long id;
-	private Customer customer;
-	private Shop shop;
+	private CustomerDTO customer;
+	private ShopDTO shop;
 	private String orderSn;
-	private List<Order> subOrders;
+	private List<OrderDTO> subOrders;
 	private Long pid;
 	private String consignee;
 	private Long regionId;
@@ -41,7 +41,7 @@ public class Order {
 	private Integer state;
 	private Integer subState;
 	private Integer beDeleted;
-	private List<OrderItem> orderItems;
+	private List<OrderItemDTO> orderItems;
 	private LocalDateTime gmtCreated;
 	private LocalDateTime gmtModified;
 }

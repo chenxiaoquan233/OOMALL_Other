@@ -1,7 +1,7 @@
 package cn.edu.xmu.oomall.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
-import cn.edu.xmu.oomall.other.dto.Customer;
+import cn.edu.xmu.oomall.other.dto.CustomerDTO;
 import cn.edu.xmu.oomall.other.model.po.CustomerPo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserRetVo;
 import lombok.Data;
@@ -171,8 +171,8 @@ public class UserBo implements VoObject {
         return null;
     }
 
-    public Customer createCustomer() {
-        Customer customer = new Customer();
+    public CustomerDTO createCustomer() {
+        CustomerDTO customer = new CustomerDTO();
         customer.setId(this.id);
         customer.setRealName(this.realName);
         customer.setUserName(this.userName);

@@ -6,8 +6,9 @@
     <modules>
         <module>other-service</module>
         <module>other-gateway</module>
-        <module>other-order-interface</module>
+        <module>order-other-client</module>
         <module>other-goods-client</module>
+        <module>dubbo-test</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

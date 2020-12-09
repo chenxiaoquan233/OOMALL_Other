@@ -11,15 +11,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderItem {
+public class ShopDTO {
 	private Long id;
-	private Long skuId;
-	private Long orderId;
 	private String name;
-	private Integer quantity;
-	private Long price;
-	private Long discount;
-	private Long couponActivityId;
-	private Long beShareId;
-
+	private String gmtCreateTime;
+	private String gmtModiTime;
 }
