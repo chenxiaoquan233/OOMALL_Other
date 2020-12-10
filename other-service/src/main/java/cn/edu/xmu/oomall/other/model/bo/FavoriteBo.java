@@ -4,6 +4,7 @@ package cn.edu.xmu.oomall.other.model.bo;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.other.model.po.FavouriteGoodsPo;
 import cn.edu.xmu.oomall.other.model.vo.Favorite.FavoritesRetVo;
+import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -33,7 +34,7 @@ public class FavoriteBo implements VoObject {
     public Object createVo() {
         FavoritesRetVo favoritesRetVo=new FavoritesRetVo();
         favoritesRetVo.setId(this.id);
-        favoritesRetVo.setGoodsSpuId(this.goodsSkuId);
+        favoritesRetVo.setGoodsSku(getSku(this.goodsSkuId));
         favoritesRetVo.setGmtCreate(this.gmtCreate);
         return favoritesRetVo;
     }
@@ -41,5 +42,9 @@ public class FavoriteBo implements VoObject {
     @Override
     public Object createSimpleVo() {
         return null;
+    }
+
+    Object getSku(Long skuId){
+        return new GoodsSkuSimpleVo(skuId);
     }
 }
