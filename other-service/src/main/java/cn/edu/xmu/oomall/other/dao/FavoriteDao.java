@@ -75,16 +75,22 @@ public class FavoriteDao {
     }
 
     public ResponseCode deletefavorites(Long userId, Long id){
-        FavouriteGoodsPo favouriteGoodsPo=favouriteGoodsPoMapper.selectByPrimaryKey(id);
-        /*资源不存在*/
-        if(favouriteGoodsPo==null)
-            return ResponseCode.RESOURCE_ID_NOTEXIST;
-        /*资源id非自己对象*/
-        if(favouriteGoodsPo.getCustomerId()!=userId)
-            return ResponseCode.RESOURCE_ID_OUTSCOPE;
-        /*开始删除*/
-        if(favouriteGoodsPoMapper.deleteByPrimaryKey(id)==1)
-            return ResponseCode.OK;
-        else return ResponseCode.INTERNAL_SERVER_ERR;
+//        FavouriteGoodsPo favouriteGoodsPo=favouriteGoodsPoMapper.selectByPrimaryKey(id);
+//        /*资源不存在*/
+//        if(favouriteGoodsPo==null)
+//            return ResponseCode.RESOURCE_ID_NOTEXIST;
+//        /*资源id非自己对象*/
+//        if(favouriteGoodsPo.getCustomerId()!=userId)
+//            return ResponseCode.RESOURCE_ID_OUTSCOPE;
+//        /*开始删除*/
+//        if(favouriteGoodsPoMapper.deleteByPrimaryKey(id)==1)
+//            return ResponseCode.OK;
+//        else return ResponseCode.INTERNAL_SERVER_ERR;
+        FavouriteGoodsPoExample favouriteGoodsPoExample=new FavouriteGoodsPoExample();
+        FavouriteGoodsPoExample.Criteria criteria=favouriteGoodsPoExample.createCriteria();
+        criteria.andCustomerIdEqualTo(userId);
+        criteria.andIdEqualTo(id);
+        int ret=favouriteGoodsPoMapper.deleteByExample(favouriteGoodsPoExample);
+        return ResponseCode.OK;
     }
 }

@@ -51,9 +51,9 @@ public class FavoriteController {
     })
     @Audit
     @GetMapping
-    public Object getFavorites(@LoginUser Long UserId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
+    public Object getFavorites(@LoginUser Long UserId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
         logger.debug("userID:" + UserId);
-        ReturnObject<PageInfo<VoObject>> returnObject = favoriteService.getFavorites(UserId,page==null?1:page, pageSize==null?10:pageSize);
+        ReturnObject<PageInfo<VoObject>> returnObject = favoriteService.getFavorites(UserId,page, pageSize);
         return Common.getPageRetObject(returnObject);
     }
 
@@ -74,6 +74,8 @@ public class FavoriteController {
     @Audit
     @PostMapping("/goods/{spuId}")
     public Object addFavorites(@LoginUser Long UserId, @PathVariable("spuId") Long spuId) {
+        if(spuId<=0)
+            return ResponseUtil.ok();
         return Common.getRetObject(favoriteService.addFavorites(UserId,spuId));
     }
 

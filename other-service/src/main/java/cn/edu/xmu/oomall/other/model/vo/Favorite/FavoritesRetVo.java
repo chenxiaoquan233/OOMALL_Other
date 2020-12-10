@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.other.model.vo.Favorite;
 
+import cn.edu.xmu.ooad.model.VoObject;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,6 @@ import java.time.LocalDateTime;
 @Data
 public class FavoritesRetVo {
     private Long id;
-    private Long goodsSpuId;
+    Object goodsSku;
     private LocalDateTime gmtCreate;
 }
