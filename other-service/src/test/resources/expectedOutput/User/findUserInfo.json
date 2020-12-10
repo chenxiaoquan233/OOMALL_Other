@@ -1,0 +1,21 @@
+{
+  "1": {
+    "errno": 0,
+    "data": {
+      "id": 20000,
+      "userName": "testuser",
+      "realName": "test",
+      "mobile": "12300010001",
+      "email": "test@test.com",
+      "gender": 0,
+      "birthday": "2020-01-01",
+      "gmtCreate": "2020-12-05T13:22:04",
+      "gmtModified": "2020-12-05T13:22:04"
+    },
+    "errmsg": "成功"
+  },
+  "2": {
+    "errno": 504,
+    "errmsg": "操作的资源id不存在"
+  }
+}

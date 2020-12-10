@@ -1,0 +1,29 @@
+{
+  "1": {
+    "errno": 0,
+    "data": {
+      "id": 17334,
+      "userName": "testuser1",
+      "realName": "test",
+      "mobile": "12300010003",
+      "email": "test@test1.com",
+      "gender": 0,
+      "birthday": "2020-01-01",
+      "gmtCreate": "2020-11-30T15:45:50.030396",
+      "gmtModified": null
+    },
+    "errmsg": "成功"
+  },
+  "2": {
+    "errno": 731,
+    "errmsg": "用户名已被注册"
+  },
+  "3": {
+    "errno": 733,
+    "errmsg": "手机号已被注册"
+  },
+  "4": {
+    "errno": 732,
+    "errmsg": "邮箱已被注册"
+  }
+}
