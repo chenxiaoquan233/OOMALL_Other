@@ -1,7 +1,6 @@
 package cn.edu.xmu.oomall.other.model.vo.Aftersale;
 
-import cn.edu.xmu.oomall.other.model.bo.AftersaleOrderBo;
-import cn.edu.xmu.oomall.other.model.po.AftersalePo;
+import cn.edu.xmu.oomall.other.model.bo.AftersaleBo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -50,9 +49,10 @@ public class AftersaleVo {
     @Pattern(regexp = "[+]?[0-9*#]*")
     @ApiModelProperty(name = "手机号", value = "12300000000")
     private String mobile;
-    public AftersaleOrderBo createBo()
+
+    public AftersaleBo createBo()
     {
-        AftersaleOrderBo bo = new AftersaleOrderBo();
+        AftersaleBo bo = new AftersaleBo();
         bo.setOrderItemId(this.getId());
         bo.setQuantity(this.getQuantity());
         bo.setReason(this.getReason());

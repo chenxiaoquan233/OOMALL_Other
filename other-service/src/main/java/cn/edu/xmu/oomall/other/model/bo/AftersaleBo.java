@@ -13,7 +13,7 @@ import java.util.Map;
  * @version 创建时间：2020/12/3 下午15:16
  */
 @Data
-public class AftersaleOrderBo implements VoObject {
+public class AftersaleBo implements VoObject {
     /**
      * 售后类型
      */
@@ -22,7 +22,7 @@ public class AftersaleOrderBo implements VoObject {
         MAINTAIN(1,"维修"),
         RETURN(2, "退货");
 
-        private static final Map<Integer, AftersaleOrderBo.Type> typeMap;
+        private static final Map<Integer, AftersaleBo.Type> typeMap;
 
         static {
             typeMap = new HashMap();
@@ -37,7 +37,7 @@ public class AftersaleOrderBo implements VoObject {
             this.description = description;
         }
 
-        public static AftersaleOrderBo.Type getTypeByCode(Integer code) { return typeMap.get(code); }
+        public static AftersaleBo.Type getTypeByCode(Integer code) { return typeMap.get(code); }
 
         public Integer getCode() { return code; }
 
@@ -58,11 +58,11 @@ public class AftersaleOrderBo implements VoObject {
         CANCELED(7,"取消"),
         OVER(8,"已结束");
 
-        private static final Map<Integer, AftersaleOrderBo.State> stateMap;
+        private static final Map<Integer, AftersaleBo.State> stateMap;
 
         static {
             stateMap = new HashMap();
-            Arrays.stream(AftersaleOrderBo.State.values()).forEach(enumitem -> stateMap.put(enumitem.code, enumitem));
+            Arrays.stream(AftersaleBo.State.values()).forEach(enumitem -> stateMap.put(enumitem.code, enumitem));
         }
 
         private int code;
@@ -73,7 +73,7 @@ public class AftersaleOrderBo implements VoObject {
             this.description = description;
         }
 
-        public static AftersaleOrderBo.State getTypeByCode(Integer code) { return stateMap.get(code); }
+        public static AftersaleBo.State getTypeByCode(Integer code) { return stateMap.get(code); }
 
         public Integer getCode() { return code; }
 
