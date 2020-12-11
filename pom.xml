@@ -10,7 +10,6 @@
         <module>other-goods-client</module>
         <module>goods-other-client</module>
         <module>dubbo-test</module>
-        <module>order-interface-provider</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
