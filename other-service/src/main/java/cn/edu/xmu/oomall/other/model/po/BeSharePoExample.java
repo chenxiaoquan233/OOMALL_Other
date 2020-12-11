@@ -255,63 +255,63 @@ public class BeSharePoExample {
             return (Criteria) this;
         }
 
-        public Criteria andGoodsSpuIdIsNull() {
-            addCriterion("goods_spu_id is null");
+        public Criteria andGoodsSkuIdIsNull() {
+            addCriterion("goods_sku_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsSpuIdIsNotNull() {
-            addCriterion("goods_spu_id is not null");
+        public Criteria andGoodsSkuIdIsNotNull() {
+            addCriterion("goods_sku_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsSpuIdEqualTo(Long value) {
-            addCriterion("goods_spu_id =", value, "goodsSpuId");
+        public Criteria andGoodsSkuIdEqualTo(Long value) {
+            addCriterion("goods_sku_id =", value, "goodsSkuId");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsSpuIdNotEqualTo(Long value) {
-            addCriterion("goods_spu_id <>", value, "goodsSpuId");
+        public Criteria andGoodsSkuIdNotEqualTo(Long value) {
+            addCriterion("goods_sku_id <>", value, "goodsSkuId");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsSpuIdGreaterThan(Long value) {
-            addCriterion("goods_spu_id >", value, "goodsSpuId");
+        public Criteria andGoodsSkuIdGreaterThan(Long value) {
+            addCriterion("goods_sku_id >", value, "goodsSkuId");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsSpuIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("goods_spu_id >=", value, "goodsSpuId");
+        public Criteria andGoodsSkuIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("goods_sku_id >=", value, "goodsSkuId");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsSpuIdLessThan(Long value) {
-            addCriterion("goods_spu_id <", value, "goodsSpuId");
+        public Criteria andGoodsSkuIdLessThan(Long value) {
+            addCriterion("goods_sku_id <", value, "goodsSkuId");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsSpuIdLessThanOrEqualTo(Long value) {
-            addCriterion("goods_spu_id <=", value, "goodsSpuId");
+        public Criteria andGoodsSkuIdLessThanOrEqualTo(Long value) {
+            addCriterion("goods_sku_id <=", value, "goodsSkuId");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsSpuIdIn(List<Long> values) {
-            addCriterion("goods_spu_id in", values, "goodsSpuId");
+        public Criteria andGoodsSkuIdIn(List<Long> values) {
+            addCriterion("goods_sku_id in", values, "goodsSkuId");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsSpuIdNotIn(List<Long> values) {
-            addCriterion("goods_spu_id not in", values, "goodsSpuId");
+        public Criteria andGoodsSkuIdNotIn(List<Long> values) {
+            addCriterion("goods_sku_id not in", values, "goodsSkuId");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsSpuIdBetween(Long value1, Long value2) {
-            addCriterion("goods_spu_id between", value1, value2, "goodsSpuId");
+        public Criteria andGoodsSkuIdBetween(Long value1, Long value2) {
+            addCriterion("goods_sku_id between", value1, value2, "goodsSkuId");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsSpuIdNotBetween(Long value1, Long value2) {
-            addCriterion("goods_spu_id not between", value1, value2, "goodsSpuId");
+        public Criteria andGoodsSkuIdNotBetween(Long value1, Long value2) {
+            addCriterion("goods_sku_id not between", value1, value2, "goodsSkuId");
             return (Criteria) this;
         }
 
@@ -495,63 +495,63 @@ public class BeSharePoExample {
             return (Criteria) this;
         }
 
-        public Criteria andOrderItemIdIsNull() {
-            addCriterion("order_item_id is null");
+        public Criteria andOrderIdIsNull() {
+            addCriterion("order_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andOrderItemIdIsNotNull() {
-            addCriterion("order_item_id is not null");
+        public Criteria andOrderIdIsNotNull() {
+            addCriterion("order_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andOrderItemIdEqualTo(Long value) {
-            addCriterion("order_item_id =", value, "orderItemId");
+        public Criteria andOrderIdEqualTo(Long value) {
+            addCriterion("order_id =", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderItemIdNotEqualTo(Long value) {
-            addCriterion("order_item_id <>", value, "orderItemId");
+        public Criteria andOrderIdNotEqualTo(Long value) {
+            addCriterion("order_id <>", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderItemIdGreaterThan(Long value) {
-            addCriterion("order_item_id >", value, "orderItemId");
+        public Criteria andOrderIdGreaterThan(Long value) {
+            addCriterion("order_id >", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderItemIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("order_item_id >=", value, "orderItemId");
+        public Criteria andOrderIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("order_id >=", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderItemIdLessThan(Long value) {
-            addCriterion("order_item_id <", value, "orderItemId");
+        public Criteria andOrderIdLessThan(Long value) {
+            addCriterion("order_id <", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderItemIdLessThanOrEqualTo(Long value) {
-            addCriterion("order_item_id <=", value, "orderItemId");
+        public Criteria andOrderIdLessThanOrEqualTo(Long value) {
+            addCriterion("order_id <=", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderItemIdIn(List<Long> values) {
-            addCriterion("order_item_id in", values, "orderItemId");
+        public Criteria andOrderIdIn(List<Long> values) {
+            addCriterion("order_id in", values, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderItemIdNotIn(List<Long> values) {
-            addCriterion("order_item_id not in", values, "orderItemId");
+        public Criteria andOrderIdNotIn(List<Long> values) {
+            addCriterion("order_id not in", values, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderItemIdBetween(Long value1, Long value2) {
-            addCriterion("order_item_id between", value1, value2, "orderItemId");
+        public Criteria andOrderIdBetween(Long value1, Long value2) {
+            addCriterion("order_id between", value1, value2, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderItemIdNotBetween(Long value1, Long value2) {
-            addCriterion("order_item_id not between", value1, value2, "orderItemId");
+        public Criteria andOrderIdNotBetween(Long value1, Long value2) {
+            addCriterion("order_id not between", value1, value2, "orderId");
             return (Criteria) this;
         }
 

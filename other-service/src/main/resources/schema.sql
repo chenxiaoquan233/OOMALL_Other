@@ -103,17 +103,17 @@ DROP TABLE IF EXISTS `be_share`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `be_share` (
                             `id` bigint NOT NULL AUTO_INCREMENT,
-                            `goods_spu_id` bigint DEFAULT NULL,
+                            `goods_sku_id` bigint DEFAULT NULL,
                             `sharer_id` bigint DEFAULT NULL,
                             `share_id` bigint DEFAULT NULL,
                             `customer_id` bigint DEFAULT NULL,
-                            `order_item_id` bigint DEFAULT NULL,
+                            `order_id` bigint DEFAULT NULL,
                             `rebate` int DEFAULT NULL,
                             `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                             `gmt_modified` datetime DEFAULT NULL,
                             `share_activity_id` bigint DEFAULT NULL,
                             PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=401384 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=450533 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,7 +155,7 @@ CREATE TABLE `favourite_goods` (
                                    `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                    `gmt_modified` datetime DEFAULT NULL,
                                    PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3440536 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3833740 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -172,7 +172,7 @@ CREATE TABLE `foot_print` (
                               `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                               `gmt_modified` datetime DEFAULT NULL,
                               PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1114079 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1245147 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -204,13 +204,13 @@ DROP TABLE IF EXISTS `share`;
 CREATE TABLE `share` (
                          `id` bigint NOT NULL AUTO_INCREMENT,
                          `sharer_id` bigint DEFAULT NULL,
-                         `goods_spu_id` bigint DEFAULT NULL,
+                         `goods_sku_id` bigint DEFAULT NULL,
                          `quantity` int DEFAULT NULL,
                          `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                          `gmt_modified` datetime DEFAULT NULL,
                          `share_activity_id` bigint DEFAULT NULL,
                          PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=401360 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=458697 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -223,16 +223,15 @@ DROP TABLE IF EXISTS `share_activity`;
 CREATE TABLE `share_activity` (
                                   `id` bigint NOT NULL AUTO_INCREMENT,
                                   `shop_id` bigint DEFAULT NULL,
-                                  `goods_spu_id` bigint DEFAULT NULL,
+                                  `goods_sku_id` bigint DEFAULT NULL,
                                   `begin_time` datetime DEFAULT NULL,
                                   `end_time` datetime DEFAULT NULL,
                                   `strategy` varchar(500) DEFAULT NULL,
-                                  `be_deleted` tinyint DEFAULT NULL,
                                   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                   `gmt_modified` datetime DEFAULT NULL,
                                   `state` tinyint DEFAULT NULL,
                                   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=286686 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=311259 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -281,4 +280,4 @@ CREATE TABLE `time_segment` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-12-05 13:24:01
+-- Dump completed on 2020-12-07 21:49:07

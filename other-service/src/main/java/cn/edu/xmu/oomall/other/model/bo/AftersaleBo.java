@@ -1,6 +1,8 @@
 package cn.edu.xmu.oomall.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
+import cn.edu.xmu.oomall.other.model.po.AftersalePo;
+import cn.edu.xmu.oomall.other.model.vo.Aftersale.AftersaleRetVo;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -80,51 +82,28 @@ public class AftersaleBo implements VoObject {
         public String getDescription() { return description; }
     }
     private Long id;
-
     private Long orderId;
-
     private Long orderSn;
-
     private Long orderItemId;
-
     private Long skuId;
-
     private String skuName;
-
     private Long customerId;
-
     private Long shopId;
-
     private String serviceSn;
-
     private Type type = Type.RETURN;
-
     private String reason;
-
     private String conclusion;
-
     private Long refund;
-
     private Integer quantity;
-
     private Long regionId;
-
     private String detail;
-
     private String consignee;
-
     private String mobile;
-
     private String customerLogSn;
-
     private String shopLogSn;
-
     private State state;
-
     private Byte beDeleted;
-
     private LocalDateTime gmtCreate;
-
     private LocalDateTime gmtModified;
 
 
@@ -136,5 +115,57 @@ public class AftersaleBo implements VoObject {
     @Override
     public Object createSimpleVo() {
         return null;
+    }
+
+    public AftersalePo createPo() {
+        AftersalePo po = new AftersalePo();
+        po.setId(this.id);
+        po.setOrderItemId(this.orderItemId);
+        po.setBeDeleted(this.beDeleted);
+        po.setConclusion(this.conclusion);
+        po.setConsignee(this.consignee);
+        po.setCustomerId(this.customerId);
+        po.setDetail(this.detail);
+        po.setCustomerLogSn(this.customerLogSn);
+        po.setGmtCreate(this.gmtCreate);
+        po.setGmtModified(this.gmtModified);
+        po.setMobile(this.mobile);
+        po.setQuantity(this.quantity);
+        po.setReason(this.reason);
+        po.setRefund(this.refund);
+        po.setRegionId(this.regionId);
+        po.setServiceSn(this.serviceSn);
+        po.setShopId(this.shopId);
+        po.setShopLogSn(this.shopLogSn);
+        po.setState(this.state.getCode().byteValue());
+        po.setType(this.type.getCode().byteValue());
+
+        return po;
+    }
+
+    public AftersaleRetVo createRetVo() {
+        AftersaleRetVo vo = new AftersaleRetVo();
+        vo.setBeDeleted(this.beDeleted);
+        vo.setConclusion(this.conclusion);
+        vo.setConsignee(this.consignee);
+        vo.setCustomerId(this.customerId);
+        vo.setCustomerLogSn(this.customerLogSn);
+        vo.setDetail(this.detail);
+        vo.setGmtCreate(this.gmtCreate);
+        vo.setGmtModified(this.gmtModified);
+        vo.setId(this.id);
+        vo.setMobile(this.mobile);
+        vo.setOrderItemId(this.orderItemId);
+        vo.setQuantity(this.quantity);
+        vo.setReason(this.reason);
+        vo.setRefund(this.refund);
+        vo.setRegionId(this.regionId);
+        vo.setServiceSn(this.serviceSn);
+        vo.setShopId(this.shopId);
+        vo.setShopLogSn(this.shopLogSn);
+        vo.setState(this.state.getCode().byteValue());
+        //vo.setType(this.type.getCode().byteValue());
+
+        return vo;
     }
 }
