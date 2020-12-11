@@ -1,17 +1,14 @@
 package cn.edu.xmu.oomall.other.dao;
 
-import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
-import cn.edu.xmu.ooad.util.ReturnObject;
-import cn.edu.xmu.oomall.other.dto.BeSharedDTO;
 import cn.edu.xmu.oomall.other.mapper.BeSharePoMapper;
 import cn.edu.xmu.oomall.other.mapper.ShareActivityPoMapper;
 import cn.edu.xmu.oomall.other.model.bo.BeSharedBo;
 import cn.edu.xmu.oomall.other.model.bo.ShareActivityBo;
-import cn.edu.xmu.oomall.other.model.po.*;
-import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityRetVo;
-import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityVo;
-import com.github.pagehelper.PageInfo;
+import cn.edu.xmu.oomall.other.model.po.BeSharePo;
+import cn.edu.xmu.oomall.other.model.po.BeSharePoExample;
+import cn.edu.xmu.oomall.other.model.po.ShareActivityPo;
+import cn.edu.xmu.oomall.other.model.po.ShareActivityPoExample;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,21 +37,15 @@ public class ShareDao {
 
     private Byte online = 1;
 
-    public PageInfo<SharePo> findSharesBySkuIdOrTime(Long skuId,LocalDateTime beginTime,LocalDateTime endTime){
-        return null;
-    }
     /*在下单时查找第一个有效的分享成功记录*/
-    public BeSharedDTO getFirstBeShared(Long customerId, Long skuId, Long orderItemId) {
+    public BeSharedBo getFirstBeShared(Long customerId, Long skuId) {
         BeSharePoExample example=new BeSharePoExample();
         BeSharePoExample.Criteria criteria=example.createCriteria();
         criteria.andCustomerIdEqualTo(customerId);
         criteria.andGoodsSpuIdEqualTo(skuId);
         criteria.andOrderItemIdEqualTo(0L);
         List<BeSharePo> beSharePos=beSharePoMapper.selectByExample(example);
-        BeSharePo po=beSharePos.get(0);
-        po.setOrderItemId(orderItemId);
-        beSharePoMapper.updateByPrimaryKey(po);
-        return new BeSharedDTO(po.getOrderItemId(), po.getGoodsSpuId(),po.getId(),po.getCustomerId());
+        return new BeSharedBo(beSharePos.get(0));
     }
 
     public ShareActivityBo getShareActivityById(Long id){
@@ -125,7 +116,7 @@ public class ShareDao {
         if(oldVal.getShopId()!=shopId)
             return ResponseCode.RESOURCE_ID_OUTSCOPE;
         /*试图上架的活动时间与已有活动冲突*/
-        if(ifTimeConflict(shopId,oldVal.getGoodsSkuId(),oldVal.getBeginTime(),oldVal.getEndTime()))
+        if(ifTimeConflict(shopId,oldVal.getGoodsSpuId(),oldVal.getBeginTime(),oldVal.getEndTime()))
             return ResponseCode.SHAREACT_CONFLICT;
         ShareActivityPo newVal=new ShareActivityPo();
         newVal.setId(shareActivityId);
@@ -168,11 +159,11 @@ public class ShareDao {
     }
 
     /*新建分享活动：默认为下架*/
-    public ReturnObject<VoObject> insertShareActivity(ShareActivityBo shareActivity){
+    public ShareActivityPo insertShareActivity(ShareActivityBo shareActivity){
         ShareActivityPo record=shareActivity.createPo();
         record.setGmtCreate(LocalDateTime.now());
-        shareActivityPoMapper.insert(record);
-        return new ReturnObject<>(new ShareActivityBo(record));
+        shareActivityPoMapper.insertSelective(record);
+        return record;
     }
 
 }
