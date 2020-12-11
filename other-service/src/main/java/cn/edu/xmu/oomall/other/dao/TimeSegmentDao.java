@@ -5,10 +5,15 @@ import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.dto.TimeSegmentDTO;
 import cn.edu.xmu.oomall.other.mapper.TimeSegmentPoMapper;
+import cn.edu.xmu.oomall.other.model.bo.ShoppingCartBo;
 import cn.edu.xmu.oomall.other.model.bo.TimeSegmentBo;
+import cn.edu.xmu.oomall.other.model.po.ShoppingCartPo;
 import cn.edu.xmu.oomall.other.model.po.TimeSegmentPo;
 import cn.edu.xmu.oomall.other.model.po.TimeSegmentPoExample;
+import cn.edu.xmu.oomall.other.model.vo.TimeSegment.TimeSegementRetVo;
 import cn.edu.xmu.oomall.other.model.vo.TimeSegment.TimeSegmentVo;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +40,34 @@ public class TimeSegmentDao {
 
         List<TimeSegmentPo> timeSegmentPos = timeSegmentPoMapper.selectByExample(timeSegmentPoExample);
 
-        return timeSegmentPos.stream().map(x->new TimeSegmentDTO(x.getId(), x.getBeTime(), x.getEndTime())).collect(Collectors.toList());
+        return timeSegmentPos.stream().map(x->new TimeSegmentDTO(x.getId(), x.getBeginTime(), x.getEndTime())).collect(Collectors.toList());
     }
     public List<TimeSegmentDTO> getAdsSegments(){
         return getTimeSegments((byte)0);
     }
     public List<TimeSegmentDTO> getFlashSaleSegments() {
         return getTimeSegments((byte)1);
+    }
+
+    public ReturnObject<PageInfo<VoObject>> getTimeSegment(byte type, int page, int pageSize){
+        TimeSegmentPoExample timeSegmentPoExample=new TimeSegmentPoExample();
+        TimeSegmentPoExample.Criteria criteria=timeSegmentPoExample.createCriteria();
+        criteria.andTypeEqualTo(type);
+        List<TimeSegmentPo> timeSegmentPoList=null;
+        PageHelper.startPage(page,pageSize,true,true,null);
+        try{
+            timeSegmentPoList=timeSegmentPoMapper.selectByExample(timeSegmentPoExample);
+        }catch (Exception e){
+            return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
+        }
+        List<VoObject> ret = timeSegmentPoList.stream().map(TimeSegmentBo::new).collect(Collectors.toList());
+        PageInfo<TimeSegmentPo> timeSegPoPage = PageInfo.of(timeSegmentPoList);
+        PageInfo<VoObject> timeSegPage = new PageInfo<>(ret);
+        timeSegPage.setPages(timeSegPoPage.getPages());
+        timeSegPage.setPageNum(timeSegPoPage.getPageNum());
+        timeSegPage.setPageSize(timeSegPoPage.getPageSize());
+        timeSegPage.setTotal(timeSegPoPage.getTotal());
+        return new ReturnObject<>(timeSegPage);
     }
 
     private TimeSegmentDTO getTimeSegmentById(Long id, byte type){
@@ -80,6 +106,26 @@ public class TimeSegmentDao {
     }
     public TimeSegmentBo addFlashSaleSegment(TimeSegmentVo timeSegmentVo){
         return addTimeSegment(timeSegmentVo,(byte)1);
+    }
+
+    private ResponseCode deleteTimeSegment(Long timeSegId, byte type){
+        TimeSegmentPoExample timeSegmentPoExample=new TimeSegmentPoExample();
+        TimeSegmentPoExample.Criteria criteria=timeSegmentPoExample.createCriteria();
+        criteria.andTypeEqualTo(type);
+        criteria.andIdEqualTo(timeSegId);
+        List<TimeSegmentPo> poList=timeSegmentPoMapper.selectByExample(timeSegmentPoExample);
+        if(poList.size()==0)return ResponseCode.RESOURCE_ID_NOTEXIST;
+        else{
+            timeSegmentPoMapper.deleteByPrimaryKey(poList.get(0).getId());
+            return ResponseCode.OK;
+        }
+    }
+
+    public ResponseCode deleteAdsSegment(Long timeSegId){
+        return deleteTimeSegment(timeSegId,(byte)0);
+    }
+    public ResponseCode deleteFlashSaleSegment(Long timeSegId){
+        return deleteTimeSegment(timeSegId,(byte)0);
     }
 
 }
