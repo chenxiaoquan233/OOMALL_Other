@@ -3,7 +3,7 @@ package cn.edu.xmu.oomall.other.dao;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
-import cn.edu.xmu.oomall.other.dto.BeSharedDTO;
+import cn.edu.xmu.oomall.dto.BeSharedDTO;
 import cn.edu.xmu.oomall.other.mapper.BeSharePoMapper;
 import cn.edu.xmu.oomall.other.mapper.ShareActivityPoMapper;
 import cn.edu.xmu.oomall.other.mapper.SharePoMapper;
