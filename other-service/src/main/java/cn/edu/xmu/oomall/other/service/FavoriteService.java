@@ -2,10 +2,13 @@ package cn.edu.xmu.oomall.other.service;
 
 
 import cn.edu.xmu.ooad.model.VoObject;
+import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
+import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.dao.FavoriteDao;
 import cn.edu.xmu.oomall.other.model.bo.FavoriteBo;
+import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +30,14 @@ public class FavoriteService {
         return favoriteDao.getFavoritesByUserId(userId,page,pageSize);
     }
 
-    public ReturnObject<VoObject> addFavorites(Long userId, Long skuId) {
-        return favoriteDao.addFavorites(userId, skuId);
+    public Object addFavorites(Long userId, Long skuId) {
+        GoodsSkuSimpleVo sku=new GoodsSkuSimpleVo(favoriteDao.getSku(skuId));
+        if(sku==null||sku.getId()==null){
+            return null;
+        }
+        FavoriteBo favoriteBo=new FavoriteBo(favoriteDao.addFavorites(userId, skuId));
+        favoriteBo.setSkuSimpleVo(sku);
+        return Common.getRetObject(new ReturnObject<>(favoriteBo));
     }
 
     public ResponseCode deleteFavorites(Long userId,Long id){

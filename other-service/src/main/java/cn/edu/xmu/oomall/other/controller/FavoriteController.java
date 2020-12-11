@@ -13,6 +13,7 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,7 +53,11 @@ public class FavoriteController {
     @Audit
     @GetMapping
     public Object getFavorites(@LoginUser Long UserId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
-        logger.debug("userID:" + UserId);
+        if(page<=0||pageSize<=0)
+        {
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtil.fail(ResponseCode.OK,"page或pageSize格式不符");
+        }
         ReturnObject<PageInfo<VoObject>> returnObject = favoriteService.getFavorites(UserId,page, pageSize);
         return Common.getPageRetObject(returnObject);
     }
@@ -60,7 +65,7 @@ public class FavoriteController {
     /***
      * 买家收藏商品
      * @param UserId 用户id
-     * @param spuId 商品spuId
+     * @param skuId 商品spuId
      * @return Object
      */
     @ApiOperation(value = "买家收藏商品", produces = "application/json")
@@ -72,11 +77,19 @@ public class FavoriteController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @Audit
-    @PostMapping("/goods/{spuId}")
-    public Object addFavorites(@LoginUser Long UserId, @PathVariable("spuId") Long spuId) {
-        if(spuId<=0)
-            return ResponseUtil.ok();
-        return Common.getRetObject(favoriteService.addFavorites(UserId,spuId));
+    @PostMapping("/goods/{skuId}")
+    public Object addFavorites(@LoginUser Long UserId, @PathVariable("skuId") Long skuId) {
+        if(skuId<=0)
+        {
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtil.fail(ResponseCode.OK,"skuId格式不符");
+        }
+        Object ret=favoriteService.addFavorites(UserId,skuId);
+        if(ret==null){
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(ResponseCode.OK,"sku不存在");
+        }
+        return ret;
     }
 
     /***
@@ -96,11 +109,17 @@ public class FavoriteController {
     @Audit
     @DeleteMapping("/{id}")
     public Object deleteFavorites(@LoginUser Long UserId, @PathVariable("id") Long id) {
+        if(id<=0)
+        {
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtil.fail(ResponseCode.OK,"id格式不符");
+        }
         ResponseCode responseCode = favoriteService.deleteFavorites(UserId,id);
         if(responseCode.equals(ResponseCode.OK)){
             return ResponseUtil.ok();
         } else {
-            return ResponseUtil.fail(responseCode);
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(ResponseCode.OK,"您没有该收藏");
         }
     }
 }

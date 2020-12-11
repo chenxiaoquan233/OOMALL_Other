@@ -1,9 +1,12 @@
 package cn.edu.xmu.oomall.other.dao;
 
+import cn.edu.xmu.ooad.model.VoObject;
+import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.dto.TimeSegmentDTO;
 import cn.edu.xmu.oomall.other.mapper.TimeSegmentPoMapper;
 import cn.edu.xmu.oomall.other.model.po.TimeSegmentPo;
 import cn.edu.xmu.oomall.other.model.po.TimeSegmentPoExample;
+import cn.edu.xmu.oomall.other.model.vo.TimeSegment.TimeSegmentVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,4 +43,6 @@ public class TimeSegmentDao {
         else
             return null;
     }
+
+    //public ReturnObject<VoObject> addTimeSegments(TimeSegmentVo)
 }

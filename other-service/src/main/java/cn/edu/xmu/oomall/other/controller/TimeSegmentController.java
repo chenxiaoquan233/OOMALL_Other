@@ -1,13 +1,12 @@
 package cn.edu.xmu.oomall.other.controller;
 
+import cn.edu.xmu.ooad.annotation.LoginUser;
+import cn.edu.xmu.oomall.other.model.vo.TimeSegment.TimeSegmentVo;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,14 +25,15 @@ public class TimeSegmentController {
     @ApiOperation(value = "平台管理员新增广告时间段", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String",         name = "authorization", value = "用户token", required = true),
-            @ApiImplicitParam(paramType = "body",   dataType = "timeSegementVo", name = "vo",            value = "起止时间",  required = true)
+            @ApiImplicitParam(paramType = "body",   dataType = "timeSegmentVo", name = "vo",            value = "起止时间",  required = true)
     })
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功"),
             @ApiResponse(code = 604, message = "时段冲突")
     })
-    @PostMapping("/advertisement/timesegements")
-    public Object addAdsTimeSegement() {
+    @PostMapping("/advertisement/timesegments")
+    public Object addAdsTimeSegment(@LoginUser Long userId, @RequestBody TimeSegmentVo timeSegmentVo) {
+
         return null;
     }
 
@@ -46,22 +46,22 @@ public class TimeSegmentController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @GetMapping("/advertisement/timesegements")
-    public Object getAllAdsTimeSegement() {
+    @GetMapping("/advertisement/timesegments")
+    public Object getAllAdsTimeSegment() {
         return null;
     }
 
     @ApiOperation(value = "平台管理员新增秒杀时间段", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String",         name = "authorization", value = "用户token", required = true),
-            @ApiImplicitParam(paramType = "body",   dataType = "timeSegementVo", name = "vo",            value = "起止时间",  required = true)
+            @ApiImplicitParam(paramType = "body",   dataType = "timeSegmentVo", name = "vo",            value = "起止时间",  required = true)
     })
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功"),
             @ApiResponse(code = 604, message = "时段冲突")
     })
-    @PostMapping("/flashsale/timesegements")
-    public Object addFlashsaleTimeSegement() {
+    @PostMapping("/flashsale/timesegments")
+    public Object addFlashsaleTimeSegment() {
         return null;
     }
 
@@ -74,8 +74,8 @@ public class TimeSegmentController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @GetMapping("/flashsale/timesegements")
-    public Object getAllFlashTimeSegement() {
+    @GetMapping("/flashsale/timesegments")
+    public Object getAllFlashTimeSegment() {
         return null;
     }
 }

@@ -9,8 +9,12 @@ import cn.edu.xmu.oomall.other.model.bo.ShoppingCartBo;
 import cn.edu.xmu.oomall.other.model.po.FavouriteGoodsPo;
 import cn.edu.xmu.oomall.other.model.po.FavouriteGoodsPoExample;
 import cn.edu.xmu.oomall.other.model.po.ShoppingCartPo;
+import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
+import cn.xmu.edu.goods.client.IGoodsService;
+import cn.xmu.edu.goods.client.dubbo.SkuDTO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +34,27 @@ import java.util.stream.Collectors;
 public class FavoriteDao {
     private static final Logger logger = LoggerFactory.getLogger(FavoriteDao.class);
 
+    public Long getPrice(Long skuId){
+        return  skuId*100;
+    }
+    public SkuDTO getSku(Long id){
+        SkuDTO sku=new SkuDTO();
+        sku.setId(id);
+        sku.setName("打桩");
+        sku.setSkuSn("0");
+        sku.setImageUrl("打桩.jpg");
+        sku.setInventory(10);
+        sku.setOriginalPrice(100L);
+        sku.setPrice(100L);
+        sku.setDisable((byte)0);
+        return sku;
+    }
+
     @Autowired
     private FavouriteGoodsPoMapper favouriteGoodsPoMapper;
+
+    @DubboReference(registry = {"provider1"})
+    IGoodsService iGoodsService;
 
     public ReturnObject<PageInfo<VoObject>> getFavoritesByUserId(Long userId, Integer page, Integer pageSize){
         FavouriteGoodsPoExample favouriteGoodsPoExample=new FavouriteGoodsPoExample();
@@ -45,7 +68,9 @@ public class FavoriteDao {
             logger.error("findFavorites: DataAccessException:" + e.getMessage());
             return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
         }
-        List<VoObject> ret = favoritesPos.stream().map(FavoriteBo::new).collect(Collectors.toList());
+        List<VoObject> ret = favoritesPos.stream().map(FavoriteBo::new).
+                map((x)->{x.setSkuSimpleVo(new GoodsSkuSimpleVo(getSku(x.getGoodsSkuId())));return x;}).
+                collect(Collectors.toList());
         PageInfo<FavouriteGoodsPo> favoritesPoPage = PageInfo.of(favoritesPos);
         PageInfo<VoObject> favoritesPage = new PageInfo<>(ret);
         favoritesPage.setPages(favoritesPoPage.getPages());
@@ -55,7 +80,7 @@ public class FavoriteDao {
         return new ReturnObject<>(favoritesPage);
     }
 
-    public ReturnObject<VoObject> addFavorites(Long userId, Long skuId) {
+    public FavouriteGoodsPo addFavorites(Long userId, Long skuId) {
         /*判断是否已经有此收藏*/
         FavouriteGoodsPoExample favouriteGoodsPoExample=new FavouriteGoodsPoExample();
         FavouriteGoodsPoExample.Criteria criteria=favouriteGoodsPoExample.createCriteria();
@@ -64,14 +89,14 @@ public class FavoriteDao {
         List<FavouriteGoodsPo> favoritesPos = favouriteGoodsPoMapper.selectByExample(favouriteGoodsPoExample);
         /*若有，返回*/
         if(favoritesPos.size()>0)
-            return new ReturnObject<>(new FavoriteBo(favoritesPos.get(0)));
+            return favoritesPos.get(0);
         /*若没有，插入*/
         FavouriteGoodsPo record=new FavouriteGoodsPo();
         record.setCustomerId(userId);
         record.setGoodsSkuId(skuId);
         record.setGmtCreate(LocalDateTime.now());
         favouriteGoodsPoMapper.insertSelective(record);
-        return new ReturnObject<>(new FavoriteBo(record));
+        return record;
     }
 
     public ResponseCode deletefavorites(Long userId, Long id){
@@ -91,6 +116,9 @@ public class FavoriteDao {
         criteria.andCustomerIdEqualTo(userId);
         criteria.andIdEqualTo(id);
         int ret=favouriteGoodsPoMapper.deleteByExample(favouriteGoodsPoExample);
-        return ResponseCode.OK;
+        if(ret!=1)
+            return ResponseCode.AUTH_ID_NOTEXIST;
+        else return ResponseCode.OK;
+
     }
 }

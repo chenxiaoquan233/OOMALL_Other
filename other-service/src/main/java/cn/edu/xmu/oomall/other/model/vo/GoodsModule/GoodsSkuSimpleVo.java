@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.other.model.vo.GoodsModule;
 
+import cn.xmu.edu.goods.client.dubbo.SkuDTO;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -16,18 +17,18 @@ public class GoodsSkuSimpleVo  {
     private String skuSn;
     private String imageUrl;
     private Integer inventory;
-    private Integer originalPrice;
-    private Integer price;
-    private Boolean disable;
+    private Long originalPrice;
+    private Long price;
+    private Byte disable;
 
-    public GoodsSkuSimpleVo(Long id){
-        this.id=id;
-        name="打桩";
-        skuSn="0";
-        imageUrl="打桩.jpg";
-        inventory=10;
-        originalPrice=100;
-        price=100;
-        disable=false;
+    public GoodsSkuSimpleVo(SkuDTO sku){
+        id=sku.getId();
+        name=sku.getName();
+        skuSn=sku.getSkuSn();
+        imageUrl=sku.getImageUrl();
+        inventory=sku.getInventory();
+        originalPrice=sku.getOriginalPrice();
+        price=sku.getPrice();
+        disable=sku.getDisable();
     }
 }
