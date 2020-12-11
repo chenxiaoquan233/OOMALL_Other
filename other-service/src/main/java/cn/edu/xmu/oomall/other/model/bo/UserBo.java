@@ -1,7 +1,7 @@
 package cn.edu.xmu.oomall.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
-import cn.edu.xmu.oomall.other.dto.CustomerDTO;
+import cn.edu.xmu.oomall.dto.CustomerDTO;
 import cn.edu.xmu.oomall.other.model.po.CustomerPo;
 import cn.edu.xmu.oomall.other.model.vo.User.UserRetVo;
 import lombok.Data;
