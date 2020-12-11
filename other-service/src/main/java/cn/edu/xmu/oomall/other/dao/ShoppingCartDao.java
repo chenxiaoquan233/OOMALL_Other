@@ -10,7 +10,9 @@ import cn.edu.xmu.oomall.other.model.bo.ShoppingCartBo;
 import cn.edu.xmu.oomall.other.model.po.FavouriteGoodsPo;
 import cn.edu.xmu.oomall.other.model.po.ShoppingCartPo;
 import cn.edu.xmu.oomall.other.model.po.ShoppingCartPoExample;
+import cn.xmu.edu.goods.client.IGoodsService;
 import com.github.pagehelper.PageInfo;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,17 @@ public class ShoppingCartDao {
 
     @Autowired
     private ShoppingCartPoMapper shoppingCartPoMapper;
+
+    @DubboReference(registry = {"provider1"})
+    IGoodsService iGoodsService;
+
+    public Long getPrice(Long skuId){
+        return skuId*10;
+    }
+
+    public List<Object> getCouponActicity(Long goodsSkuId) {
+        return null;
+    }
 
     public ResponseCode clearCart(Long userId){
         ShoppingCartPoExample shoppingCartPoExample=new ShoppingCartPoExample();
@@ -68,7 +81,9 @@ public class ShoppingCartDao {
             logger.error("findCarts: DataAccessException:" + e.getMessage());
             return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
         }
-        List<VoObject> ret = cartPos.stream().map(ShoppingCartBo::new).collect(Collectors.toList());
+        List<VoObject> ret = cartPos.stream().map(ShoppingCartBo::new)
+                .map(x->{x.setCouponActivity(getCouponActicity(x.getGoodsSkuId()));return x;})
+                .collect(Collectors.toList());
         PageInfo<ShoppingCartPo> cartPoPage = PageInfo.of(cartPos);
         PageInfo<VoObject> cartPage = new PageInfo<>(ret);
         cartPage.setPages(cartPoPage.getPages());
@@ -78,11 +93,34 @@ public class ShoppingCartDao {
         return new ReturnObject<>(cartPage);
     }
 
-    public ReturnObject addCart(Long userId, Long goodsSkuId,Integer quantity,Long price){
-        return null;
+    public ShoppingCartPo addCart(Long userId, Long goodsSkuId,Integer quantity){
+        Long price=getPrice(goodsSkuId);
+        if(price<=0)
+            return null;
+        ShoppingCartPo po=new ShoppingCartPo();
+        po.setCustomerId(userId);
+        po.setGoodsSkuId(goodsSkuId);
+        po.setQuantity(quantity);
+        po.setPrice(price);
+        shoppingCartPoMapper.insertSelective(po);
+        return po;
     }
 
-    public ReturnObject modifyCart(Long id, Long goodsSkuId,Integer quantity,Long price){
-        return null;
+    public ResponseCode modifyCart(Long cartId, Long userId, Long goodsSkuId,Integer quantity){
+        Long price=getPrice(goodsSkuId);
+        if(price<=0)
+            return null;
+        ShoppingCartPo po=new ShoppingCartPo();
+        po.setGoodsSkuId(goodsSkuId);
+        po.setQuantity(quantity);
+        po.setPrice(price);
+        ShoppingCartPoExample example=new ShoppingCartPoExample();
+        ShoppingCartPoExample.Criteria criteria=example.createCriteria();
+        criteria.andIdEqualTo(cartId);
+        criteria.andCustomerIdEqualTo(userId);
+        int ret=shoppingCartPoMapper.updateByExampleSelective(po,example);
+        if(ret==1)
+         return ResponseCode.OK;
+        else return ResponseCode.AUTH_ID_NOTEXIST;
     }
 }

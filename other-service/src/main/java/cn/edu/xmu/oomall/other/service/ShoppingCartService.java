@@ -5,6 +5,9 @@ import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.dao.ShoppingCartDao;
 import cn.edu.xmu.oomall.other.dao.UserDao;
+import cn.edu.xmu.oomall.other.model.bo.ShoppingCartBo;
+import cn.edu.xmu.oomall.other.model.po.ShoppingCartPo;
+import cn.edu.xmu.oomall.other.model.vo.ShoppingCart.ShoppingCartRetVo;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +39,16 @@ public class ShoppingCartService {
         return shoppingCartDao.getCartByUserId(userId,page,pageSize);
     }
 
-    public ReturnObject<VoObject> addTocart(Long userId, Long goodsSkuId, Integer quantity){
-        return null;
+    public Object addCart(Long userId, Long goodsSkuId, Integer quantity){
+        ShoppingCartPo po=shoppingCartDao.addCart(userId,goodsSkuId,quantity);
+        if(po==null)
+            return null;
+        ShoppingCartBo bo=new ShoppingCartBo(po);
+        bo.setCouponActivity(shoppingCartDao.getCouponActicity(goodsSkuId));
+        return new ReturnObject<>(bo);
     }
 
-    public ResponseCode changeCartInfo(Long userId, Long cartId,Long goodsSkuId, Integer quantity){
-        return null;
+    public ResponseCode modifyCart(Long userId, Long cartId,Long goodsSkuId, Integer quantity) {
+        return shoppingCartDao.modifyCart(cartId,userId,goodsSkuId,quantity);
     }
 }
