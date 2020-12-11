@@ -14,7 +14,6 @@ import cn.xmu.edu.goods.client.IGoodsService;
 import cn.xmu.edu.goods.client.IShopService;
 import cn.xmu.edu.goods.client.dubbo.ShopDTO;
 import com.github.pagehelper.PageInfo;
-import com.github.sardine.model.Bind;
 import io.swagger.annotations.*;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
@@ -59,7 +58,7 @@ public class ShareController {
     })
     @Audit
     @PostMapping("/shops/{shopId}/goods/{skuId}/shareactivities")
-    public Object addShareActivity(@LoginUser Long UserId, @PathVariable("shopId") Long shopId, @PathVariable("skuId") Long skuId,
+    public Object addShareActivity(@LoginUser Long userId, @PathVariable("shopId") Long shopId, @PathVariable("skuId") Long skuId,
                                    @Validated @RequestBody ShareActivityVo shareActivityVo, BindingResult bindingResult){
         Object object= Common.processFieldErrors(bindingResult,httpServletResponse);
         if(object!=null){
@@ -98,7 +97,7 @@ public class ShareController {
     })
     @Audit
     @GetMapping("/shares")
-    public Object getShares(@LoginUser Long UserId, @RequestParam Long skuId,
+    public Object getShares(@LoginUser Long userId, @RequestParam Long skuId,
                             @RequestParam(required = false) LocalDateTime beginTime, @RequestParam(required = false) LocalDateTime endTime,
                             @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize){
         if(endTime.isBefore(beginTime)){
@@ -107,7 +106,7 @@ public class ShareController {
         if(page <= 0 || pageSize <= 0) {
             return Common.getNullRetObj(new ReturnObject<>(ResponseCode.FIELD_NOTVALID), httpServletResponse);
         }
-        ReturnObject<PageInfo<VoObject>> retObj=shareService.findShares(skuId,beginTime,endTime,page,pageSize);
+        ReturnObject<PageInfo<VoObject>> retObj=shareService.findShares(skuId,null,beginTime,endTime,page,pageSize);
         return Common.getPageRetObject(retObj);
     }
 
@@ -125,8 +124,15 @@ public class ShareController {
     })
     @Audit
     @DeleteMapping("/shops/{shopId}/shareactivities/{id}")
-    public Object deleteShareActivity(@LoginUser Long UserId, @PathVariable("shopId") Long shopId, @PathVariable("id") Long shareActivityId){
-        return null;
+    public Object offlineShareActivity(@LoginUser Long userId, @PathVariable("shopId") Long shopId, @PathVariable("id") Long shareActivityId){
+        ResponseCode ret=shareService.offlineShareActivity(shopId,shareActivityId);
+        if(ret==ResponseCode.OK){
+            return ResponseUtil.ok();
+        }
+        else{
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail(ret);
+        }
     }
 
     /***
@@ -143,9 +149,77 @@ public class ShareController {
     })
     @Audit
     @PutMapping("/shops/{shopId}/shareactivities/{id}/online")
-    public Object shareActivityOnline(@LoginUser Long UserId, @PathVariable("shopId") Long shopId, @PathVariable("id") Long shareActivityId){
-        return null;
+    public Object shareActivityOnline(@LoginUser Long userId, @PathVariable("shopId") Long shopId, @PathVariable("id") Long shareActivityId){
+        ResponseCode ret=shareService.onlineShareActivity(shopId,shareActivityId);
+        if (ret != ResponseCode.SHAREACT_CONFLICT && ret != ResponseCode.OK) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+        return ret;
     }
 
+    /***
+     * 商铺管理员查询分享记录
+     */
+    @Audit
+    @GetMapping("/shop/{id}/shares")
+    public Object getSharesByShopId(@LoginUser Long userId,@PathVariable("id")Long shopId,
+                                    @RequestParam(required = false)Long skuId,
+                                    @RequestParam(defaultValue = "1") Integer page,
+                                    @RequestParam(defaultValue = "10") Integer pageSize)
+    {
+        return null;
+        //TODO:等待问题解决
+    }
+    /***
+     * 买家查询所有的分享成功记录
+     */
+    @Audit
+    @GetMapping("/beshared")
+    public Object getBeShared(@LoginUser Long userId,@RequestParam(required = false)Long skuId,
+                              @RequestParam(required = false)LocalDateTime beginTime,
+                              @RequestParam(required = false)LocalDateTime endTime,
+                              @RequestParam(defaultValue = "1") Integer page,
+                              @RequestParam(defaultValue = "10") Integer pageSize){
+        if(endTime.isBefore(beginTime)){
+            return ResponseUtil.fail(ResponseCode.Log_Bigger);
+        }
+        ReturnObject<PageInfo<VoObject>> retObj=shareService.getBeShared(userId,null,skuId,beginTime,endTime,page,pageSize);
+        return Common.getPageRetObject(retObj);
+    }
+    @Audit
+    @GetMapping("/shops/{id}/beshared")
+    public Object getBeSharedByShopId(@LoginUser Long userId,@PathVariable("id")Long shopId,
+                              @RequestParam(required = false)Long skuId,
+                              @RequestParam(required = false)LocalDateTime beginTime,
+                              @RequestParam(required = false)LocalDateTime endTime,
+                              @RequestParam(defaultValue = "1") Integer page,
+                              @RequestParam(defaultValue = "10") Integer pageSize){
+        if(endTime.isBefore(beginTime)){
+            return ResponseUtil.fail(ResponseCode.Log_Bigger);
+        }
+        ReturnObject<PageInfo<VoObject>> retObj=shareService.getBeShared(null,shopId,skuId,beginTime,endTime,page,pageSize);
+        return Common.getPageRetObject(retObj);
+    }
+    @Audit
+    @PutMapping("/shops/{shopId}/shareactivities/{id}")
+    public Object modifyShareActivity(@LoginUser Long userId,@PathVariable("shopId")Long shopId,
+                                         @PathVariable("id")Long shareActivityId,
+                                         @RequestBody ShareActivityVo vo){
+        ResponseCode ret=shareService.updateShareActivity(shopId,shareActivityId,vo);
+        if (ret != ResponseCode.INTERNAL_SERVER_ERR && ret != ResponseCode.OK) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+        return ret;
+    }
+    @Audit
+    @GetMapping("/shareactivities")
+    public Object getShareActivities(@LoginUser Long userId,@RequestParam(required = false)Long shopId,
+                                     @RequestParam(required = false)Long skuId,
+                                     @RequestParam(defaultValue = "1")Integer page,
+                                     @RequestParam(defaultValue = "10")Integer pageSize){
+        //是否需要判断SKUID属于SHOPID
+        ReturnObject<PageInfo<VoObject>> retObj=shareService.getShareActivities(shopId,skuId,page,pageSize);
+        return Common.getPageRetObject(retObj);
+    }
 
 }
