@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.other.model.vo.Share;
 
+import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -9,10 +10,10 @@ import java.time.LocalDateTime;
  * @version 创建时间：2020/12/2 下午6:01
  */
 @Data
-public class SharesRetVo {
+public class ShareRetVo {
     private Long id;
     private Long sharerId;
-    private Long goodSpuId;
+    private GoodsSkuSimpleVo sku;
     private Integer quantity;
     private LocalDateTime gmtCreate;
 }

@@ -2,7 +2,9 @@ package cn.edu.xmu.oomall.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.other.model.po.SharePo;
-import cn.edu.xmu.oomall.other.model.vo.Share.SharesVo;
+import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
+import cn.edu.xmu.oomall.other.model.vo.Share.ShareRetVo;
+import cn.edu.xmu.oomall.other.model.vo.Share.ShareVo;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
 public class ShareBo implements VoObject {
     private Long id;
     private Long sharerId;
-    private Long goodsSpuId;
+    private GoodsSkuSimpleVo sku;
     private Integer quantity;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
@@ -25,7 +27,7 @@ public class ShareBo implements VoObject {
     public ShareBo(SharePo sharePo){
         this.id= sharePo.getId();
         this.sharerId=sharePo.getSharerId();
-        this.goodsSpuId=sharePo.getGoodsSpuId();
+//remember to get sku object
         this.quantity= sharePo.getQuantity();
         this.gmtCreate= sharePo.getGmtCreate();
         this.gmtModified=sharePo.getGmtModified();
@@ -33,10 +35,13 @@ public class ShareBo implements VoObject {
     }
     @Override
     public Object createVo() {
-        SharesVo sharesVo=new SharesVo();
-        sharesVo.setGoodSpuId(this.goodsSpuId);
-        sharesVo.setSharerId(this.sharerId);
-        return  sharesVo;
+        ShareRetVo retVo=new ShareRetVo();
+        retVo.setGmtCreate(gmtCreate);
+        retVo.setId(id);
+        retVo.setQuantity(quantity);
+        retVo.setSharerId(sharerId);
+        retVo.setSku(sku);
+        return retVo;
     }
 
     @Override

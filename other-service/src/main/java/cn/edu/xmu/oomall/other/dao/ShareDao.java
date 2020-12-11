@@ -6,6 +6,7 @@ import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.dto.BeSharedDTO;
 import cn.edu.xmu.oomall.other.mapper.BeSharePoMapper;
 import cn.edu.xmu.oomall.other.mapper.ShareActivityPoMapper;
+import cn.edu.xmu.oomall.other.mapper.SharePoMapper;
 import cn.edu.xmu.oomall.other.model.bo.BeSharedBo;
 import cn.edu.xmu.oomall.other.model.bo.ShareActivityBo;
 import cn.edu.xmu.oomall.other.model.po.*;
@@ -36,12 +37,27 @@ public class ShareDao {
     @Autowired
     private ShareActivityPoMapper shareActivityPoMapper;
 
+    @Autowired
+    SharePoMapper sharePoMapper;
+
     private Byte offline = 0;
 
     private Byte online = 1;
 
-    public PageInfo<SharePo> findSharesBySkuIdOrTime(Long skuId,LocalDateTime beginTime,LocalDateTime endTime){
-        return null;
+    public PageInfo<SharePo> findSharesBySkuIdOrTime(Long skuId, LocalDateTime beginTime, LocalDateTime endTime){
+        SharePoExample example=new SharePoExample();
+        SharePoExample.Criteria criteria=example.createCriteria();
+        if(beginTime!=null){
+            criteria.andGmtCreateGreaterThanOrEqualTo(beginTime);
+        }
+        if(endTime!=null){
+            criteria.andGmtCreateLessThanOrEqualTo(endTime);
+        }
+        if(skuId!=null){
+            criteria.andGoodsSpuIdEqualTo(skuId);
+        }
+        List<SharePo> sharePos= sharePoMapper.selectByExample(example);
+        return new PageInfo<>(sharePos);
     }
     /*在下单时查找第一个有效的分享成功记录*/
     public BeSharedDTO getFirstBeShared(Long customerId, Long skuId, Long orderItemId) {

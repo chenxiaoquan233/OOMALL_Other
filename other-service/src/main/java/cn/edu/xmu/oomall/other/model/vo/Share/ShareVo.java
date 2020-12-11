@@ -13,19 +13,13 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 @ApiModel
-public class SharesVo {
+public class ShareVo {
     @NotNull(message = "分享者Id不能为空")
     @ApiModelProperty(name = "shareId", value = "0")
     private Long sharerId;
 
     @NotNull(message = "商品SpuId不能为空")
-    @ApiModelProperty(name = "goodsSpuId", value = "0")
-    private Long goodSpuId;
+    @ApiModelProperty(name = "goodsSkuId", value = "0")
+    private Long goodSkuId;
 
-    public ShareBo createBo(){
-        ShareBo sharesBo = new ShareBo();
-        sharesBo.setSharerId(this.sharerId);
-        sharesBo.setGoodsSpuId(this.goodSpuId);
-        return sharesBo;
-    }
 }

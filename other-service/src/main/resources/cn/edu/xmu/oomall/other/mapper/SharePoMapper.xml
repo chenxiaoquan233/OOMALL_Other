@@ -8,7 +8,7 @@
     -->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="sharer_id" jdbcType="BIGINT" property="sharerId" />
-    <result column="goods_spu_id" jdbcType="BIGINT" property="goodsSpuId" />
+    <result column="goods_spu_id" jdbcType="BIGINT" property="goodsSkuId" />
     <result column="quantity" jdbcType="INTEGER" property="quantity" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
@@ -145,7 +145,7 @@
     insert into share (sharer_id, goods_spu_id, quantity, 
       gmt_create, gmt_modified, share_activity_id
       )
-    values (#{sharerId,jdbcType=BIGINT}, #{goodsSpuId,jdbcType=BIGINT}, #{quantity,jdbcType=INTEGER}, 
+    values (#{sharerId,jdbcType=BIGINT}, #{goodsSkuId,jdbcType=BIGINT}, #{quantity,jdbcType=INTEGER},
       #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{shareActivityId,jdbcType=BIGINT}
       )
   </insert>
@@ -162,7 +162,7 @@
       <if test="sharerId != null">
         sharer_id,
       </if>
-      <if test="goodsSpuId != null">
+      <if test="goodsSkuId != null">
         goods_spu_id,
       </if>
       <if test="quantity != null">
@@ -182,8 +182,8 @@
       <if test="sharerId != null">
         #{sharerId,jdbcType=BIGINT},
       </if>
-      <if test="goodsSpuId != null">
-        #{goodsSpuId,jdbcType=BIGINT},
+      <if test="goodsSkuId != null">
+        #{goodsSkuId,jdbcType=BIGINT},
       </if>
       <if test="quantity != null">
         #{quantity,jdbcType=INTEGER},
@@ -222,8 +222,8 @@
       <if test="record.sharerId != null">
         sharer_id = #{record.sharerId,jdbcType=BIGINT},
       </if>
-      <if test="record.goodsSpuId != null">
-        goods_spu_id = #{record.goodsSpuId,jdbcType=BIGINT},
+      <if test="record.goodsSkuId != null">
+        goods_spu_id = #{record.goodsSkuId,jdbcType=BIGINT},
       </if>
       <if test="record.quantity != null">
         quantity = #{record.quantity,jdbcType=INTEGER},
@@ -250,7 +250,7 @@
     update share
     set id = #{record.id,jdbcType=BIGINT},
       sharer_id = #{record.sharerId,jdbcType=BIGINT},
-      goods_spu_id = #{record.goodsSpuId,jdbcType=BIGINT},
+      goods_spu_id = #{record.goodsSkuId,jdbcType=BIGINT},
       quantity = #{record.quantity,jdbcType=INTEGER},
       gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
       gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
@@ -269,8 +269,8 @@
       <if test="sharerId != null">
         sharer_id = #{sharerId,jdbcType=BIGINT},
       </if>
-      <if test="goodsSpuId != null">
-        goods_spu_id = #{goodsSpuId,jdbcType=BIGINT},
+      <if test="goodsSkuId != null">
+        goods_spu_id = #{goodsSkuId,jdbcType=BIGINT},
       </if>
       <if test="quantity != null">
         quantity = #{quantity,jdbcType=INTEGER},
@@ -294,7 +294,7 @@
     -->
     update share
     set sharer_id = #{sharerId,jdbcType=BIGINT},
-      goods_spu_id = #{goodsSpuId,jdbcType=BIGINT},
+      goods_spu_id = #{goodsSkuId,jdbcType=BIGINT},
       quantity = #{quantity,jdbcType=INTEGER},
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},

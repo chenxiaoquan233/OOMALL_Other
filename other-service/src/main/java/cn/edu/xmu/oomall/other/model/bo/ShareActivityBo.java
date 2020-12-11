@@ -3,7 +3,6 @@ package cn.edu.xmu.oomall.other.model.bo;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.other.model.po.ShareActivityPo;
 import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityRetVo;
-import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityVo;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -16,7 +15,7 @@ import java.time.LocalDateTime;
 public class ShareActivityBo implements VoObject {
     private Long id;
     private Long shopId;
-    private Long goodSpuId;
+    private Long goodSkuId;
     private LocalDateTime beginTime;
     private LocalDateTime endTime;
     private String strategy;
@@ -29,7 +28,7 @@ public class ShareActivityBo implements VoObject {
     public ShareActivityBo(ShareActivityPo shareActivityPo){
         this.id= shareActivityPo.getId();
         this.shopId= shareActivityPo.getShopId();
-        this.goodSpuId= shareActivityPo.getGoodsSpuId();
+        this.goodSkuId = shareActivityPo.getGoodsSkuId();
         this.beginTime= shareActivityPo.getBeginTime();
         this.endTime=shareActivityPo.getEndTime();
         this.strategy= shareActivityPo.getStrategy();
@@ -59,7 +58,7 @@ public class ShareActivityBo implements VoObject {
         ShareActivityPo po=new ShareActivityPo();
         po.setId(this.id);
         po.setShopId(this.shopId);
-        po.setGoodsSpuId(this.goodSpuId);
+        po.setGoodsSkuId(this.goodSkuId);
         po.setBeginTime(this.beginTime);
         po.setEndTime(this.endTime);
         po.setStrategy(this.strategy);

@@ -2,12 +2,26 @@ package cn.edu.xmu.oomall.other.controller;
 
 import cn.edu.xmu.ooad.annotation.Audit;
 import cn.edu.xmu.ooad.annotation.LoginUser;
+import cn.edu.xmu.ooad.model.VoObject;
+import cn.edu.xmu.ooad.util.Common;
+import cn.edu.xmu.ooad.util.ResponseCode;
+import cn.edu.xmu.ooad.util.ResponseUtil;
+import cn.edu.xmu.ooad.util.ReturnObject;
+import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityVo;
 import cn.edu.xmu.oomall.other.service.ShareService;
 import cn.edu.xmu.oomall.other.service.ShoppingCartService;
+import cn.xmu.edu.goods.client.IGoodsService;
+import cn.xmu.edu.goods.client.IShopService;
+import cn.xmu.edu.goods.client.dubbo.ShopDTO;
+import com.github.pagehelper.PageInfo;
+import com.github.sardine.model.Bind;
 import io.swagger.annotations.*;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +42,9 @@ public class ShareController {
     @Autowired
     private ShareService shareService;
 
+    @DubboReference
+    IGoodsService goodsService;
+
     /***
      * 平台或店家创建新的分享活动
      */
@@ -42,8 +59,26 @@ public class ShareController {
     })
     @Audit
     @PostMapping("/shops/{shopId}/goods/{skuId}/shareactivities")
-    public Object addShareActivity(@LoginUser Long UserId, @PathVariable("shopId") Long shopId, @PathVariable("skuId") Long skuId){
-        return null;
+    public Object addShareActivity(@LoginUser Long UserId, @PathVariable("shopId") Long shopId, @PathVariable("skuId") Long skuId,
+                                   @Validated @RequestBody ShareActivityVo shareActivityVo, BindingResult bindingResult){
+        Object object= Common.processFieldErrors(bindingResult,httpServletResponse);
+        if(object!=null){
+            return object;
+        }
+        ShopDTO shopDTO=goodsService.getShopBySKUId(skuId);
+        if(shopDTO==null){
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail(ResponseCode.OK,"资源不存在");
+        }
+        else if(shopId!=0){
+            Long realShopId=shopDTO.getId();
+            if(!realShopId.equals(shopId)){
+                httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                return ResponseUtil.fail(ResponseCode.OK,"非法资源");
+            }
+        }
+
+        return Common.getRetObject(shareService.addShareActivity(shopId,skuId,shareActivityVo));
     }
 
     /***
@@ -66,7 +101,14 @@ public class ShareController {
     public Object getShares(@LoginUser Long UserId, @RequestParam Long skuId,
                             @RequestParam(required = false) LocalDateTime beginTime, @RequestParam(required = false) LocalDateTime endTime,
                             @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize){
-        return null;
+        if(endTime.isBefore(beginTime)){
+            return ResponseUtil.fail(ResponseCode.Log_Bigger);
+        }
+        if(page <= 0 || pageSize <= 0) {
+            return Common.getNullRetObj(new ReturnObject<>(ResponseCode.FIELD_NOTVALID), httpServletResponse);
+        }
+        ReturnObject<PageInfo<VoObject>> retObj=shareService.findShares(skuId,beginTime,endTime,page,pageSize);
+        return Common.getPageRetObject(retObj);
     }
 
     /***
