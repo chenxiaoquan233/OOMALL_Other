@@ -14,7 +14,7 @@ public class AftersaleRetVo {
     private Long customerId;
     private Long shopId;
     private String serviceSn;
-    private Integer type;
+    private Byte type;
     private String reason;
     private String conclusion;
     private Long refund;

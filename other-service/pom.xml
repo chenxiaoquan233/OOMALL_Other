@@ -29,6 +29,12 @@
 
         <dependency>
             <groupId>cn.edu.xmu.oomall</groupId>
+            <artifactId>other-order-client</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.edu.xmu.oomall</groupId>
             <artifactId>goods-other-client</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
