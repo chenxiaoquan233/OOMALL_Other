@@ -32,7 +32,6 @@ public class ShareActivityBo implements VoObject {
         this.beginTime= shareActivityPo.getBeginTime();
         this.endTime=shareActivityPo.getEndTime();
         this.strategy= shareActivityPo.getStrategy();
-        this.beDeleted= shareActivityPo.getBeDeleted();
         this.state=shareActivityPo.getState();
         this.gmtCreate= shareActivityPo.getGmtCreate();
         this.gmtModified= shareActivityPo.getGmtModified();
@@ -63,7 +62,6 @@ public class ShareActivityBo implements VoObject {
         po.setEndTime(this.endTime);
         po.setStrategy(this.strategy);
         po.setState(this.state);
-        po.setBeDeleted(this.beDeleted);
         po.setGmtCreate(this.gmtCreate);
         po.setGmtModified(this.gmtModified);
         return po;

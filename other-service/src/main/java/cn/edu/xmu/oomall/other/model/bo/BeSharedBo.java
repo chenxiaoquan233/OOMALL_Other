@@ -26,11 +26,11 @@ public class BeSharedBo  {
 
     public BeSharedBo(BeSharePo po){
         this.id=po.getId();
-        this.goodsSkuId=po.getGoodsSpuId();
+        //this.goodsSkuId=po.getGoodsSpuId();
         this.sharerId=po.getSharerId();
         this.shareId=po.getShareId();
         this.customerId=po.getCustomerId();
-        this.orderItemId=po.getOrderItemId();
+        //this.orderItemId=po.getOrderItemId();
         this.rebate=po.getRebate();
         this.shareActivityId=po.getShareActivityId();
         this.gmtCreate=po.getGmtCreate();

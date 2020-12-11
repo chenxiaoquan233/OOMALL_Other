@@ -54,7 +54,7 @@ public class ShareDao {
             criteria.andGmtCreateLessThanOrEqualTo(endTime);
         }
         if(skuId!=null){
-            criteria.andGoodsSpuIdEqualTo(skuId);
+            criteria.andGoodsSkuIdEqualTo(skuId);
         }
         List<SharePo> sharePos= sharePoMapper.selectByExample(example);
         return new PageInfo<>(sharePos);
@@ -64,13 +64,14 @@ public class ShareDao {
         BeSharePoExample example=new BeSharePoExample();
         BeSharePoExample.Criteria criteria=example.createCriteria();
         criteria.andCustomerIdEqualTo(customerId);
-        criteria.andGoodsSpuIdEqualTo(skuId);
-        criteria.andOrderItemIdEqualTo(0L);
+        criteria.andGoodsSkuIdEqualTo(skuId);
+        //criteria.andOrderItemIdEqualTo(0L);
         List<BeSharePo> beSharePos=beSharePoMapper.selectByExample(example);
         BeSharePo po=beSharePos.get(0);
-        po.setOrderItemId(orderItemId);
+        //po.setOrderItemId(orderItemId);
         beSharePoMapper.updateByPrimaryKey(po);
-        return new BeSharedDTO(po.getOrderItemId(), po.getGoodsSpuId(),po.getId(),po.getCustomerId());
+        //return new BeSharedDTO(po.getOrderItemId(), po.getGoodsSkuId(),po.getId(),po.getCustomerId());
+        return null;
     }
 
     public ShareActivityBo getShareActivityById(Long id){
@@ -81,7 +82,7 @@ public class ShareDao {
     public List<ShareActivityBo> getAllShareActivityBySkuId(Long skuId){
         ShareActivityPoExample example=new ShareActivityPoExample();
         ShareActivityPoExample.Criteria criteria=example.createCriteria();
-        criteria.andGoodsSpuIdEqualTo(skuId);
+        criteria.andGoodsSkuIdEqualTo(skuId);
         List<ShareActivityPo> pos=shareActivityPoMapper.selectByExample(example);
         if(pos==null)
             return null;
@@ -92,7 +93,7 @@ public class ShareDao {
     public ShareActivityBo getValidShareActivityBySkuId(Long skuId){
         ShareActivityPoExample example=new ShareActivityPoExample();
         ShareActivityPoExample.Criteria criteria=example.createCriteria();
-        criteria.andGoodsSpuIdEqualTo(skuId);
+        criteria.andGoodsSkuIdEqualTo(skuId);
         criteria.andStateEqualTo(online); //状态上架
         criteria.andBeginTimeLessThan(LocalDateTime.now());
         criteria.andEndTimeGreaterThan(LocalDateTime.now());
@@ -106,7 +107,7 @@ public class ShareDao {
         ShareActivityPoExample example=new ShareActivityPoExample();
         ShareActivityPoExample.Criteria criteria=example.createCriteria();
         criteria.andShopIdEqualTo(shopId);
-        criteria.andGoodsSpuIdEqualTo(0L); //默认分享的skuId为0
+        criteria.andGoodsSkuIdEqualTo(0L); //默认分享的skuId为0
         criteria.andStateEqualTo(online); //状态上架
         criteria.andBeginTimeLessThan(LocalDateTime.now());
         criteria.andEndTimeGreaterThan(LocalDateTime.now());
@@ -178,7 +179,7 @@ public class ShareDao {
         if(goodsSkuId==0)
             criteria.andShopIdEqualTo(shopId);
             /*不是默认分享，查找skuId*/
-        else criteria.andGoodsSpuIdEqualTo(goodsSkuId);
+        else criteria.andGoodsSkuIdEqualTo(goodsSkuId);
         Long count=shareActivityPoMapper.countByExample(example);
         return count>0?true:false;
     }

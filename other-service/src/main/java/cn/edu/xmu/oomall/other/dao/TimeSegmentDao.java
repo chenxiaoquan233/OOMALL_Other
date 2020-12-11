@@ -35,7 +35,7 @@ public class TimeSegmentDao {
 
         List<TimeSegmentPo> timeSegmentPos = timeSegmentPoMapper.selectByExample(timeSegmentPoExample);
 
-        return timeSegmentPos.stream().map(x->new TimeSegmentDTO(x.getId(), x.getBeTime(), x.getEndTime())).collect(Collectors.toList());
+        return timeSegmentPos.stream().map(x->new TimeSegmentDTO(x.getId(), x.getBeginTime(), x.getEndTime())).collect(Collectors.toList());
     }
     public List<TimeSegmentDTO> getAdsSegments(){
         return getTimeSegments((byte)0);
