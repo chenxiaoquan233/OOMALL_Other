@@ -125,7 +125,6 @@ public class TimeSegmentDao {
         return deleteTimeSegment(timeSegId,(byte)0);
     }
     public ResponseCode deleteFlashSaleSegment(Long timeSegId){
-        return deleteTimeSegment(timeSegId,(byte)0);
+        return deleteTimeSegment(timeSegId,(byte)1);
     }
-
 }
