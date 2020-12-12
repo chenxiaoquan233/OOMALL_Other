@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import cn.edu.xmu.ooad.util.ReturnObject;
@@ -102,6 +104,7 @@ public class ShoppingCartDao {
         po.setGoodsSkuId(goodsSkuId);
         po.setQuantity(quantity);
         po.setPrice(price);
+        po.setGmtCreate(LocalDateTime.now());
         shoppingCartPoMapper.insertSelective(po);
         return po;
     }
@@ -114,6 +117,7 @@ public class ShoppingCartDao {
         po.setGoodsSkuId(goodsSkuId);
         po.setQuantity(quantity);
         po.setPrice(price);
+        po.setGmtModified(LocalDateTime.now());
         ShoppingCartPoExample example=new ShoppingCartPoExample();
         ShoppingCartPoExample.Criteria criteria=example.createCriteria();
         criteria.andIdEqualTo(cartId);
