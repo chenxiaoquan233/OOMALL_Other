@@ -10,6 +10,7 @@ import cn.edu.xmu.oomall.other.mapper.SharePoMapper;
 import cn.edu.xmu.oomall.other.model.bo.ShareActivityBo;
 import cn.edu.xmu.oomall.other.model.po.*;
 import com.github.pagehelper.PageInfo;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

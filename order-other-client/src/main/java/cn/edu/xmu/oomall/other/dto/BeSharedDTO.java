@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * 2 * @author: LiangJi3229
  * 3 * @date: 2020/12/11 下午3:22
@@ -12,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BeSharedDTO {
+public class BeSharedDTO implements Serializable {
     private Long orderItemId;
     private Long skuId;
     private Long beSharedId;
