@@ -21,6 +21,20 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
+        <!-- order interface -->
+        <dependency>
+            <groupId>cn.edu.xmu.oomall</groupId>
+            <artifactId>order-other-client</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.edu.xmu.oomall</groupId>
+            <artifactId>other-order-client</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <!-- goods interface -->
         <dependency>
             <groupId>cn.edu.xmu.oomall</groupId>
             <artifactId>other-goods-client</artifactId>
@@ -54,12 +68,6 @@
             <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-client</artifactId>
             <version>1.4.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.edu.xmu.oomall.other</groupId>
-            <artifactId>order-other-client</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

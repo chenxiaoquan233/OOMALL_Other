@@ -1,9 +1,9 @@
 package cn.edu.xmu.oomall.other.service.OrderInterface;
 
 import cn.edu.xmu.oomall.other.dao.UserDao;
-import cn.edu.xmu.oomall.other.dto.CustomerDTO;
+import cn.edu.xmu.oomall.dto.CustomerDTO;
 import cn.edu.xmu.oomall.other.model.bo.UserBo;
-import cn.edu.xmu.oomall.other.impl.ICustomerService;
+import cn.edu.xmu.oomall.impl.ICustomerService;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 

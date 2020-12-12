@@ -1,5 +1,8 @@
 package cn.edu.xmu.oomall.other.model.bo;
 
+import cn.edu.xmu.ooad.model.VoObject;
+import cn.edu.xmu.oomall.other.model.po.TimeSegmentPo;
+import cn.edu.xmu.oomall.other.model.vo.TimeSegment.TimeSegmentVo;
 import lombok.Data;
 
 import java.sql.Time;
@@ -13,10 +16,32 @@ import java.util.Map;
  * @version 创建时间：2020/12/11 下午1:10
  */
 @Data
-public class TimeSegmentBo {
+public class TimeSegmentBo implements VoObject {
+    public TimeSegmentBo(){}
+    public TimeSegmentBo(TimeSegmentPo timeSegmentPo){
+        id=timeSegmentPo.getId();
+        beginTime=timeSegmentPo.getBeginTime();
+        endTime=timeSegmentPo.getEndTime();
+        type=Type.getTypeByCode((int)timeSegmentPo.getType());
+        gmtCreate=timeSegmentPo.getGmtCreate();
+        gmtModified=timeSegmentPo.getGmtModified();
+    }
+    @Override
+    public Object createVo() {
+        TimeSegmentVo timeSegmentVo = new TimeSegmentVo();
+        timeSegmentVo.setBeginTime(beginTime);
+        timeSegmentVo.setEndTime(endTime);
+        return timeSegmentVo;
+    }
+
+    @Override
+    public Object createSimpleVo() {
+        return null;
+    }
+
     /*
-    states
-        */
+        states
+            */
     public enum Type {
         ADS(0, "广告"),
         FLASHSALE(1, "秒杀");

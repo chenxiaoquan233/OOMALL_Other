@@ -1,9 +1,11 @@
 package cn.edu.xmu.oomall.other.dao;
 
 import cn.edu.xmu.ooad.model.VoObject;
+import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.dto.TimeSegmentDTO;
 import cn.edu.xmu.oomall.other.mapper.TimeSegmentPoMapper;
+import cn.edu.xmu.oomall.other.model.bo.TimeSegmentBo;
 import cn.edu.xmu.oomall.other.model.po.TimeSegmentPo;
 import cn.edu.xmu.oomall.other.model.po.TimeSegmentPoExample;
 import cn.edu.xmu.oomall.other.model.vo.TimeSegment.TimeSegmentVo;
@@ -26,23 +28,58 @@ public class TimeSegmentDao {
     @Autowired
     private TimeSegmentPoMapper timeSegmentPoMapper;
 
-    public List<TimeSegmentDTO> getFlashSaleSegments() {
+    private List<TimeSegmentDTO> getTimeSegments(byte type){
         TimeSegmentPoExample timeSegmentPoExample = new TimeSegmentPoExample();
         TimeSegmentPoExample.Criteria criteria = timeSegmentPoExample.createCriteria();
-        criteria.andTypeEqualTo((byte) 1);
+        criteria.andTypeEqualTo((byte) type);
 
         List<TimeSegmentPo> timeSegmentPos = timeSegmentPoMapper.selectByExample(timeSegmentPoExample);
 
         return timeSegmentPos.stream().map(x->new TimeSegmentDTO(x.getId(), x.getBeginTime(), x.getEndTime())).collect(Collectors.toList());
     }
+    public List<TimeSegmentDTO> getAdsSegments(){
+        return getTimeSegments((byte)0);
+    }
+    public List<TimeSegmentDTO> getFlashSaleSegments() {
+        return getTimeSegments((byte)1);
+    }
 
-    public TimeSegmentDTO getFlashSaleSegmentById(Long id) {
+    private TimeSegmentDTO getTimeSegmentById(Long id, byte type){
         TimeSegmentPo timeSegmentPo = timeSegmentPoMapper.selectByPrimaryKey(id);
-        if(timeSegmentPo.getType().equals((byte) 1))
+        if(timeSegmentPo.getType().equals((byte) type))
             return new TimeSegmentDTO(timeSegmentPo.getId(), timeSegmentPo.getBeginTime(), timeSegmentPo.getEndTime());
         else
             return null;
     }
 
-    //public ReturnObject<VoObject> addTimeSegments(TimeSegmentVo)
+    public TimeSegmentDTO getAdsTimeSegmentById(Long id){
+        return getTimeSegmentById(id,(byte)0);
+    }
+    public TimeSegmentDTO getFlashSaleSegmentById(Long id) {
+        return  getTimeSegmentById(id,(byte)1);
+    }
+
+
+    private TimeSegmentBo addTimeSegment(TimeSegmentVo timeSegmentVo, byte type){
+        TimeSegmentPoExample timeSegmentPoExample=new TimeSegmentPoExample();
+        TimeSegmentPoExample.Criteria criteria=timeSegmentPoExample.createCriteria();
+        criteria.andBeginTimeLessThan(timeSegmentVo.getEndTime());
+        criteria.andEndTimeGreaterThan(timeSegmentVo.getBeginTime());
+        criteria.andTypeEqualTo(type);
+        if(timeSegmentPoMapper.countByExample(timeSegmentPoExample)>0) {
+            TimeSegmentPo newVal = new TimeSegmentPo();
+            newVal.setBeginTime(timeSegmentVo.getBeginTime());
+            newVal.setEndTime(timeSegmentVo.getEndTime());
+            newVal.setType(type);
+            timeSegmentPoMapper.insert(newVal);
+            return new TimeSegmentBo(newVal);
+        }else return null;
+    }
+    public TimeSegmentBo addAdsSegment(TimeSegmentVo timeSegmentVo){
+        return addTimeSegment(timeSegmentVo,(byte)0);
+    }
+    public TimeSegmentBo addFlashSaleSegment(TimeSegmentVo timeSegmentVo){
+        return addTimeSegment(timeSegmentVo,(byte)1);
+    }
+
 }

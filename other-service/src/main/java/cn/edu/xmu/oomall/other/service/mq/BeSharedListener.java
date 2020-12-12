@@ -2,7 +2,7 @@ package cn.edu.xmu.oomall.other.service.mq;
 
 import cn.edu.xmu.ooad.util.JacksonUtil;
 import cn.edu.xmu.oomall.other.dao.ShareDao;
-import cn.edu.xmu.oomall.other.dto.BeSharedDTO;
+import cn.edu.xmu.oomall.dto.BeSharedDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
