@@ -24,10 +24,7 @@ public class ICustomerServiceImpl implements ICustomerService {
 
     @Override
     public CustomerDTO getCustomer(Long customerId) {
-        logger.debug("here yxc");
-        logger.debug(customerId.toString());
         UserBo userBo = userDao.findUserById(customerId);
-        logger.debug(userBo.toString());
         if(userBo == null) return null;
         return userBo.createCustomer();
     }
