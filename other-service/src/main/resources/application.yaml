@@ -29,8 +29,6 @@ dubbo:
   registries:
     provider1:
       address: nacos://47.115.162.144:8848
-    provider2:
-      address: nacos://domi.xqchen.site:8848
 
 spring:
   main:

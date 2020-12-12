@@ -33,10 +33,10 @@ public class ShoppingCartService {
     @DubboReference(registry = {"provider1"})
     IGoodsService iGoodsService;
 
-    public Long getPrice(Long skuId){
-        return skuId*10;
-    }
-
+//    public Long getPrice(Long skuId){
+//        return skuId*10;
+//    }
+//
     public List<Object> getCouponActicity(Long goodsSkuId) {
         return null;
     }
@@ -65,7 +65,7 @@ public class ShoppingCartService {
     }
 
     public Object addCart(Long userId, Long goodsSkuId, Integer quantity){
-        Long price=getPrice(goodsSkuId);
+        Long price=iGoodsService.getPrice(goodsSkuId);
         if(price<=0)
             return null;
         ShoppingCartPo po=shoppingCartDao.addCart(userId,goodsSkuId,quantity,price);
@@ -77,7 +77,7 @@ public class ShoppingCartService {
     }
 
     public ResponseCode modifyCart(Long userId, Long cartId,Long goodsSkuId, Integer quantity) {
-        Long price=getPrice(goodsSkuId);
+        Long price=iGoodsService.getPrice(goodsSkuId);
         if(price<=0)
             return null;
         return shoppingCartDao.modifyCart(cartId,userId,goodsSkuId,quantity,price);

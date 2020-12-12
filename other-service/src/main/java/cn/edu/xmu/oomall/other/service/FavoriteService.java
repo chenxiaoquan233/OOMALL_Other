@@ -31,7 +31,7 @@ public class FavoriteService {
     }
 
     public Object addFavorites(Long userId, Long skuId) {
-        GoodsSkuSimpleVo sku=new GoodsSkuSimpleVo(favoriteDao.getSku(skuId));
+        GoodsSkuSimpleVo sku=new GoodsSkuSimpleVo(favoriteDao.iGoodsService.getSku(skuId));
         if(sku==null||sku.getId()==null){
             return null;
         }

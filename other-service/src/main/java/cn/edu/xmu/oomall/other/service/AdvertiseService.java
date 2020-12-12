@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.other.service;
 
+
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.oomall.other.dao.AdvertiseDao;
 import cn.edu.xmu.oomall.other.dao.AftersaleDao;
@@ -11,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+
 /**
  * @author hardworking-qf
  * @version 创建时间：2020/12/12 上午10:45
  */
 @Data
+@Service
 public class AdvertiseService {
     private static final Logger logger = LoggerFactory.getLogger(AfterSaleService.class);
 

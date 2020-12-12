@@ -44,6 +44,10 @@ public class ShareController {
     @DubboReference
     IGoodsService goodsService;
 
+    //TODO:生成分享链接 接受点击分享连接信息
+    //以完成：下单后更改分享成功
+    //TODO:七天后返回返点
+    //Topic
     /***
      * 平台或店家创建新的分享活动
      */
@@ -186,6 +190,18 @@ public class ShareController {
         ReturnObject<PageInfo<VoObject>> retObj=shareService.getBeShared(userId,null,skuId,beginTime,endTime,page,pageSize);
         return Common.getPageRetObject(retObj);
     }
+
+    /**
+     * 管理员查询店铺分享成功记录
+     * @param userId
+     * @param shopId
+     * @param skuId
+     * @param beginTime
+     * @param endTime
+     * @param page
+     * @param pageSize
+     * @return
+     */
     @Audit
     @GetMapping("/shops/{id}/beshared")
     public Object getBeSharedByShopId(@LoginUser Long userId,@PathVariable("id")Long shopId,
@@ -200,6 +216,15 @@ public class ShareController {
         ReturnObject<PageInfo<VoObject>> retObj=shareService.getBeShared(null,shopId,skuId,beginTime,endTime,page,pageSize);
         return Common.getPageRetObject(retObj);
     }
+
+    /**
+     * 修改分享活动
+     * @param userId
+     * @param shopId
+     * @param shareActivityId
+     * @param vo
+     * @return
+     */
     @Audit
     @PutMapping("/shops/{shopId}/shareactivities/{id}")
     public Object modifyShareActivity(@LoginUser Long userId,@PathVariable("shopId")Long shopId,
@@ -211,6 +236,16 @@ public class ShareController {
         }
         return ret;
     }
+
+    /**
+     * 查询所有分享活动
+     * @param userId
+     * @param shopId
+     * @param skuId
+     * @param page
+     * @param pageSize
+     * @return
+     */
     @Audit
     @GetMapping("/shareactivities")
     public Object getShareActivities(@LoginUser Long userId,@RequestParam(required = false)Long shopId,

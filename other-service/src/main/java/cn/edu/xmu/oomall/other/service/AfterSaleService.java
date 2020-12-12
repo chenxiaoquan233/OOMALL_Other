@@ -2,7 +2,7 @@ package cn.edu.xmu.oomall.other.service;
 
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.oomall.dto.OrderDTO;
-import cn.edu.xmu.oomall.impl.IOrderService;
+import cn.edu.xmu.oomall.impl.IDubboOrderService;
 import cn.edu.xmu.oomall.other.dao.AftersaleDao;
 import cn.edu.xmu.oomall.other.model.bo.AftersaleBo;
 import cn.edu.xmu.oomall.other.model.po.AftersalePo;
@@ -30,7 +30,7 @@ public class AfterSaleService {
     private AftersaleDao aftersaleDao;
 
     @DubboReference
-    private IOrderService iOrderService;
+    private IDubboOrderService iDubboOrderService;
 
     public List<AftersaleStateVo> getAfterSaleAllStates() {
         logger.debug("getAfterSaleAllStates");
@@ -45,7 +45,7 @@ public class AfterSaleService {
         aftersaleBo.setOrderItemId(orderItemId);
         aftersaleBo.setRefund(0L);
 
-        OrderDTO orderDTO = iOrderService.getOrderIdByOrderItemId(orderItemId);
+        //OrderDTO orderDTO = iDubboOrderService.getOrderIdByOrderItemId(orderItemId);
 
         AftersalePo aftersalePo = aftersaleDao.insertAftersale(aftersaleBo.createPo());
 

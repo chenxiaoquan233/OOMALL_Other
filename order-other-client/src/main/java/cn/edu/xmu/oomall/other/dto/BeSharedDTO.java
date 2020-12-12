@@ -1,8 +1,10 @@
-package cn.edu.xmu.oomall.dto;
+package cn.edu.xmu.oomall.other.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * 2 * @author: LiangJi3229
@@ -12,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BeSharedDTO {
+public class BeSharedDTO implements Serializable {
     private Long orderItemId;
     private Long skuId;
     private Long beSharedId;
