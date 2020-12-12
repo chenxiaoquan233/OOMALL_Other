@@ -71,6 +71,14 @@ public class ShoppingCartDao {
         else return ResponseCode.INTERNAL_SERVER_ERR;
     }
 
+    public void deleteCartByCustomerAndSku(Long userId,Long skuId){
+        ShoppingCartPoExample example=new ShoppingCartPoExample();
+        ShoppingCartPoExample.Criteria criteria=example.createCriteria();
+        criteria.andCustomerIdEqualTo(userId);
+        criteria.andGoodsSkuIdEqualTo(skuId);
+        shoppingCartPoMapper.deleteByExample(example);
+    }
+
     public ReturnObject<PageInfo<VoObject>> getCartByUserId(Long userId, Integer page, Integer pageSize){
         ShoppingCartPoExample shoppingCartPoExample=new ShoppingCartPoExample();
         ShoppingCartPoExample.Criteria criteria=shoppingCartPoExample.createCriteria();
