@@ -76,7 +76,7 @@
     <logger name="cn.edu.xmu.oomall.other.model" level = "DEBUG"/>
     <logger name="cn.edu.xmu.oomall.other.controller.User" level="DEBUG"/>
 
-    <root level="WARN">
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
     </root>

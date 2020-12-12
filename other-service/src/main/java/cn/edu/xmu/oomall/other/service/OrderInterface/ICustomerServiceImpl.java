@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author XQChen
  * @version 创建时间：2020/12/4 下午10:47
  */
-@DubboService(registry = {"provider2"})
+@DubboService(registry = {"provider1"})
 public class ICustomerServiceImpl implements ICustomerService {
     @Autowired
     private UserDao userDao;

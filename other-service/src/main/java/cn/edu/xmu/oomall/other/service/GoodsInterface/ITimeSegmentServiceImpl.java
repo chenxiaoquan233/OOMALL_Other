@@ -12,7 +12,7 @@ import java.util.List;
  * @author XQChen
  * @version 创建时间：2020/12/9 下午10:12
  */
-@DubboService(registry = {"provider2"})
+@DubboService(registry = {"provider1"})
 public class ITimeSegmentServiceImpl implements ITimeSegmentService {
     @Autowired
     private TimeSegmentDao timeSegmentDao;

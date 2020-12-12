@@ -34,27 +34,27 @@ import java.util.stream.Collectors;
 public class FavoriteDao {
     private static final Logger logger = LoggerFactory.getLogger(FavoriteDao.class);
 
-    public Long getPrice(Long skuId){
-        return  skuId*100;
-    }
-    public SkuDTO getSku(Long id){
-        SkuDTO sku=new SkuDTO();
-        sku.setId(id);
-        sku.setName("打桩");
-        sku.setSkuSn("0");
-        sku.setImageUrl("打桩.jpg");
-        sku.setInventory(10);
-        sku.setOriginalPrice(100L);
-        sku.setPrice(100L);
-        sku.setDisable((byte)0);
-        return sku;
-    }
+//    public Long getPrice(Long skuId){
+//        return  skuId*100;
+//    }
+//    public SkuDTO getSku(Long id){
+//        SkuDTO sku=new SkuDTO();
+//        sku.setId(id);
+//        sku.setName("打桩");
+//        sku.setSkuSn("0");
+//        sku.setImageUrl("打桩.jpg");
+//        sku.setInventory(10);
+//        sku.setOriginalPrice(100L);
+//        sku.setPrice(100L);
+//        sku.setDisable((byte)0);
+//        return sku;
+//    }
 
     @Autowired
     private FavouriteGoodsPoMapper favouriteGoodsPoMapper;
 
     @DubboReference(registry = {"provider1"})
-    IGoodsService iGoodsService;
+    public IGoodsService iGoodsService;
 
     public ReturnObject<PageInfo<VoObject>> getFavoritesByUserId(Long userId, Integer page, Integer pageSize){
         FavouriteGoodsPoExample favouriteGoodsPoExample=new FavouriteGoodsPoExample();
@@ -69,7 +69,7 @@ public class FavoriteDao {
             return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
         }
         List<VoObject> ret = favoritesPos.stream().map(FavoriteBo::new).
-                map((x)->{x.setSkuSimpleVo(new GoodsSkuSimpleVo(getSku(x.getGoodsSkuId())));return x;}).
+                map((x)->{x.setSkuSimpleVo(new GoodsSkuSimpleVo(iGoodsService.getSku(x.getGoodsSkuId())));return x;}).
                 collect(Collectors.toList());
         PageInfo<FavouriteGoodsPo> favoritesPoPage = PageInfo.of(favoritesPos);
         PageInfo<VoObject> favoritesPage = new PageInfo<>(ret);
