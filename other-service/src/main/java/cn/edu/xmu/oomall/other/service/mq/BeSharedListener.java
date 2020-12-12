@@ -1,8 +1,8 @@
 package cn.edu.xmu.oomall.other.service.mq;
 
 import cn.edu.xmu.ooad.util.JacksonUtil;
+import cn.edu.xmu.oomall.dto.ShareDTO;
 import cn.edu.xmu.oomall.other.dao.ShareDao;
-import cn.edu.xmu.oomall.dto.BeSharedDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
@@ -27,8 +27,8 @@ public class BeSharedListener implements RocketMQListener<String>, RocketMQPushC
     private RocketMQTemplate rocketMQTemplate;
     @Override
     public void onMessage(String s) {
-        BeSharedDTO beSharedDTO= JacksonUtil.toObj(s,BeSharedDTO.class);
-        BeSharedDTO ret=shareDao.getFirstBeShared(beSharedDTO.getCustomId(), beSharedDTO.getSkuId(), beSharedDTO.getOrderItemId());
+        ShareDTO shareDTO= JacksonUtil.toObj(s,ShareDTO.class);
+        ShareDTO ret=shareDao.getFirstBeShared(shareDTO.getCustomerId(), shareDTO.getSkuId(), shareDTO.getOrderItemId());
         String message=JacksonUtil.toJson(ret);
         rocketMQTemplate.sendOneWay("orderItem-topic",message);
     }

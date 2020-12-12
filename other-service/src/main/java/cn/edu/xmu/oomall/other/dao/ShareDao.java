@@ -3,13 +3,14 @@ package cn.edu.xmu.oomall.other.dao;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
-import cn.edu.xmu.oomall.dto.BeSharedDTO;
+import cn.edu.xmu.oomall.dto.ShareDTO;
 import cn.edu.xmu.oomall.other.mapper.BeSharePoMapper;
 import cn.edu.xmu.oomall.other.mapper.ShareActivityPoMapper;
 import cn.edu.xmu.oomall.other.mapper.SharePoMapper;
 import cn.edu.xmu.oomall.other.model.bo.ShareActivityBo;
 import cn.edu.xmu.oomall.other.model.po.*;
 import com.github.pagehelper.PageInfo;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +38,31 @@ public class ShareDao {
     @Autowired
     SharePoMapper sharePoMapper;
 
+    @Autowired
+    RocketMQTemplate rocketMQTemplate;
+
     private Byte offline = 0;
 
     private Byte online = 1;
 
+    public boolean createBeShare(Long customerId,Long skuId,Long shareId){
+        SharePoExample example=new SharePoExample();
+        SharePoExample.Criteria criteria=example.createCriteria();
+        criteria.andGoodsSkuIdEqualTo(skuId);
+        criteria.andIdEqualTo(shareId);
+        List<SharePo> sharePos=sharePoMapper.selectByExample(example);
+        if(sharePos.size()==0)return false;
+        SharePo sharePo=sharePos.get(0);
+        BeSharePo beSharePo=new BeSharePo();
+        beSharePo.setCustomerId(customerId);
+        beSharePo.setGmtCreate(LocalDateTime.now());
+        beSharePo.setGoodsSkuId(skuId);
+        beSharePo.setShareActivityId(sharePo.getShareActivityId());
+        beSharePo.setShareId(sharePo.getId());
+        beSharePo.setSharerId(sharePo.getSharerId());
+        beSharePoMapper.insertSelective(beSharePo);
+        return true;
+    }
     public PageInfo<BeSharePo> findBeShare(Long userId, Long shopId, Long skuId, LocalDateTime beginTime, LocalDateTime endTime) {
         BeSharePoExample example=new BeSharePoExample();
         BeSharePoExample.Criteria criteria= example.createCriteria();
@@ -92,7 +114,7 @@ public class ShareDao {
         return new PageInfo<>(sharePos);
     }
     /*在下单时查找第一个有效的分享成功记录*/
-    public BeSharedDTO getFirstBeShared(Long customerId, Long skuId, Long orderItemId) {
+    public ShareDTO getFirstBeShared(Long customerId, Long skuId, Long orderItemId) {
         BeSharePoExample example=new BeSharePoExample();
         BeSharePoExample.Criteria criteria=example.createCriteria();
         criteria.andCustomerIdEqualTo(customerId);
@@ -102,7 +124,7 @@ public class ShareDao {
         BeSharePo po=beSharePos.get(0);
         po.setOrderId(orderItemId);
         beSharePoMapper.updateByPrimaryKey(po);
-        return new BeSharedDTO(po.getOrderId(), po.getGoodsSkuId(),po.getId(),po.getCustomerId());
+        return new ShareDTO(po.getOrderId(),po.getCustomerId(),po.getGoodsSkuId(),po.getId());
     }
 
     public ShareActivityBo getShareActivityById(Long id){
