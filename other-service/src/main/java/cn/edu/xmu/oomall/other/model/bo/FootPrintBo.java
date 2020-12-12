@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.other.model.bo;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.other.model.po.FootPrintPo;
 import cn.edu.xmu.oomall.other.model.vo.FootPrint.FootPrintVo;
+import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -15,28 +16,26 @@ import java.time.LocalDateTime;
 public class FootPrintBo implements VoObject {
     private Long id;
     private Long customerId;
-    private Long goodSkuId;
+    private Long skuId;
+    private GoodsSkuSimpleVo goodsRetVo;
     private LocalDateTime gmtCreate;
-    private LocalDateTime gmtModified;
-
     public FootPrintBo(){}
-
-    public FootPrintBo(FootPrintPo footPrintPo){
-        this.id=footPrintPo.getId();
-        this.customerId=footPrintPo.getCustomerId();
-        this.goodSkuId=footPrintPo.getGoodsSkuId();
-        this.gmtCreate=footPrintPo.getGmtCreate();
-        this.gmtModified=footPrintPo.getGmtModified();
+    public FootPrintBo(FootPrintPo po)
+    {
+        this.setId(po.getId());
+        this.setSkuId(po.getGoodsSkuId());
+        this.setCustomerId(po.getCustomerId());
+        this.setGmtCreate(po.getGmtCreate());
     }
     @Override
     public Object createVo() {
-        FootPrintVo footPrintVo = new FootPrintVo();
-        footPrintVo.setGoodSkuID(this.goodSkuId);
-        return footPrintVo;
+        return  null;
     }
 
     @Override
     public Object createSimpleVo() {
         return null;
     }
+
+
 }

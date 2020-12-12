@@ -65,6 +65,22 @@ public class RegionBo implements VoObject {
     public Object createSimpleVo() {
         return null;
     }
+
+    public RegionBo()
+    {
+
+    }
+
+
+    public RegionBo(RegionPo po)
+    {
+        this.setId(po.getId());
+        this.setPid(po.getPid());
+        this.setState(State.getTypeByCode(po.getState().intValue()));
+        this.setGmtCreate(po.getGmtCreate());
+        this.setGmtModified(po.getGmtModified());
+    }
+
     /**
      * 用vo对象创建更新po对象
      * @param vo vo对象
@@ -86,7 +102,7 @@ public class RegionBo implements VoObject {
     /**
      * 用bo对象创建更新po对象
      *
-     * @return RolePo
+     * @return RegionPo
      */
     public RegionPo gotRegionPo()
     {

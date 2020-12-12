@@ -18,9 +18,5 @@ public class FootPrintVo {
     @ApiModelProperty(name = "goodSkuID", value = "0")
     private Long goodSkuID;
 
-    public FootPrintBo createBo(){
-        FootPrintBo footPrintBo=new FootPrintBo();
-        footPrintBo.setGoodSkuId(this.goodSkuID);
-        return footPrintBo;
-    }
+
 }
