@@ -20,7 +20,6 @@ public class AftersaleVo {
     @ApiModelProperty(name = "订单明细ID", value = "坏了")
     private Long id;
 
-    @Pattern(regexp = "", message = "换货/退货")
     @ApiModelProperty(name = "售后类别", value = "0")
     private Integer type;
 

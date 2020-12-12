@@ -12,10 +12,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class AftersaleSendbackVo {
     @NotBlank
-    @ApiModelProperty(name = "售后单ID", value = "001")
-    private Long id;
-
-    @NotBlank
     @ApiModelProperty(name = "运单号", value = "002")
     private String logsn;
 }

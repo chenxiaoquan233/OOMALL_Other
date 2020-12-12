@@ -3,7 +3,10 @@ package cn.edu.xmu.oomall.other.model.bo;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.other.model.po.AftersalePo;
 import cn.edu.xmu.oomall.other.model.vo.Aftersale.AftersaleRetVo;
+import com.alibaba.druid.filter.AutoLoad;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -15,6 +18,8 @@ import java.util.Map;
  * @version 创建时间：2020/12/3 下午15:16
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AftersaleBo implements VoObject {
     /**
      * 售后类型
@@ -115,6 +120,16 @@ public class AftersaleBo implements VoObject {
     @Override
     public Object createSimpleVo() {
         return null;
+    }
+
+    /**
+     * TODO not finished
+     * @param po
+     */
+    public AftersaleBo(AftersalePo po) {
+        this.customerId = po.getCustomerId();
+        po.getBeDeleted();
+        po.getConclusion();
     }
 
     public AftersalePo createPo() {

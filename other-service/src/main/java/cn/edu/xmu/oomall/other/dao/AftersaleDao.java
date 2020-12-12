@@ -2,6 +2,8 @@ package cn.edu.xmu.oomall.other.dao;
 
 import cn.edu.xmu.oomall.other.mapper.AftersalePoMapper;
 import cn.edu.xmu.oomall.other.model.po.AftersalePo;
+import cn.edu.xmu.oomall.other.model.po.AftersalePoExample;
+import cn.edu.xmu.oomall.other.model.vo.Aftersale.AftersaleModifyVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,5 +40,13 @@ public class AftersaleDao {
             Integer type,
             Integer state) {
         return null;
+    }
+
+    public AftersalePo getAftersaleById(Long id) {
+        return aftersalePoMapper.selectByPrimaryKey(id);
+    }
+
+    public Integer updateAftersale(AftersalePo po) {
+        return aftersalePoMapper.updateByPrimaryKeySelective(po);
     }
 }

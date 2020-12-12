@@ -1,16 +1,22 @@
 package cn.edu.xmu.oomall.other.controller;
 
 import cn.edu.xmu.ooad.annotation.Audit;
+import cn.edu.xmu.ooad.annotation.Depart;
 import cn.edu.xmu.ooad.annotation.LoginUser;
-import cn.edu.xmu.oomall.other.model.vo.Aftersale.AftersaleRetVo;
-import cn.edu.xmu.oomall.other.model.vo.Aftersale.AftersaleVo;
+import cn.edu.xmu.ooad.util.Common;
+import cn.edu.xmu.ooad.util.ResponseCode;
+import cn.edu.xmu.ooad.util.ResponseUtil;
+import cn.edu.xmu.oomall.other.model.vo.Aftersale.*;
 import cn.edu.xmu.oomall.other.service.AfterSaleService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -56,7 +62,7 @@ public class AfterSaleController {
     })
     @Audit
     @PostMapping("/orderItems/{id}aftersales")
-    public Object createAfterSale(@RequestBody AftersaleVo vo, @PathVariable("id") Long orderItemId) {
+    public Object createAfterSale(@Validated @RequestBody AftersaleVo vo, @PathVariable("id") Long orderItemId) {
         return null;
     }
 
@@ -98,48 +104,259 @@ public class AfterSaleController {
         return null;
     }
 
-    @GetMapping("/aftersales{id}")
-    public Object getAfterSaleById() {
-        return null;
+    @ApiOperation(value = "买家根据售后单id查询售后单信息", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String",  name = "authorization", value = "用户token",    required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Integer", name = "id",         value = "售后单id")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @Audit
+    @GetMapping("/aftersales/{id}")
+    public Object getAfterSaleById(@LoginUser Long userId, @PathVariable("id") Long aftersaleId) {
+        Object object = afterSaleService.getAftersaleById(userId, aftersaleId);
+
+        if(object.equals(ResponseCode.RESOURCE_ID_NOTEXIST))
+        {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail((ResponseCode) object);
+        }
+        if(object.equals(ResponseCode.RESOURCE_ID_OUTSCOPE))
+            return ResponseUtil.fail((ResponseCode) object, ((ResponseCode) object).getMessage());
+        return object;
     }
 
+    @ApiOperation(value = "买家修改售后单信息", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String",            name = "authorization", value = "用户token",    required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Integer",           name = "id",            value = "售后单id",     required = true),
+            @ApiImplicitParam(paramType = "body",   dataType = "AftersaleModifyVo", name = "body", value = "买家可修改的信息：地址，售后商品的数量，申请售后的原因，联系人以及联系电话", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @Audit
     @PutMapping("/aftersales/{id}")
-    public Object modifyAfterSaleById() {
-        return null;
+    public Object modifyAfterSaleById(@LoginUser Long userId, @PathVariable("id") Long aftersaleId, @Validated AftersaleModifyVo vo) {
+        ResponseCode responseCode = afterSaleService.modifyAftersaleById(userId, aftersaleId, vo);
+
+        if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail(responseCode);
+        }
+        return ResponseUtil.ok(responseCode);
     }
 
+    @ApiOperation(value = "买家填写售后的运单信息", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String",              name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Integer",             name = "id",            value = "售后单id",  required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @Audit
     @DeleteMapping("/aftersales/{id}")
-    public Object deleteAfterSaleById() {
+    public Object deleteAftersaleById(@LoginUser Long userId, @PathVariable("id") Long id) {
+        ResponseCode responseCode = afterSaleService.deleteAftersaleById(userId, id);
         return null;
     }
 
+    @ApiOperation(value = "买家填写售后的运单信息", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String",              name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Integer",             name = "id",            value = "售后单id",  required = true),
+            @ApiImplicitParam(paramType = "body",   dataType = "AftersaleSendbackVo", name = "body",          value = "运单号",  required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @Audit
     @PutMapping("/aftersales/{id}/sendback")
-    public Object addWayBillNumber() {
-        return null;
+    public Object addWayBillNumber(@LoginUser Long userId, @PathVariable("id") Long id, @Validated @RequestBody AftersaleSendbackVo vo, BindingResult bindingResult) {
+        Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if(null != object) {
+            logger.debug("Validate failed");
+            logger.debug("UserSignUpVo:" + vo);
+
+            return object;
+        }
+
+        ResponseCode responseCode = afterSaleService.addWayBillNumber(userId, id, vo.getLogsn());
+
+        if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail(responseCode);
+        }
+        return ResponseUtil.ok(responseCode);
     }
 
+    @ApiOperation(value = "买家确认售后单结束", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String",             name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Integer",            name = "id",            value = "售后单id",  required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @Audit
     @PutMapping("/aftersales/{id}/confirm")
-    public Object confirmAfterSaleEnd() {
-        return null;
+    public Object confirmAftersaleEnd(@LoginUser Long userId, @PathVariable("id") Long id) {
+        ResponseCode responseCode = afterSaleService.confirmAftersaleEnd(userId, id);
+
+        if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail(responseCode);
+        }
+        return ResponseUtil.ok(responseCode);
     }
 
+    @ApiOperation(value = "管理员根据售后单id查询售后单信息", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String",             name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Integer",            name = "shopId",        value = "店铺id",    required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Integer",            name = "id",            value = "售后单id",  required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @Audit
     @GetMapping("/shops/{shopId}/aftersales/{id}")
-    public Object adminGetAfterSaleById() {
-        return null;
+    public Object adminGetAfterSaleById(@LoginUser Long userId, @Depart Long did, @PathVariable("shopId") Long shopId, @PathVariable("id") Long id) {
+        if(!did.equals(shopId)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
+        }
+
+        Object object = afterSaleService.adminGetAftersaleById(shopId, id);
+        if(object.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail((ResponseCode) object);
+        }
+        return ResponseUtil.ok(object);
     }
 
+    @ApiOperation(value = "管理员同意/不同意（退款，换货，维修）", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String",             name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Integer",            name = "shopId",        value = "店铺id",    required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Integer",            name = "id",            value = "售后单id",  required = true),
+            @ApiImplicitParam(paramType = "body",   dataType = "AftersaleConfirmVo", name = "body",          value = "处理意见",    required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @Audit
     @PutMapping("/shops/{shopId}/aftersales/{id}/confirm")
-    public Object adminConfirmAfterSale() {
-        return null;
+    public Object adminConfirmAfterSale(
+            @LoginUser Long userId,
+            @Depart Long did,
+            @PathVariable("shopId") Long shopId,
+            @PathVariable("id") Long id,
+            @RequestBody AftersaleConfirmVo vo,
+            BindingResult bindingResult) {
+        Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if(null != object) {
+            logger.debug("Validate failed");
+            logger.debug("UserSignUpVo:" + vo);
+
+            return object;
+        }
+
+        if(!did.equals(shopId)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
+        }
+
+        ResponseCode responseCode = afterSaleService.adminConfirm(id, shopId, vo);
+
+        if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail(responseCode);
+        }
+        return ResponseUtil.ok(responseCode);
     }
 
+    @ApiOperation(value = "店家确认收到买家的退（换）货", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String",             name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Integer",            name = "shopId",        value = "店铺id",    required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Integer",            name = "id",            value = "售后单id",  required = true),
+            @ApiImplicitParam(paramType = "body",   dataType = "AftersaleReceiveVo", name = "body",          value = "处理意见",    required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @Audit
     @PutMapping("/shops/{shopId}/aftersales/{id}/receive")
-    public Object adminReceive() {
-        return null;
+    public Object adminReceive(
+            @LoginUser Long userId,
+            @Depart Long did,
+            @PathVariable("shopId") Long shopId,
+            @PathVariable("id") Long id,
+            @RequestBody AftersaleReceiveVo vo,
+            BindingResult bindingResult) {
+        Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if(null != object) {
+            logger.debug("Validate failed");
+            logger.debug("UserSignUpVo:" + vo);
+
+            return object;
+        }
+
+        if(!did.equals(shopId)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
+        }
+
+        ResponseCode responseCode = afterSaleService.adminReceive(id, shopId, vo);
+
+        if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail(responseCode);
+        }
+        return ResponseUtil.ok(responseCode);
     }
 
+    @ApiOperation(value = "店家寄出维修好的货物", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String",             name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Integer",            name = "shopId",        value = "店铺id",    required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Integer",            name = "id",            value = "售后单id",  required = true),
+            @ApiImplicitParam(paramType = "body",   dataType = "AftersaleDeliverVo", name = "body",          value = "运单号",    required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @Audit
     @PutMapping("/shops/{shopId}/aftersales/{id}/deliver")
-    public Object adminDeliver() {
-        return null;
+    public Object adminDeliver(
+            @LoginUser Long userId,
+            @Depart Long did,
+            @PathVariable("shopId") Long shopId,
+            @PathVariable("id") Long id,
+            @Validated @RequestBody AftersaleDeliverVo vo,
+            BindingResult bindingResult) {
+        Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if(null != object) {
+            logger.debug("Validate failed");
+            logger.debug("UserSignUpVo:" + vo);
+
+            return object;
+        }
+
+        if(!did.equals(shopId)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
+        }
+
+        ResponseCode responseCode = afterSaleService.adminDeliver(id, shopId, vo.getLogSn());
+
+        if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail(responseCode);
+        }
+        return ResponseUtil.ok(responseCode);
     }
 }
