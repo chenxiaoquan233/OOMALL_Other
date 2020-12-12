@@ -1,9 +1,14 @@
 package cn.edu.xmu.oomall.other.controller;
 
 import cn.edu.xmu.ooad.annotation.LoginUser;
+import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.Common;
+import cn.edu.xmu.ooad.util.ResponseCode;
+import cn.edu.xmu.ooad.util.ResponseUtil;
+import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.model.vo.TimeSegment.TimeSegmentVo;
 import cn.edu.xmu.oomall.other.service.TimeSegmentService;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,14 +36,15 @@ public class TimeSegmentController {
     @ApiOperation(value = "平台管理员新增广告时间段", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String",         name = "authorization", value = "用户token", required = true),
-            @ApiImplicitParam(paramType = "body",   dataType = "timeSegmentVo", name = "vo",            value = "起止时间",  required = true)
+            @ApiImplicitParam(paramType = "body",   dataType = "timeSegmentVo",  name = "vo",            value = "起止时间",  required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Long",           name = "did",           value = "店ID")
     })
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功"),
             @ApiResponse(code = 604, message = "时段冲突")
     })
-    @PostMapping("/advertisement/timesegments")
-    public Object addAdsTimeSegment(@LoginUser Long userId, @RequestBody TimeSegmentVo timeSegmentVo) {
+    @PostMapping("/shops/{did}/advertisement/timesegments")
+    public Object addAdsTimeSegment(@LoginUser Long userId, @RequestBody TimeSegmentVo timeSegmentVo,@PathVariable("did") Long shopId) {
         return Common.getRetObject(timeSegmentService.addAdsSegment(timeSegmentVo));
     }
 
@@ -46,41 +52,85 @@ public class TimeSegmentController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String",  name = "authorization", value = "用户token", required = true),
             @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "page",          value = "页码"),
-            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "pageSize",      value = "每页数目")
+            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "pageSize",      value = "每页数目"),
+            @ApiImplicitParam(paramType = "path",   dataType = "Long",           name = "did",           value = "店ID")
     })
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @GetMapping("/advertisement/timesegments")
-    public Object getAllAdsTimeSegment() {
-        return null;
+    @GetMapping("/shops/{did}/advertisement/timesegments")
+    public Object getAllAdsTimeSegment(@LoginUser Long userId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize,@PathVariable("did") Long shopId) {
+        ReturnObject<PageInfo<VoObject>> returnObject = timeSegmentService.getAdsSegments(page==null?1:page, pageSize==null?10:pageSize);
+        return Common.getPageRetObject(returnObject);
     }
 
     @ApiOperation(value = "平台管理员新增秒杀时间段", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String",         name = "authorization", value = "用户token", required = true),
-            @ApiImplicitParam(paramType = "body",   dataType = "timeSegmentVo", name = "vo",            value = "起止时间",  required = true)
+            @ApiImplicitParam(paramType = "body",   dataType = "timeSegmentVo", name = "vo",            value = "起止时间",  required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Long",           name = "did",           value = "店ID")
     })
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功"),
             @ApiResponse(code = 604, message = "时段冲突")
     })
-    @PostMapping("/flashsale/timesegments")
-    public Object addFlashsaleTimeSegment() {
-        return null;
+    @PostMapping("/shops/{did}/flashsale/timesegments")
+    public Object addFlashsaleTimeSegment(@LoginUser Long userId, @RequestBody TimeSegmentVo timeSegmentVo, @PathVariable("did") Long shopId) {
+        return Common.getRetObject(timeSegmentService.addAdsSegment(timeSegmentVo));
     }
 
     @ApiOperation(value = "管理员获取秒杀时间段列表", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String",  name = "authorization", value = "用户token", required = true),
             @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "page",          value = "页码"),
-            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "pageSize",      value = "每页数目")
+            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "pageSize",      value = "每页数目"),
+            @ApiImplicitParam(paramType = "path",   dataType = "Long",           name = "did",           value = "店ID")
     })
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @GetMapping("/flashsale/timesegments")
-    public Object getAllFlashTimeSegment() {
-        return null;
+    @GetMapping("/shops/{did}/flashsale/timesegments")
+    public Object getAllFlashTimeSegment(@LoginUser Long userId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize,@PathVariable("did") Long shopId) {
+        ReturnObject<PageInfo<VoObject>> returnObject = timeSegmentService.getFlashSaleSegments(page==null?1:page, pageSize==null?10:pageSize);
+        return Common.getPageRetObject(returnObject);
+    }
+
+    @ApiOperation(value="平台管理员删除广告时间段", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String",name="authorization",value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path", dataType = "Long", name = "did",value = "店ID"),
+            @ApiImplicitParam(paramType = "path", dataType = "Long", name = "id", value = "时段id")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @DeleteMapping("/shops/{did}/advertisement/timesegments/{id}")
+    public Object deleteAdsSegmentById(@LoginUser Long userId ,@PathVariable("did") Long shopId,@PathVariable("id") Long timeSegId){
+        ResponseCode responseCode = timeSegmentService.deleteAdsSegmentById(timeSegId);
+        if(responseCode.equals(ResponseCode.OK)){
+            return ResponseUtil.ok();
+        }else{
+            return ResponseUtil.fail(responseCode);
+        }
+    }
+
+
+    @ApiOperation(value="平台管理员删除秒杀时间段", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String",name="authorization",value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path", dataType = "Long", name = "did",value = "店ID"),
+            @ApiImplicitParam(paramType = "path", dataType = "Long", name = "id", value = "时段id")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @DeleteMapping("/shops/{did}/flashsale/timesegments/{id}")
+    public Object deleteFlashSaleSegmentById(@LoginUser Long userId ,@PathVariable("did") Long shopId,@PathVariable("id") Long timeSegId){
+        ResponseCode responseCode = timeSegmentService.deleteFlashSaleSegmentById(timeSegId);
+        if(responseCode.equals(ResponseCode.OK)){
+            return ResponseUtil.ok();
+        }else{
+            return ResponseUtil.fail(responseCode);
+        }
     }
 }

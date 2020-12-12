@@ -14,6 +14,7 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 
@@ -46,8 +47,8 @@ public class ShoppingCartController {
     })
     @Audit
     @GetMapping
-    public Object getCarts(@LoginUser Long UserId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
-        ReturnObject<PageInfo<VoObject>> returnObject = shoppingCartService.getCarts(UserId,page==null?1:page, pageSize==null?10:pageSize);
+    public Object getCarts(@LoginUser Long UserId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
+        ReturnObject<PageInfo<VoObject>> returnObject = shoppingCartService.getCarts(UserId,page, pageSize);
         return Common.getPageRetObject(returnObject);
     }
 
@@ -93,8 +94,10 @@ public class ShoppingCartController {
         ResponseCode responseCode = shoppingCartService.deleteCart(UserId,id);
         if(responseCode.equals(ResponseCode.OK)){
             return ResponseUtil.ok();
-        } else {
-            return ResponseUtil.fail(responseCode);
+        }
+        else {
+                httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                return ResponseUtil.fail(ResponseCode.OK,"您没有该购物车项");
         }
     }
 
@@ -113,8 +116,14 @@ public class ShoppingCartController {
     })
     @Audit
     @PostMapping
-    public Object addToCart(@LoginUser Long UserId,@RequestBody ShoppingCartVo vo) {
-        return null;
+    public Object addToCart(@LoginUser Long UserId,@RequestBody(required = true) ShoppingCartVo vo) {
+        Object ret=shoppingCartService.addCart(UserId,vo.getGoodsSkuId(),vo.getQuantity());
+        if(ret==null)
+        {
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(ResponseCode.OK,"没有该sku存在");
+        }
+        return ret;
     }
 
     /***
@@ -133,8 +142,18 @@ public class ShoppingCartController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @Audit
-    @PutMapping
+    @PutMapping("/{id}")
     public Object changeCartInfo(@LoginUser Long UserId, @PathVariable("id") Long id, @RequestBody ShoppingCartVo vo) {
-        return null;
+        ResponseCode ret=shoppingCartService.modifyCart(UserId,id,vo.getGoodsSkuId(),vo.getQuantity());
+        if(ret==null){
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(ResponseCode.OK,"没有该sku存在");
+        }
+        if(ret.equals(ResponseCode.OK)){
+            return ResponseUtil.ok();
+        } else {
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(ResponseCode.OK,"您没有该购物车项");
+        }
     }
 }

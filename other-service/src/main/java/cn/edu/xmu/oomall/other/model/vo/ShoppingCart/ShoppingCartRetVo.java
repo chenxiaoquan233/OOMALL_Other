@@ -19,5 +19,5 @@ public class ShoppingCartRetVo {
     private Integer quantity;
     private LocalDateTime addTime;
     private Long price;     //? history or now
-    private List<VoObject> couponActivity; //dispatch goods module
+    private List<Object> couponActivity; //dispatch goods module
 }

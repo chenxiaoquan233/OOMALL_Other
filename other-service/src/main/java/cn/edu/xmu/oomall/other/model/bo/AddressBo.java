@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 public class AddressBo implements VoObject {
     private Long id;
 
+    private Long customerId;
+
     private Long regionId;
 
     private String detail;
@@ -43,28 +45,10 @@ public class AddressBo implements VoObject {
     }
 
     /**
-     * 用vo对象创建更新po对象
-     * @param vo vo对象
+     * 用bo对象创建po对象
      * @return po对象
      */
-    public AddressPo createUpdatePo(AddressVo vo)
-    {
-        AddressPo po = new AddressPo();
-        po.setId(this.getId());
-        po.setRegionId(vo.getRegionId());
-        po.setDetail(vo.getDetail());
-        po.setConsignee(vo.getConsignee());
-        po.setMobile(vo.getMobile());
-        po.setBeDefault((byte)(this.getBeDefault()?1:0));
-        po.setGmtCreate(null);
-        po.setGmtModified(LocalDateTime.now());
-        return po;
-    }
-    /**
-     * 用bo对象创建更新po对象
-     * @return AddressPo
-     */
-    public AddressPo gotAddressPo()
+    public AddressPo getAddressPo()
     {
         AddressPo po = new AddressPo();
         po.setId(this.getId());
@@ -73,10 +57,26 @@ public class AddressBo implements VoObject {
         po.setConsignee(this.getConsignee());
         po.setMobile(this.getMobile());
         po.setBeDefault((byte)(this.getBeDefault()?1:0));
-        po.setGmtCreate(this.getGmtCreate());
-        po.setGmtModified(this.getGmtModified());
+        po.setGmtCreate(null);
+        po.setGmtModified(LocalDateTime.now());
         return po;
     }
+    public AddressBo(AddressPo po)
+    {
+        this.setId(po.getId());
+        this.setRegionId(po.getRegionId());
+        this.setDetail(po.getDetail());
+        this.setConsignee(po.getConsignee());
+        this.setMobile(po.getMobile());
+        this.setGmtCreate(po.getGmtCreate());
+        this.setGmtModified(po.getGmtModified());
+    }
+
+    public AddressBo()
+    {
+
+    }
+
 
 
 }

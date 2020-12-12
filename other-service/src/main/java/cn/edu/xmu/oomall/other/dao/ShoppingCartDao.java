@@ -10,12 +10,16 @@ import cn.edu.xmu.oomall.other.model.bo.ShoppingCartBo;
 import cn.edu.xmu.oomall.other.model.po.FavouriteGoodsPo;
 import cn.edu.xmu.oomall.other.model.po.ShoppingCartPo;
 import cn.edu.xmu.oomall.other.model.po.ShoppingCartPoExample;
+import cn.xmu.edu.goods.client.IGoodsService;
 import com.github.pagehelper.PageInfo;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import cn.edu.xmu.ooad.util.ReturnObject;
@@ -33,6 +37,7 @@ public class ShoppingCartDao {
 
     @Autowired
     private ShoppingCartPoMapper shoppingCartPoMapper;
+
 
     public ResponseCode clearCart(Long userId){
         ShoppingCartPoExample shoppingCartPoExample=new ShoppingCartPoExample();
@@ -56,7 +61,15 @@ public class ShoppingCartDao {
         else return ResponseCode.INTERNAL_SERVER_ERR;
     }
 
-    public ReturnObject<PageInfo<VoObject>> getCartByUserId(Long userId, Integer page, Integer pageSize){
+    public void deleteCartByCustomerAndSku(Long userId,Long skuId){
+        ShoppingCartPoExample example=new ShoppingCartPoExample();
+        ShoppingCartPoExample.Criteria criteria=example.createCriteria();
+        criteria.andCustomerIdEqualTo(userId);
+        criteria.andGoodsSkuIdEqualTo(skuId);
+        shoppingCartPoMapper.deleteByExample(example);
+    }
+
+    public List<ShoppingCartPo> getCartByUserId(Long userId, Integer page, Integer pageSize){
         ShoppingCartPoExample shoppingCartPoExample=new ShoppingCartPoExample();
         ShoppingCartPoExample.Criteria criteria=shoppingCartPoExample.createCriteria();
         criteria.andCustomerIdEqualTo(userId);
@@ -66,23 +79,36 @@ public class ShoppingCartDao {
             cartPos = shoppingCartPoMapper.selectByExample(shoppingCartPoExample);
         }catch (DataAccessException e){
             logger.error("findCarts: DataAccessException:" + e.getMessage());
-            return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
+            return null;
         }
-        List<VoObject> ret = cartPos.stream().map(ShoppingCartBo::new).collect(Collectors.toList());
-        PageInfo<ShoppingCartPo> cartPoPage = PageInfo.of(cartPos);
-        PageInfo<VoObject> cartPage = new PageInfo<>(ret);
-        cartPage.setPages(cartPoPage.getPages());
-        cartPage.setPageNum(cartPoPage.getPageNum());
-        cartPage.setPageSize(cartPoPage.getPageSize());
-        cartPage.setTotal(cartPoPage.getTotal());
-        return new ReturnObject<>(cartPage);
+        return cartPos;
     }
 
-    public ReturnObject addCart(Long userId, Long goodsSkuId,Integer quantity,Long price){
-        return null;
+    public ShoppingCartPo addCart(Long userId, Long goodsSkuId,Integer quantity,Long price){
+
+        ShoppingCartPo po=new ShoppingCartPo();
+        po.setCustomerId(userId);
+        po.setGoodsSkuId(goodsSkuId);
+        po.setQuantity(quantity);
+        po.setPrice(price);
+        po.setGmtCreate(LocalDateTime.now());
+        shoppingCartPoMapper.insertSelective(po);
+        return po;
     }
 
-    public ReturnObject modifyCart(Long id, Long goodsSkuId,Integer quantity,Long price){
-        return null;
+    public ResponseCode modifyCart(Long cartId, Long userId, Long goodsSkuId,Integer quantity,Long price){
+        ShoppingCartPo po=new ShoppingCartPo();
+        po.setGoodsSkuId(goodsSkuId);
+        po.setQuantity(quantity);
+        po.setPrice(price);
+        po.setGmtModified(LocalDateTime.now());
+        ShoppingCartPoExample example=new ShoppingCartPoExample();
+        ShoppingCartPoExample.Criteria criteria=example.createCriteria();
+        criteria.andIdEqualTo(cartId);
+        criteria.andCustomerIdEqualTo(userId);
+        int ret=shoppingCartPoMapper.updateByExampleSelective(po,example);
+        if(ret==1)
+         return ResponseCode.OK;
+        else return ResponseCode.AUTH_ID_NOTEXIST;
     }
 }
