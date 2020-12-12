@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class TimeSegmentService {
-    private static final Logger logger = LoggerFactory.getLogger(ShoppingCartService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TimeSegmentService.class);
 
     @Autowired
     private TimeSegmentDao timeSegmentDao;
