@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.other.model.po.ShoppingCartPo;
 import cn.edu.xmu.oomall.other.model.vo.ShoppingCart.ShoppingCartRetVo;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 /**
@@ -19,11 +20,14 @@ public class ShoppingCartBo implements VoObject {
     private Long goodsSkuId;
     private Integer quantity;
     private Long price;
+    private List<Object> couponActivity;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
 
     public ShoppingCartBo(ShoppingCartPo shoppingCartPo){
         this.id=shoppingCartPo.getId();
+        this.gmtCreate=shoppingCartPo.getGmtCreate();
+        this.gmtModified=shoppingCartPo.getGmtModified();
         this.customerId=shoppingCartPo.getCustomerId();
         this.goodsSkuId=shoppingCartPo.getGoodsSkuId();
         this.quantity=shoppingCartPo.getQuantity();
@@ -38,6 +42,7 @@ public class ShoppingCartBo implements VoObject {
         shoppingCartRetVo.setQuantity(this.quantity);
         shoppingCartRetVo.setPrice(this.price);
         shoppingCartRetVo.setAddTime(this.gmtCreate);
+        shoppingCartRetVo.setCouponActivity(this.couponActivity);
         return shoppingCartRetVo;
     }
 

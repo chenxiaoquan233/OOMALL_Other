@@ -1,8 +1,7 @@
 package cn.edu.xmu.oomall.other.service.mq;
 
 import cn.edu.xmu.ooad.util.JacksonUtil;
-import cn.edu.xmu.oomall.other.dao.ShareDao;
-import cn.edu.xmu.oomall.dto.BeSharedDTO;
+import cn.edu.xmu.oomall.other.dao.ShoppingCartDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
@@ -19,18 +18,16 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-@RocketMQMessageListener(topic="beShared-topic",consumerGroup = "share-group")
-public class BeSharedListener implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
+@RocketMQMessageListener(topic="cart-topic",consumerGroup = "cart-group")
+public class DeleteCartListener implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
     @Autowired
-    private ShareDao shareDao;
+    private ShoppingCartDao shoppingCartDao;
     @Autowired
     private RocketMQTemplate rocketMQTemplate;
     @Override
-    public void onMessage(String s) {
-        BeSharedDTO beSharedDTO= JacksonUtil.toObj(s,BeSharedDTO.class);
-        BeSharedDTO ret=shareDao.getFirstBeShared(beSharedDTO.getCustomId(), beSharedDTO.getSkuId(), beSharedDTO.getOrderItemId());
-        String message=JacksonUtil.toJson(ret);
-        rocketMQTemplate.sendOneWay("orderItem-topic",message);
+    public void onMessage(String message) {
+        String [] s=message.split("/");
+        shoppingCartDao.deleteCartByCustomerAndSku(Long.valueOf(s[0]),Long.valueOf(s[1]));
     }
 
     @Override

@@ -164,7 +164,7 @@ public class AftersaleBo implements VoObject {
         vo.setShopId(this.shopId);
         vo.setShopLogSn(this.shopLogSn);
         vo.setState(this.state.getCode().byteValue());
-        //vo.setType(this.type.getCode().byteValue());
+        vo.setType(this.type.getCode().byteValue());
 
         return vo;
     }

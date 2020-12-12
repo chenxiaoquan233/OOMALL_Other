@@ -8,6 +8,8 @@ import cn.edu.xmu.oomall.other.dao.ShareDao;
 import cn.edu.xmu.oomall.other.model.bo.BeSharedBo;
 import cn.edu.xmu.oomall.other.model.bo.ShareActivityBo;
 import cn.edu.xmu.oomall.other.model.bo.ShareBo;
+import cn.edu.xmu.oomall.other.model.po.BeSharePo;
+import cn.edu.xmu.oomall.other.model.po.ShareActivityPo;
 import cn.edu.xmu.oomall.other.model.po.SharePo;
 import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
 import cn.edu.xmu.oomall.other.model.vo.Share.ShareRetVo;
@@ -39,6 +41,14 @@ public class ShareService {
     @Autowired
     private ShareDao shareDao;
 
+    public ResponseCode offlineShareActivity(Long shopId,Long shareActivityId){
+        return shareDao.offlineShareActivity(shopId,shareActivityId);
+    }
+
+    public ResponseCode onlineShareActivity(Long shopId,Long shareActivityId){
+        return shareDao.onlineShareActivity(shopId,shareActivityId);
+    }
+
     public ReturnObject<VoObject> addShareActivity(Long shopId, Long skuId, ShareActivityVo vo){
         ShareActivityBo bo=vo.createBo();
         bo.setState((byte)0);
@@ -46,9 +56,9 @@ public class ShareService {
         bo.setGoodSkuId(skuId);
         return shareDao.insertShareActivity(bo);
     }
-    public ReturnObject<PageInfo<VoObject>> findShares(Long skuId, LocalDateTime beginTime,LocalDateTime endTime,Integer page,Integer pageSize){
+    public ReturnObject<PageInfo<VoObject>> findShares(Long skuId,Long shopId, LocalDateTime beginTime,LocalDateTime endTime,Integer page,Integer pageSize){
         PageHelper.startPage(page,pageSize,true,true,null);
-        PageInfo<SharePo> sharePos=shareDao.findSharesBySkuIdOrTime(skuId,beginTime,endTime);
+        PageInfo<SharePo> sharePos=shareDao.findShares(skuId,shopId,beginTime,endTime);
 
         List<VoObject> shares=sharePos.getList().stream().map(ShareBo::new)
                 .map(shareBo -> {shareBo.setSku(new GoodsSkuSimpleVo(goodsService.getSku(skuId)));return shareBo;
@@ -61,6 +71,41 @@ public class ShareService {
         retObj.setPages(sharePos.getPages());
         return new ReturnObject<>(retObj);
     }
+
+    public ReturnObject<PageInfo<VoObject>> getBeShared(Long userId, Long shopId, Long skuId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize) {
+        PageHelper.startPage(page,pageSize,true,true,null);
+        PageInfo<BeSharePo> beSharePos=shareDao.findBeShare(userId,shopId,skuId,beginTime,endTime);
+
+        List<VoObject> beShares=beSharePos.getList().stream().map(BeSharedBo::new).map(beSharedBo -> {
+            beSharedBo.setSku(new GoodsSkuSimpleVo(goodsService.getSku(skuId)));return beSharedBo;
+        }).collect(Collectors.toList());
+
+        PageInfo<VoObject> retObj=new PageInfo<>(beShares);
+        retObj.setPageNum(beSharePos.getPageNum());
+        retObj.setPageSize(beSharePos.getPageSize());
+        retObj.setTotal(beSharePos.getTotal());
+        retObj.setPages(beSharePos.getPages());
+        return new ReturnObject<>(retObj);
+    }
+    public ReturnObject<PageInfo<VoObject>> getShareActivities(Long shopId, Long skuId, Integer page, Integer pageSize) {
+        PageHelper.startPage(page,pageSize,true,true,null);
+        PageInfo<ShareActivityPo> shareActivityPos=shareDao.findShareActivity(shopId,skuId);
+
+        List<VoObject> shareActivities=shareActivityPos.getList().stream().map(ShareActivityBo::new).collect(Collectors.toList());
+
+        PageInfo<VoObject> retObj=new PageInfo<>(shareActivities);
+        retObj.setPageNum(shareActivityPos.getPageNum());
+        retObj.setPageSize(shareActivityPos.getPageSize());
+        retObj.setTotal(shareActivityPos.getTotal());
+        retObj.setPages(shareActivityPos.getPages());
+        return new ReturnObject<>(retObj);
+    }
+
+    public ResponseCode updateShareActivity(Long shopId, Long shareActivityId, ShareActivityVo vo) {
+        return shareDao.updateShareActivity(shopId,shareActivityId,vo.createBo().createPo());
+    }
+
+
 
 //    public BeSharedBo selectValidFirstBeShared(Long customerId, Long skuId){
 //        /*根据skuId查找当前有效的分享活动*/
