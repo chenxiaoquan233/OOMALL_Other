@@ -38,16 +38,6 @@ public class ShoppingCartDao {
     @Autowired
     private ShoppingCartPoMapper shoppingCartPoMapper;
 
-    @DubboReference(registry = {"provider1"})
-    IGoodsService iGoodsService;
-
-    public Long getPrice(Long skuId){
-        return skuId*10;
-    }
-
-    public List<Object> getCouponActicity(Long goodsSkuId) {
-        return null;
-    }
 
     public ResponseCode clearCart(Long userId){
         ShoppingCartPoExample shoppingCartPoExample=new ShoppingCartPoExample();
@@ -79,7 +69,7 @@ public class ShoppingCartDao {
         shoppingCartPoMapper.deleteByExample(example);
     }
 
-    public ReturnObject<PageInfo<VoObject>> getCartByUserId(Long userId, Integer page, Integer pageSize){
+    public List<ShoppingCartPo> getCartByUserId(Long userId, Integer page, Integer pageSize){
         ShoppingCartPoExample shoppingCartPoExample=new ShoppingCartPoExample();
         ShoppingCartPoExample.Criteria criteria=shoppingCartPoExample.createCriteria();
         criteria.andCustomerIdEqualTo(userId);
@@ -89,24 +79,13 @@ public class ShoppingCartDao {
             cartPos = shoppingCartPoMapper.selectByExample(shoppingCartPoExample);
         }catch (DataAccessException e){
             logger.error("findCarts: DataAccessException:" + e.getMessage());
-            return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
+            return null;
         }
-        List<VoObject> ret = cartPos.stream().map(ShoppingCartBo::new)
-                .map(x->{x.setCouponActivity(getCouponActicity(x.getGoodsSkuId()));return x;})
-                .collect(Collectors.toList());
-        PageInfo<ShoppingCartPo> cartPoPage = PageInfo.of(cartPos);
-        PageInfo<VoObject> cartPage = new PageInfo<>(ret);
-        cartPage.setPages(cartPoPage.getPages());
-        cartPage.setPageNum(cartPoPage.getPageNum());
-        cartPage.setPageSize(cartPoPage.getPageSize());
-        cartPage.setTotal(cartPoPage.getTotal());
-        return new ReturnObject<>(cartPage);
+        return cartPos;
     }
 
-    public ShoppingCartPo addCart(Long userId, Long goodsSkuId,Integer quantity){
-        Long price=getPrice(goodsSkuId);
-        if(price<=0)
-            return null;
+    public ShoppingCartPo addCart(Long userId, Long goodsSkuId,Integer quantity,Long price){
+
         ShoppingCartPo po=new ShoppingCartPo();
         po.setCustomerId(userId);
         po.setGoodsSkuId(goodsSkuId);
@@ -117,10 +96,7 @@ public class ShoppingCartDao {
         return po;
     }
 
-    public ResponseCode modifyCart(Long cartId, Long userId, Long goodsSkuId,Integer quantity){
-        Long price=getPrice(goodsSkuId);
-        if(price<=0)
-            return null;
+    public ResponseCode modifyCart(Long cartId, Long userId, Long goodsSkuId,Integer quantity,Long price){
         ShoppingCartPo po=new ShoppingCartPo();
         po.setGoodsSkuId(goodsSkuId);
         po.setQuantity(quantity);

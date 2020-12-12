@@ -8,13 +8,16 @@ import cn.edu.xmu.oomall.other.dao.UserDao;
 import cn.edu.xmu.oomall.other.model.bo.ShoppingCartBo;
 import cn.edu.xmu.oomall.other.model.po.ShoppingCartPo;
 import cn.edu.xmu.oomall.other.model.vo.ShoppingCart.ShoppingCartRetVo;
+import cn.xmu.edu.goods.client.IGoodsService;
 import com.github.pagehelper.PageInfo;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Jx
@@ -27,6 +30,18 @@ public class ShoppingCartService {
     @Autowired
     private ShoppingCartDao shoppingCartDao;
 
+    @DubboReference(registry = {"provider1"})
+    IGoodsService iGoodsService;
+
+    public Long getPrice(Long skuId){
+        return skuId*10;
+    }
+
+    public List<Object> getCouponActicity(Long goodsSkuId) {
+        return null;
+    }
+
+
     public ResponseCode clearCart(Long userId){
         return shoppingCartDao.clearCart(userId);
     }
@@ -36,19 +51,35 @@ public class ShoppingCartService {
     }
 
     public ReturnObject<PageInfo<VoObject>> getCarts(Long userId, Integer page, Integer pageSize){
-        return shoppingCartDao.getCartByUserId(userId,page,pageSize);
+        List<ShoppingCartPo> cartPos=shoppingCartDao.getCartByUserId(userId,page,pageSize);
+        List<VoObject> ret = cartPos.stream().map(ShoppingCartBo::new)
+                .map(x->{x.setCouponActivity(getCouponActicity(x.getGoodsSkuId()));return x;})
+                .collect(Collectors.toList());
+        PageInfo<ShoppingCartPo> cartPoPage = PageInfo.of(cartPos);
+        PageInfo<VoObject> cartPage = new PageInfo<>(ret);
+        cartPage.setPages(cartPoPage.getPages());
+        cartPage.setPageNum(cartPoPage.getPageNum());
+        cartPage.setPageSize(cartPoPage.getPageSize());
+        cartPage.setTotal(cartPoPage.getTotal());
+        return new ReturnObject<>(cartPage);
     }
 
     public Object addCart(Long userId, Long goodsSkuId, Integer quantity){
-        ShoppingCartPo po=shoppingCartDao.addCart(userId,goodsSkuId,quantity);
+        Long price=getPrice(goodsSkuId);
+        if(price<=0)
+            return null;
+        ShoppingCartPo po=shoppingCartDao.addCart(userId,goodsSkuId,quantity,price);
         if(po==null)
             return null;
         ShoppingCartBo bo=new ShoppingCartBo(po);
-        bo.setCouponActivity(shoppingCartDao.getCouponActicity(goodsSkuId));
+        bo.setCouponActivity(getCouponActicity(goodsSkuId));
         return new ReturnObject<>(bo);
     }
 
     public ResponseCode modifyCart(Long userId, Long cartId,Long goodsSkuId, Integer quantity) {
-        return shoppingCartDao.modifyCart(cartId,userId,goodsSkuId,quantity);
+        Long price=getPrice(goodsSkuId);
+        if(price<=0)
+            return null;
+        return shoppingCartDao.modifyCart(cartId,userId,goodsSkuId,quantity,price);
     }
 }

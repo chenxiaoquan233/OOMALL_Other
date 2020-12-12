@@ -8,26 +8,35 @@ import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.apache.rocketmq.spring.core.RocketMQPushConsumerLifecycleListener;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * 2 * @author: LiangJi3229
- * 3 * @date: 2020/12/11 下午3:28
+ * 2 * @author: JiangXiao
+ * 3 * @date: 2020/12/12 上午8:55
  * 4
  */
 @Slf4j
 @Component
 @RocketMQMessageListener(topic="cart-topic",consumerGroup = "cart-group")
 public class DeleteCartListener implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
+    private static final Logger logger = LoggerFactory.getLogger(DeleteCartListener.class);
     @Autowired
     private ShoppingCartDao shoppingCartDao;
     @Autowired
     private RocketMQTemplate rocketMQTemplate;
     @Override
     public void onMessage(String message) {
-        String [] s=message.split("/");
-        shoppingCartDao.deleteCartByCustomerAndSku(Long.valueOf(s[0]),Long.valueOf(s[1]));
+        try{
+            String [] s=message.split("/");
+            shoppingCartDao.deleteCartByCustomerAndSku(Long.valueOf(s[0]),Long.valueOf(s[1]));
+        }
+        catch (Exception e){
+            logger.error("message from order module is wrong");
+        }
+
     }
 
     @Override
