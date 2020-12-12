@@ -2,6 +2,8 @@ package cn.edu.xmu.oomall.other.controller;
 
 import cn.edu.xmu.ooad.annotation.Audit;
 import cn.edu.xmu.ooad.annotation.LoginUser;
+import cn.edu.xmu.ooad.util.ResponseCode;
+import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseVo;
 import cn.edu.xmu.oomall.other.service.AdvertiseService;
 import cn.edu.xmu.oomall.other.service.AfterSaleService;
@@ -22,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping(value = "/advertisement", produces = "application/json;charset=UTF-8")
 public class AdvertiseController {
-    private static final Logger logger = LoggerFactory.getLogger(AfterSaleController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdvertiseController.class);
 
     @Autowired
     private AdvertiseService advertiseService;
@@ -36,32 +38,36 @@ public class AdvertiseController {
     })
     @GetMapping("/advertisement/states")
     public Object getAdvertisementStates(@LoginUser Long userId){
-        return null;
+          return advertiseService.getAllAdvertisementStates();
     }
 
     @ApiOperation(value = "管理员设置默认广告", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path",   dataType = "Long",           name = "did",           value = "店ID"),
             @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "id", value = "广告id", required = true)
     })
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @PutMapping("/advertisement/{id}/default")
-    public Object setAdvertisementDefaultById(@LoginUser Long user, @PathVariable("id") Integer id){
-        return null;
+    @PutMapping("/shops/{did}/advertisement/{id}/default")
+    public Object setAdvertisementDefaultById(@LoginUser Long user, @PathVariable("did") Integer did, @PathVariable("id") Integer id){
+        ResponseCode responseCode=advertiseService.setAdvertisementDefaultById(did,id);
+        if(responseCode.equals(ResponseCode.OK))
+            return ResponseUtil.ok();
+        else return ResponseUtil.fail(responseCode);
     }
 
     @ApiOperation(value = "管理员修改广告内容", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true),
             @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "id", value = "广告id", required = true),
-            @ApiImplicitParam(paramType = "body",   dataType = "AdvertiseVo", name = "vo",            value = "可修改的广告信息",  required = true)
+            @ApiImplicitParam(paramType = "body",   dataType = "AdvertiseVo", name = "vo",  value = "可修改的广告信息",  required = true)
     })
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @PutMapping("/advertisement/{id}")
+    @PutMapping("/shops/{did}/advertisement/{id}")
     public Object setAdvertisementDefaultById(@LoginUser Long user, @PathVariable("id") Integer id, @RequestBody AdvertiseVo advertiseVo){
         return null;
     }
@@ -74,7 +80,7 @@ public class AdvertiseController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @DeleteMapping("/advertisement/{id}")
+    @DeleteMapping("/shops/{did}/advertisement/{id}")
     public Object deleteAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id){
         return null;
     }
@@ -101,7 +107,7 @@ public class AdvertiseController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @PostMapping("/advertisement/{id}/uploadImg")
+    @PostMapping("/shops/{did}/advertisement/{id}/uploadImg")
     public Object uploadAdvertisementImgById(@LoginUser Long user, @PathVariable("id") Integer id, @RequestParam("img")MultipartFile multipartFile){
         return null;
     }
@@ -117,7 +123,7 @@ public class AdvertiseController {
             @ApiResponse(code = 0,   message = "成功"),
             @ApiResponse(code = 608,   message = "广告状态禁止")
     })
-    @PutMapping("/advertisement/{id}/onshelves")
+    @PutMapping("/shops/{did}/advertisement/{id}/onshelves")
     public Object onshelvesAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id){
         return null;
     }
@@ -132,7 +138,7 @@ public class AdvertiseController {
             @ApiResponse(code = 0,   message = "成功"),
             @ApiResponse(code = 608,   message = "广告状态禁止")
     })
-    @PutMapping("/advertisement/{id}/offshelves")
+    @PutMapping("/shops/{did}/advertisement/{id}/offshelves")
     public Object offshelvesAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id){
         return null;
     }
@@ -147,7 +153,7 @@ public class AdvertiseController {
             @ApiResponse(code = 0,   message = "成功"),
             @ApiResponse(code = 608,   message = "广告状态禁止")
     })
-    @PutMapping("/advertisement/{id}/audit")
+    @PutMapping("/shops/{did}/advertisement/{id}/audit")
     public Object auditAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id){
         return null;
     }
@@ -163,7 +169,7 @@ public class AdvertiseController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @GetMapping("/timesegments/{id}/advertisement")
+    @GetMapping("/shops/{did}/timesegments/{id}/advertisement")
     public Object getAdvertisementsByTimeSegmentId(@LoginUser Long user, @PathVariable("id") Integer id, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize){
         return null;
     }
@@ -180,7 +186,7 @@ public class AdvertiseController {
             @ApiResponse(code = 0,   message = "成功"),
             @ApiResponse(code=603, message="达到时段广告上限")
     })
-    @PostMapping("/timesegments/{id}/advertisement")
+    @PostMapping("/shops/{did}/timesegments/{id}/advertisement")
     public Object createAdvertisementsByTimeSegmentId(@LoginUser Long user, @PathVariable("id") Integer id, @RequestBody AdvertiseVo advertiseVo){
         return null;
     }
@@ -197,7 +203,7 @@ public class AdvertiseController {
             @ApiResponse(code = 0,   message = "成功"),
             @ApiResponse(code=603, message="达到时段广告上限")
     })
-    @PostMapping("/timesegments/{tid}/advertisement/{id}")
+    @PostMapping("/shops/{did}/timesegments/{tid}/advertisement/{id}")
     public Object createAdvertisementsByTimeSegmentId(@LoginUser Long user, @PathVariable("id") String tid, @PathVariable("id") String id){
         return null;
     }
