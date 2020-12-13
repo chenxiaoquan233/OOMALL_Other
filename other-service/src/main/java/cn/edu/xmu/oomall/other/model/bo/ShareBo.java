@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 public class ShareBo implements VoObject {
     private Long id;
     private Long sharerId;
+    private Long skuId;
     private GoodsSkuSimpleVo sku;
     private Integer quantity;
     private LocalDateTime gmtCreate;
@@ -27,6 +28,7 @@ public class ShareBo implements VoObject {
     public ShareBo(SharePo sharePo){
         this.id= sharePo.getId();
         this.sharerId=sharePo.getSharerId();
+        this.skuId=sharePo.getGoodsSkuId();
 //remember to get sku object
         this.quantity= sharePo.getQuantity();
         this.gmtCreate= sharePo.getGmtCreate();

@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @Data
 public class BeSharedBo  implements  VoObject{
     private Long id;
+    private Long skuId;
     private GoodsSkuSimpleVo sku;
     private Long sharerId;
     private Long shareId;
@@ -28,6 +29,7 @@ public class BeSharedBo  implements  VoObject{
 
     public BeSharedBo(BeSharePo po){
         this.id=po.getId();
+        this.skuId=po.getGoodsSkuId();
         this.sharerId=po.getSharerId();
         this.shareId=po.getShareId();
         this.customerId=po.getCustomerId();

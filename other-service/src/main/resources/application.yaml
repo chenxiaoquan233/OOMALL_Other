@@ -103,3 +103,6 @@ rocketmq:
 #pagehelper分页插件配置
 pagehelper:
   helper-dialect: mysql
+
+share-activity:
+  enable-redis: true
