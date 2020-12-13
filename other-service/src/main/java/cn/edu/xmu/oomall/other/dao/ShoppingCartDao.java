@@ -85,7 +85,19 @@ public class ShoppingCartDao {
     }
 
     public ShoppingCartPo addCart(Long userId, Long goodsSkuId,Integer quantity,Long price){
-
+        ShoppingCartPoExample example=new ShoppingCartPoExample();
+        ShoppingCartPoExample.Criteria criteria=example.createCriteria();
+        criteria.andCustomerIdEqualTo(userId);
+        criteria.andGoodsSkuIdEqualTo(goodsSkuId);
+        List<ShoppingCartPo> oldPos=shoppingCartPoMapper.selectByExample(example);
+        if(oldPos!=null&&oldPos.size()>0){
+            ShoppingCartPo po=oldPos.get(0);
+            po.setQuantity(po.getQuantity()+quantity);
+            po.setPrice(price);
+            po.setGmtModified(LocalDateTime.now());
+            shoppingCartPoMapper.updateByPrimaryKeySelective(po);
+            return po;
+        }
         ShoppingCartPo po=new ShoppingCartPo();
         po.setCustomerId(userId);
         po.setGoodsSkuId(goodsSkuId);
