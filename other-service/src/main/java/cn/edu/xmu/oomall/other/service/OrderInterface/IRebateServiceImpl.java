@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.other.service.OrderInterface;
 
 import cn.edu.xmu.oomall.other.dao.UserDao;
+import cn.edu.xmu.oomall.other.impl.IRebateService;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @version 创建时间：2020/12/5 上午12:09
  */
 @DubboService(registry = {"provider1"})
-public class IRebateServiceImpl{
+public class IRebateServiceImpl implements IRebateService {
 
     @Autowired
     private UserDao userDao;
