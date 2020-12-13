@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.impl;
 
 import cn.edu.xmu.oomall.dto.AftersaleDTO;
 import cn.edu.xmu.oomall.dto.EffectiveShareDTO;
+import cn.edu.xmu.oomall.dto.ExchangeOrderDto;
 import cn.edu.xmu.oomall.dto.OrderItemDTO;
 
 import java.util.List;
@@ -66,15 +67,22 @@ public interface IDubboOrderService {
     void checkOrderPaid(Long id, Long amount);
 
     /**
-     * 获取订单的价格(可以被返款的部分)
-     * @param id
-     * @return
+     * 获取订单的定金价格(用于筛选可以被返款的部分)
+     * @param id 订单id
+     * @return  定金价格, 非预售返回 -1
      */
-    Long getOrderCanBeRefundPrice(Long id);
+    Long getOrderPresaleDeposit(Long id);
 
     /**
      * 返回确认收货后七天到八天且未退款的订单项信息
      * @return
      */
     List<EffectiveShareDTO> getEffectiveShareRecord();
+
+    /**
+     * 创建换货订单
+     * @param dto 换货订单所需的信息
+     * @return 成功返回0, 错误返回500
+     */
+    Integer createExchangeOrder(ExchangeOrderDto dto);
 }
