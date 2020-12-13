@@ -14,6 +14,6 @@ public class IBeShareServiceImpl implements IBeShareService {
     ShareDao shareDao;
     @Override
     public boolean createBeShare(Long customerId, Long shareId, Long skuId) {
-        return false;
+        return shareDao.createBeShare(customerId, shareId, skuId);
     }
 }

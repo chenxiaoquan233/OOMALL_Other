@@ -3,6 +3,8 @@ package cn.edu.xmu.oomall.other.service.mq;
 import cn.edu.xmu.ooad.util.JacksonUtil;
 import cn.edu.xmu.oomall.dto.ShareDTO;
 import cn.edu.xmu.oomall.other.dao.ShareDao;
+import cn.edu.xmu.oomall.other.mapper.BeSharePoMapper;
+import cn.edu.xmu.oomall.other.model.po.BeSharePo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
@@ -19,18 +21,14 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-@RocketMQMessageListener(topic="beShared-topic",consumerGroup = "share-group")
-public class BeSharedListener implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
+@RocketMQMessageListener(topic="beShared-topic",consumerGroup = "beshare-group")
+public class CreateBeShareListener implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
     @Autowired
-    private ShareDao shareDao;
-    @Autowired
-    private RocketMQTemplate rocketMQTemplate;
+    private BeSharePoMapper beSharePoMapper;
     @Override
     public void onMessage(String s) {
-        ShareDTO shareDTO= JacksonUtil.toObj(s,ShareDTO.class);
-        ShareDTO ret=shareDao.getFirstBeShared(shareDTO.getCustomerId(), shareDTO.getSkuId(), shareDTO.getOrderItemId());
-        String message=JacksonUtil.toJson(ret);
-        rocketMQTemplate.sendOneWay("orderItem-topic",message);
+        BeSharePo beSharePo=JacksonUtil.toObj(s,BeSharePo.class);
+        beSharePoMapper.insertSelective(beSharePo);
     }
 
     @Override
