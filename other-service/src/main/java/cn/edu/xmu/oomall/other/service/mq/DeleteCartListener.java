@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.other.service.mq;
 
 import cn.edu.xmu.ooad.util.JacksonUtil;
+import cn.edu.xmu.oomall.dto.CartDto;
 import cn.edu.xmu.oomall.other.dao.ShoppingCartDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
@@ -28,15 +29,10 @@ public class DeleteCartListener implements RocketMQListener<String>, RocketMQPus
     @Autowired
     private RocketMQTemplate rocketMQTemplate;
     @Override
-    public void onMessage(String message) {
-        try{
-            String [] s=message.split("/");
-            shoppingCartDao.deleteCartByCustomerAndSku(Long.valueOf(s[0]),Long.valueOf(s[1]));
-        }
-        catch (Exception e){
-            logger.error("message from order module is wrong");
-        }
-
+    public void onMessage(String s) {
+        CartDto cart= JacksonUtil.toObj(s,CartDto.class);
+        for(Long skuId:cart.getSkuIdList())
+            shoppingCartDao.deleteCartByCustomerAndSku(cart.getCustomerId(),skuId);
     }
 
     @Override
