@@ -9,9 +9,8 @@ import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityVo;
 import cn.edu.xmu.oomall.other.service.ShareService;
-import cn.edu.xmu.oomall.other.service.ShoppingCartService;
+import cn.edu.xmu.oomall.other.service.factory.CalcPointFactory;
 import cn.xmu.edu.goods.client.IGoodsService;
-import cn.xmu.edu.goods.client.IShopService;
 import cn.xmu.edu.goods.client.dubbo.ShopDTO;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
@@ -44,9 +43,11 @@ public class ShareController {
     @DubboReference
     IGoodsService goodsService;
 
-    //TODO:生成分享链接 接受点击分享连接信息
+    //TODO:生成分享链接
+    //Done:接受点击分享连接信息
     //以完成：下单后更改分享成功
-    //TODO:七天后返回返点
+    //Done:七天后返回返点
+    //TODO:分享活动加入redis中 ps:在下线或上限活动时，记得清空对应商品的缓存
     //Topic
     /***
      * 平台或店家创建新的分享活动
@@ -64,6 +65,11 @@ public class ShareController {
     @PostMapping("/shops/{shopId}/goods/{skuId}/shareactivities")
     public Object addShareActivity(@LoginUser Long userId, @PathVariable("shopId") Long shopId, @PathVariable("skuId") Long skuId,
                                    @Validated @RequestBody ShareActivityVo shareActivityVo, BindingResult bindingResult){
+        //DONE:校验strategy是否正确
+        if(!CalcPointFactory.validateStrategy(shareActivityVo.getStrategy())){
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.OK,"分享策略不合法");
+        }
         Object object= Common.processFieldErrors(bindingResult,httpServletResponse);
         if(object!=null){
             return object;
@@ -101,7 +107,7 @@ public class ShareController {
     })
     @Audit
     @GetMapping("/shares")
-    public Object getShares(@LoginUser Long userId, @RequestParam Long skuId,
+    public Object getShares(@LoginUser Long userId, @RequestParam(required = false) Long skuId,
                             @RequestParam(required = false) LocalDateTime beginTime, @RequestParam(required = false) LocalDateTime endTime,
                             @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize){
         if(endTime.isBefore(beginTime)){
@@ -110,7 +116,7 @@ public class ShareController {
         if(page <= 0 || pageSize <= 0) {
             return Common.getNullRetObj(new ReturnObject<>(ResponseCode.FIELD_NOTVALID), httpServletResponse);
         }
-        ReturnObject<PageInfo<VoObject>> retObj=shareService.findShares(skuId,null,beginTime,endTime,page,pageSize);
+        ReturnObject<PageInfo<VoObject>> retObj=shareService.findShares(skuId, beginTime,endTime,page,pageSize);
         return Common.getPageRetObject(retObj);
     }
 
@@ -165,14 +171,22 @@ public class ShareController {
      * 商铺管理员查询分享记录
      */
     @Audit
-    @GetMapping("/shop/{id}/shares")
-    public Object getSharesByShopId(@LoginUser Long userId,@PathVariable("id")Long shopId,
-                                    @RequestParam(required = false)Long skuId,
+    @GetMapping("/shop/{did}/skus/{id}/shares")
+    public Object getSharesByShopId(@LoginUser Long userId,@PathVariable("did")Long shopId,
+                                    @PathVariable("id") Long skuId,
                                     @RequestParam(defaultValue = "1") Integer page,
                                     @RequestParam(defaultValue = "10") Integer pageSize)
     {
-        return null;
-        //TODO:等待问题解决
+        if(shopId!=0) {
+            ShopDTO shopDTO = goodsService.getShopBySKUId(skuId);
+            Long realShopId = shopDTO.getId();
+            if (!realShopId.equals(shopId)) {
+                httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return ResponseUtil.fail(ResponseCode.OK, "路径资源不匹配");
+            }
+        }
+        ReturnObject<PageInfo<VoObject>> ret=shareService.findShares(skuId, null,null,page,pageSize);
+        return Common.getPageRetObject(ret);
     }
     /***
      * 买家查询所有的分享成功记录
@@ -187,7 +201,7 @@ public class ShareController {
         if(endTime.isBefore(beginTime)){
             return ResponseUtil.fail(ResponseCode.Log_Bigger);
         }
-        ReturnObject<PageInfo<VoObject>> retObj=shareService.getBeShared(userId,null,skuId,beginTime,endTime,page,pageSize);
+        ReturnObject<PageInfo<VoObject>> retObj=shareService.getBeShared(userId, skuId,beginTime,endTime,page,pageSize);
         return Common.getPageRetObject(retObj);
     }
 
@@ -203,9 +217,9 @@ public class ShareController {
      * @return
      */
     @Audit
-    @GetMapping("/shops/{id}/beshared")
-    public Object getBeSharedByShopId(@LoginUser Long userId,@PathVariable("id")Long shopId,
-                              @RequestParam(required = false)Long skuId,
+    @GetMapping("/shops/{did}/sku/{id}/beshared")
+    public Object getBeSharedByShopId(@LoginUser Long userId,@PathVariable("did")Long shopId,
+                              @PathVariable("id") Long skuId,
                               @RequestParam(required = false)LocalDateTime beginTime,
                               @RequestParam(required = false)LocalDateTime endTime,
                               @RequestParam(defaultValue = "1") Integer page,
@@ -213,7 +227,15 @@ public class ShareController {
         if(endTime.isBefore(beginTime)){
             return ResponseUtil.fail(ResponseCode.Log_Bigger);
         }
-        ReturnObject<PageInfo<VoObject>> retObj=shareService.getBeShared(null,shopId,skuId,beginTime,endTime,page,pageSize);
+        if(shopId!=0) {
+            ShopDTO shopDTO = goodsService.getShopBySKUId(skuId);
+            Long realShopId = shopDTO.getId();
+            if (!realShopId.equals(shopId)) {
+                httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return ResponseUtil.fail(ResponseCode.OK, "路径资源不匹配");
+            }
+        }
+        ReturnObject<PageInfo<VoObject>> retObj=shareService.getBeShared(null, skuId,beginTime,endTime,page,pageSize);
         return Common.getPageRetObject(retObj);
     }
 
@@ -230,6 +252,10 @@ public class ShareController {
     public Object modifyShareActivity(@LoginUser Long userId,@PathVariable("shopId")Long shopId,
                                          @PathVariable("id")Long shareActivityId,
                                          @RequestBody ShareActivityVo vo){
+        if(!CalcPointFactory.validateStrategy(vo.getStrategy())){
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.OK,"分享策略不合法");
+        }
         ResponseCode ret=shareService.updateShareActivity(shopId,shareActivityId,vo);
         if (ret != ResponseCode.INTERNAL_SERVER_ERR && ret != ResponseCode.OK) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);

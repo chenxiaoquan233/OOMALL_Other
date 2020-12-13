@@ -1,23 +1,29 @@
 package cn.edu.xmu.oomall.other.dao;
 
 import cn.edu.xmu.ooad.model.VoObject;
+import cn.edu.xmu.ooad.util.JacksonUtil;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
+import cn.edu.xmu.oomall.dto.EffectiveShareDTO;
 import cn.edu.xmu.oomall.dto.ShareDTO;
-import cn.edu.xmu.oomall.other.mapper.BeSharePoMapper;
-import cn.edu.xmu.oomall.other.mapper.ShareActivityPoMapper;
-import cn.edu.xmu.oomall.other.mapper.SharePoMapper;
+import cn.edu.xmu.oomall.other.mapper.*;
 import cn.edu.xmu.oomall.other.model.bo.ShareActivityBo;
 import cn.edu.xmu.oomall.other.model.po.*;
+import cn.edu.xmu.oomall.other.service.factory.CalcPoint;
+import cn.edu.xmu.oomall.other.service.factory.CalcPointFactory;
 import com.github.pagehelper.PageInfo;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -39,7 +45,22 @@ public class ShareDao {
     SharePoMapper sharePoMapper;
 
     @Autowired
+    CustomerPoMapper customerPoMapper;
+
+    @Autowired
+    UpdateRebateMapper updateRebateMapper;
+
+    @Autowired
     RocketMQTemplate rocketMQTemplate;
+
+    @Autowired
+    RedisTemplate<String,String> redisTemplate;
+
+    @Autowired
+    CalcPointFactory calcPointFactory;
+
+    @Value("${share-activity.enable-redis}")
+    boolean redisEnable;
 
     private Byte offline = 0;
 
@@ -60,10 +81,11 @@ public class ShareDao {
         beSharePo.setShareActivityId(sharePo.getShareActivityId());
         beSharePo.setShareId(sharePo.getId());
         beSharePo.setSharerId(sharePo.getSharerId());
-        beSharePoMapper.insertSelective(beSharePo);
+        String message=JacksonUtil.toJson(beSharePo);
+        rocketMQTemplate.sendOneWay("createBeShare-topic",message);
         return true;
     }
-    public PageInfo<BeSharePo> findBeShare(Long userId, Long shopId, Long skuId, LocalDateTime beginTime, LocalDateTime endTime) {
+    public PageInfo<BeSharePo> findBeShare(Long userId, Long skuId, LocalDateTime beginTime, LocalDateTime endTime) {
         BeSharePoExample example=new BeSharePoExample();
         BeSharePoExample.Criteria criteria= example.createCriteria();
         if(userId!=null){
@@ -79,15 +101,9 @@ public class ShareDao {
             criteria.andGmtCreateLessThanOrEqualTo(endTime);
         }
         List<BeSharePo> beSharePos=beSharePoMapper.selectByExample(example);
-        if(shopId!=null){
-            if(shopId!=0){
-                //Todo:检查shopid
-            }
-
-        }
         return new PageInfo<>(beSharePos);
     }
-    public PageInfo<SharePo> findShares(Long skuId,Long shopId, LocalDateTime beginTime, LocalDateTime endTime){
+    public PageInfo<SharePo> findShares(Long skuId, LocalDateTime beginTime, LocalDateTime endTime){
         SharePoExample example=new SharePoExample();
         SharePoExample.Criteria criteria=example.createCriteria();
         if(beginTime!=null){
@@ -101,16 +117,6 @@ public class ShareDao {
         }
 
         List<SharePo> sharePos= sharePoMapper.selectByExample(example);
-        if(shopId!=null){
-            if(shopId!=0){
-                ShareActivityPoExample activityPoExample=new ShareActivityPoExample();
-                ShareActivityPoExample.Criteria criteria1=activityPoExample.createCriteria();
-                criteria1.andShopIdEqualTo(shopId);
-                //TODO:需要完成查询商店下所有活动的逻辑
-            }
-
-
-        }
         return new PageInfo<>(sharePos);
     }
     /*在下单时查找第一个有效的分享成功记录*/
@@ -258,5 +264,26 @@ public class ShareDao {
         List<ShareActivityPo> shareActivityPos=shareActivityPoMapper.selectByExample(example);
         return new PageInfo<>(shareActivityPos);
 
+    }
+
+    public void retPointByShareDTOS(List<EffectiveShareDTO> shareDTOS) {
+        Map<Long, CalcPoint> shareActivityMap=new HashMap<>();
+        for(EffectiveShareDTO shareDTO:shareDTOS){
+            BeSharePo beSharePo=beSharePoMapper.selectByPrimaryKey(shareDTO.getBeSharedId());
+            CalcPoint calcPoint;
+            Long activityId=beSharePo.getShareActivityId();
+            if(!shareActivityMap.containsKey(activityId)){
+                calcPoint=calcPointFactory.getInstance(shareActivityPoMapper.selectByPrimaryKey(activityId).getStrategy());
+                shareActivityMap.put(activityId,calcPoint);
+            }
+            else{
+                calcPoint=shareActivityMap.get(activityId);
+            }
+            SharePo sharePo= sharePoMapper.selectByPrimaryKey(beSharePo.getShareId());
+            Integer point=calcPoint.getPoint(shareDTO.getPrice(),shareDTO.getQuantity(),sharePo.getQuantity());
+            sharePo.setQuantity(shareDTO.getQuantity()+sharePo.getQuantity());
+            sharePoMapper.updateByPrimaryKey(sharePo);
+            updateRebateMapper.updateRebateByPrimaryKey(sharePo.getSharerId(),Long.valueOf(point));
+        }
     }
 }

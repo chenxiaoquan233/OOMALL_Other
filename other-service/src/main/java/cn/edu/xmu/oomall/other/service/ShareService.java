@@ -3,8 +3,11 @@ package cn.edu.xmu.oomall.other.service;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
-import cn.edu.xmu.oomall.other.dao.FavoriteDao;
+import cn.edu.xmu.oomall.dto.EffectiveShareDTO;
+import cn.edu.xmu.oomall.dto.ShareDTO;
+import cn.edu.xmu.oomall.impl.IDubboOrderService;
 import cn.edu.xmu.oomall.other.dao.ShareDao;
+import cn.edu.xmu.oomall.other.dao.UserDao;
 import cn.edu.xmu.oomall.other.model.bo.BeSharedBo;
 import cn.edu.xmu.oomall.other.model.bo.ShareActivityBo;
 import cn.edu.xmu.oomall.other.model.bo.ShareBo;
@@ -12,9 +15,8 @@ import cn.edu.xmu.oomall.other.model.po.BeSharePo;
 import cn.edu.xmu.oomall.other.model.po.ShareActivityPo;
 import cn.edu.xmu.oomall.other.model.po.SharePo;
 import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
-import cn.edu.xmu.oomall.other.model.vo.Share.ShareRetVo;
-import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityRetVo;
 import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityVo;
+import cn.edu.xmu.oomall.other.service.factory.CalcPoint;
 import cn.xmu.edu.goods.client.IGoodsService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -25,7 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -40,7 +44,16 @@ public class ShareService {
     IGoodsService goodsService;
     @Autowired
     private ShareDao shareDao;
+    @Autowired
+    private UserDao userDao;
+    @DubboReference
+    IDubboOrderService orderService;
 
+    public void retPointToCustomer(){
+        List<EffectiveShareDTO> shareDTOS=orderService.getEffectiveShareRecord();
+        shareDao.retPointByShareDTOS(shareDTOS);
+
+    }
     public ResponseCode offlineShareActivity(Long shopId,Long shareActivityId){
         return shareDao.offlineShareActivity(shopId,shareActivityId);
     }
@@ -56,12 +69,12 @@ public class ShareService {
         bo.setGoodSkuId(skuId);
         return shareDao.insertShareActivity(bo);
     }
-    public ReturnObject<PageInfo<VoObject>> findShares(Long skuId,Long shopId, LocalDateTime beginTime,LocalDateTime endTime,Integer page,Integer pageSize){
+    public ReturnObject<PageInfo<VoObject>> findShares(Long skuId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
         PageHelper.startPage(page,pageSize,true,true,null);
-        PageInfo<SharePo> sharePos=shareDao.findShares(skuId,shopId,beginTime,endTime);
+        PageInfo<SharePo> sharePos=shareDao.findShares(skuId, beginTime,endTime);
 
         List<VoObject> shares=sharePos.getList().stream().map(ShareBo::new)
-                .map(shareBo -> {shareBo.setSku(new GoodsSkuSimpleVo(goodsService.getSku(skuId)));return shareBo;
+                .map(shareBo -> {shareBo.setSku(new GoodsSkuSimpleVo(goodsService.getSku(shareBo.getSkuId())));return shareBo;
         }).collect(Collectors.toList());
 
         PageInfo<VoObject> retObj=new PageInfo<>(shares);
@@ -72,12 +85,12 @@ public class ShareService {
         return new ReturnObject<>(retObj);
     }
 
-    public ReturnObject<PageInfo<VoObject>> getBeShared(Long userId, Long shopId, Long skuId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize) {
+    public ReturnObject<PageInfo<VoObject>> getBeShared(Long userId, Long skuId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize) {
         PageHelper.startPage(page,pageSize,true,true,null);
-        PageInfo<BeSharePo> beSharePos=shareDao.findBeShare(userId,shopId,skuId,beginTime,endTime);
+        PageInfo<BeSharePo> beSharePos=shareDao.findBeShare(userId, skuId,beginTime,endTime);
 
         List<VoObject> beShares=beSharePos.getList().stream().map(BeSharedBo::new).map(beSharedBo -> {
-            beSharedBo.setSku(new GoodsSkuSimpleVo(goodsService.getSku(skuId)));return beSharedBo;
+            beSharedBo.setSku(new GoodsSkuSimpleVo(goodsService.getSku(beSharedBo.getSkuId())));return beSharedBo;
         }).collect(Collectors.toList());
 
         PageInfo<VoObject> retObj=new PageInfo<>(beShares);
