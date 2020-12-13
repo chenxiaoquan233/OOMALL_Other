@@ -16,7 +16,7 @@ public class AdvertiseRetVo {
     private String imagePath;
     private String content;
     private Long segId;
-    private String state;
+    private Byte state;
     private Integer weight;
     private Boolean default_;
     private LocalDate beginDate;

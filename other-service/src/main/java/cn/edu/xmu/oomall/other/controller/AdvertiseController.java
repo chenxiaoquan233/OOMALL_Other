@@ -38,7 +38,7 @@ public class AdvertiseController {
     })
     @GetMapping("/advertisement/states")
     public Object getAdvertisementStates(@LoginUser Long userId){
-          return advertiseService.getAllAdvertisementStates();
+          return ResponseUtil.ok(advertiseService.getAllAdvertisementStates());
     }
 
     @ApiOperation(value = "管理员设置默认广告", produces = "application/json")
@@ -52,7 +52,7 @@ public class AdvertiseController {
     })
     @PutMapping("/shops/{did}/advertisement/{id}/default")
     public Object setAdvertisementDefaultById(@LoginUser Long user, @PathVariable("did") Integer did, @PathVariable("id") Integer id){
-        ResponseCode responseCode=advertiseService.setAdvertisementDefaultById(did,id);
+        ResponseCode responseCode=advertiseService.setAdvertisementDefaultById(id);
         if(responseCode.equals(ResponseCode.OK))
             return ResponseUtil.ok();
         else return ResponseUtil.fail(responseCode);
@@ -68,8 +68,11 @@ public class AdvertiseController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @PutMapping("/shops/{did}/advertisement/{id}")
-    public Object setAdvertisementDefaultById(@LoginUser Long user, @PathVariable("id") Integer id, @RequestBody AdvertiseVo advertiseVo){
-        return null;
+    public Object updateAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id, @RequestBody AdvertiseVo advertiseVo){
+        ResponseCode responseCode=advertiseService.updateAdvertisementById(advertiseVo);
+        if(responseCode.equals(ResponseCode.OK))
+            return ResponseUtil.ok();
+        else return ResponseUtil.fail(responseCode);
     }
 
     @ApiOperation(value = "管理员删除某一个广告", produces = "application/json")
@@ -82,7 +85,10 @@ public class AdvertiseController {
     })
     @DeleteMapping("/shops/{did}/advertisement/{id}")
     public Object deleteAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id){
-        return null;
+        ResponseCode responseCode=advertiseService.deleteAdvertisementById(id);
+        if(responseCode.equals(ResponseCode.OK))
+            return ResponseUtil.ok();
+        else return ResponseUtil.fail(responseCode);
     }
 
 
@@ -93,7 +99,7 @@ public class AdvertiseController {
     })
     @GetMapping("/advertisement/current")
     public Object getCurrentAdvertisements(){
-        return null;
+        return ResponseUtil.ok(advertiseService.getCurrentAdvertisements());
     }
 
 
