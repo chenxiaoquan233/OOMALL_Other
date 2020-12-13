@@ -11,6 +11,8 @@ import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +20,7 @@ import java.util.stream.Collectors;
  * @author hardworking-qf
  * @version 创建时间：2020/12/12 上午10:44
  */
-@Data
+@Repository
 public class AdvertiseDao {
     private static final Logger logger = LoggerFactory.getLogger(AdvertiseDao.class);
 

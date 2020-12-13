@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
  * @author Ji Cao
  * @version 创建时间：2020/12/6 上午10:56
  */
-@Service
 @RestController /*Restful的Controller对象*/
 @RequestMapping(value = "/footprints", produces = "application/json;charset=UTF-8")
 public class FootprintController {

@@ -9,6 +9,7 @@ import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -17,7 +18,6 @@ import java.util.List;
  * @author hardworking-qf
  * @version 创建时间：2020/12/12 上午10:45
  */
-@Data
 @Service
 public class AdvertiseService {
     private static final Logger logger = LoggerFactory.getLogger(AfterSaleService.class);

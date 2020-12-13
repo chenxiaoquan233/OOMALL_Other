@@ -26,7 +26,6 @@ import java.util.List;
  * @author Ji Cao
  * @version 创建时间：2020/12/6  下午16:11
  */
-@Service
 @RestController /*Restful的Controller对象*/
 @RequestMapping(value = "/addresses", produces = "application/json;charset=UTF-8")
 public class AddressController {
