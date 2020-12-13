@@ -1,13 +1,16 @@
 package cn.edu.xmu.oomall.other.service;
 
 import cn.edu.xmu.ooad.util.ResponseCode;
+import cn.edu.xmu.oomall.dto.AftersaleDTO;
 import cn.edu.xmu.oomall.dto.OrderDTO;
 import cn.edu.xmu.oomall.impl.IDubboOrderService;
 import cn.edu.xmu.oomall.other.dao.AftersaleDao;
 import cn.edu.xmu.oomall.other.model.bo.AftersaleBo;
 import cn.edu.xmu.oomall.other.model.po.AftersalePo;
 import cn.edu.xmu.oomall.other.model.vo.Aftersale.*;
+import com.github.pagehelper.PageInfo;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.aspectj.lang.annotation.After;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -38,38 +42,50 @@ public class AfterSaleService {
         return Arrays.stream(AftersaleBo.State.values()).map(AftersaleStateVo::new).collect(Collectors.toList());
     }
 
-    public AftersaleRetVo createAfterSale(AftersaleVo vo, Long orderItemId) {
+    public AftersaleRetVo createAfterSale(AftersaleVo vo, Long orderItemId, Long userId) {
         logger.debug("createAfterSale");
 
         AftersaleBo aftersaleBo = vo.createBo();
+        aftersaleBo.setCustomerId(userId);
         aftersaleBo.setOrderItemId(orderItemId);
-        aftersaleBo.setRefund(0L);
+        aftersaleBo.setServiceSn(UUID.randomUUID().toString());
 
-        //OrderDTO orderDTO = iDubboOrderService.getOrderIdByOrderItemId(orderItemId);
+        AftersaleDTO aftersaleDTO = new AftersaleDTO(1L, "tset", 2L, "ttt", 10L, 20);
+        //AftersaleDTO aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(orderItemId);
+
+        aftersaleBo.setOrderId(aftersaleDTO.getOrderId());
+        aftersaleBo.setOrderSn(aftersaleDTO.getOrderSn());
+        aftersaleBo.setSkuId(aftersaleDTO.getSkuId());
+        aftersaleBo.setSkuName(aftersaleDTO.getSkuName());
+        aftersaleBo.setShopId(aftersaleDTO.getShopId());
+        aftersaleBo.setQuantity(Math.min(aftersaleBo.getQuantity(), aftersaleDTO.getQuantity()));
 
         AftersalePo aftersalePo = aftersaleDao.insertAftersale(aftersaleBo.createPo());
 
+        aftersaleBo.setId(aftersalePo.getId());
 
-
-
-
-        return null;
+        return aftersaleBo.createRetVo();
     }
 
-    public List<AftersaleRetVo> getAllAftersales(
+    public PageInfo<AftersaleRetVo> getAllAftersales(
             Long userId,
-            Long spuId,
-            Long skuId,
-            Long orderItemId,
+            Long shopId,
             LocalDateTime beginTime,
             LocalDateTime endTime,
             Integer page,
             Integer pageSize,
             Integer type,
             Integer state) {
-        aftersaleDao.getAllAftersales(userId, spuId, skuId, orderItemId, beginTime, endTime, page, pageSize, type, state);
 
-        return null;
+        PageInfo<AftersalePo> aftersalePos = aftersaleDao.getAllAftersales(userId, shopId, beginTime, endTime, page, pageSize, type, state);
+        PageInfo<AftersaleRetVo> aftersaleVos = new PageInfo<>(aftersalePos.getList().stream().map(AftersaleBo::new).map(AftersaleBo::createRetVo).collect(Collectors.toList()));
+
+        aftersaleVos.setTotal(aftersalePos.getTotal());
+        aftersaleVos.setPageSize(aftersalePos.getPageSize());
+        aftersaleVos.setPageNum(aftersalePos.getPageNum());
+        aftersaleVos.setPages(aftersalePos.getPages());
+
+        return aftersaleVos;
     }
 
     public Object getAftersaleById(Long userId, Long aftersaleId) {

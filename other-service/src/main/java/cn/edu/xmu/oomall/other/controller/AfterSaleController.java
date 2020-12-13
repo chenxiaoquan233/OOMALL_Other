@@ -48,7 +48,7 @@ public class AfterSaleController {
     public Object getAfterSaleAllStates() {
         logger.debug("getAfterSaleAllStates");
 
-        return afterSaleService.getAfterSaleAllStates();
+        return ResponseUtil.ok(afterSaleService.getAfterSaleAllStates());
     }
 
     @ApiOperation(value = "买家提交售后单", produces = "application/json")
@@ -62,8 +62,16 @@ public class AfterSaleController {
     })
     @Audit
     @PostMapping("/orderItems/{id}aftersales")
-    public Object createAfterSale(@Validated @RequestBody AftersaleVo vo, @PathVariable("id") Long orderItemId) {
-        return null;
+    public Object createAfterSale(@LoginUser Long userId, @Validated @RequestBody AftersaleVo vo, @PathVariable("id") Long orderItemId, BindingResult bindingResult) {
+        Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if(null != object) {
+            logger.debug("Validate failed");
+            logger.debug("UserSignUpVo:" + vo);
+
+            return object;
+        }
+
+        return ResponseUtil.ok(afterSaleService.createAfterSale(vo, orderItemId, userId));
     }
 
     @ApiOperation(value = "买家查询所有的售后单", produces = "application/json")
@@ -91,17 +99,52 @@ public class AfterSaleController {
             @RequestParam(required = false) Long orderItemId,
             @RequestParam(required = false) LocalDateTime beginTime,
             @RequestParam(required = false) LocalDateTime endTime,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer pageSize,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(required = false) Integer type,
             @RequestParam(required = false) Integer state) {
 
-        return afterSaleService.getAllAftersales(userId, spuId, skuId, orderItemId, beginTime, endTime, page, pageSize, type, state);
+        return ResponseUtil.ok(afterSaleService.getAllAftersales(userId, null, beginTime, endTime, page, pageSize, type, state));
     }
 
+    @ApiOperation(value = "买家查询所有的售后单", produces = "application/json")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String",  name = "authorization", value = "用户token",    required = true),
+            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "spuId",         value = "SPU Id"),
+            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "skuId",         value = "sku ID"),
+            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "orderItemId",   value = "orderItem Id"),
+            @ApiImplicitParam(paramType = "query",  dataType = "String",  name = "beginTime",     value = "开始时间"),
+            @ApiImplicitParam(paramType = "query",  dataType = "String",  name = "endTime",       value = "结束时间"),
+            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "page",          value = "页码"),
+            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "pageSize",      value = "每页数目"),
+            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "type",          value = "售后类型"),
+            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "state",         value = "售后状态")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,   message = "成功")
+    })
+    @Audit
     @GetMapping("/shops/{id}/aftersales")
-    public Object adminGetAllAfterSale() {
-        return null;
+    public Object adminGetAllAfterSale(
+            @LoginUser Long userId,
+            @Depart Long did,
+            @PathVariable("id") Long shopId,
+            @RequestParam(required = false) Long spuId,
+            @RequestParam(required = false) Long skuId,
+            @RequestParam(required = false) Long orderItemId,
+            @RequestParam(required = false) LocalDateTime beginTime,
+            @RequestParam(required = false) LocalDateTime endTime,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false) Integer type,
+            @RequestParam(required = false) Integer state) {
+
+        if(!did.equals(shopId)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
+        }
+
+        return ResponseUtil.ok(afterSaleService.getAllAftersales(userId, shopId, beginTime, endTime, page, pageSize, type, state));
     }
 
     @ApiOperation(value = "买家根据售后单id查询售后单信息", produces = "application/json")
@@ -124,7 +167,7 @@ public class AfterSaleController {
         }
         if(object.equals(ResponseCode.RESOURCE_ID_OUTSCOPE))
             return ResponseUtil.fail((ResponseCode) object, ((ResponseCode) object).getMessage());
-        return object;
+        return ResponseUtil.ok(object);
     }
 
     @ApiOperation(value = "买家修改售后单信息", produces = "application/json")
@@ -160,7 +203,12 @@ public class AfterSaleController {
     @DeleteMapping("/aftersales/{id}")
     public Object deleteAftersaleById(@LoginUser Long userId, @PathVariable("id") Long id) {
         ResponseCode responseCode = afterSaleService.deleteAftersaleById(userId, id);
-        return null;
+
+        if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail(responseCode);
+        }
+        return ResponseUtil.ok(responseCode);
     }
 
     @ApiOperation(value = "买家填写售后的运单信息", produces = "application/json")

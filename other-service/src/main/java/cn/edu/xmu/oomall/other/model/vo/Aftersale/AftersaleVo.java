@@ -16,10 +16,6 @@ import javax.validation.constraints.Pattern;
 @ApiModel(description = "售后传值对象")
 @Data
 public class AftersaleVo {
-    @NotBlank
-    @ApiModelProperty(name = "订单明细ID", value = "坏了")
-    private Long id;
-
     @ApiModelProperty(name = "售后类别", value = "0")
     private Integer type;
 
@@ -52,7 +48,6 @@ public class AftersaleVo {
     public AftersaleBo createBo()
     {
         AftersaleBo bo = new AftersaleBo();
-        bo.setOrderItemId(this.getId());
         bo.setQuantity(this.getQuantity());
         bo.setReason(this.getReason());
         bo.setRegionId(this.getRegionId());

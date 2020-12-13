@@ -4,6 +4,9 @@ import cn.edu.xmu.oomall.other.mapper.AftersalePoMapper;
 import cn.edu.xmu.oomall.other.model.po.AftersalePo;
 import cn.edu.xmu.oomall.other.model.po.AftersalePoExample;
 import cn.edu.xmu.oomall.other.model.vo.Aftersale.AftersaleModifyVo;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +31,28 @@ public class AftersaleDao {
         return po;
     }
 
-    public List<AftersalePo> getAllAftersales(
+    public PageInfo<AftersalePo> getAllAftersales(
             Long userId,
-            Long spuId,
-            Long skuId,
-            Long orderItemId,
+            Long shopId,
             LocalDateTime beginTime,
             LocalDateTime endTime,
             Integer page,
             Integer pageSize,
             Integer type,
             Integer state) {
-        return null;
+        AftersalePoExample example = new AftersalePoExample();
+        AftersalePoExample.Criteria criteria = example.createCriteria();
+        criteria.andCustomerIdEqualTo(userId);
+        if(shopId != null) criteria.andShopIdEqualTo(shopId);
+        if(beginTime != null) criteria.andGmtCreateGreaterThanOrEqualTo(beginTime);
+        if(endTime != null) criteria.andGmtCreateLessThanOrEqualTo(endTime);
+        if(type != null) criteria.andTypeEqualTo(type.byteValue());
+        if(state != null) criteria.andStateEqualTo(state.byteValue());
+
+        PageHelper.startPage(page, pageSize);
+        List<AftersalePo> aftersalePos = aftersalePoMapper.selectByExample(example);
+
+        return new PageInfo<>(aftersalePos);
     }
 
     public AftersalePo getAftersaleById(Long id) {
