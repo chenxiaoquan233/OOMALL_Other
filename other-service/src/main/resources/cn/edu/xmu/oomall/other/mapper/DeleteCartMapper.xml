@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.xmu.oomall.other.mapper.DeleteCartMapper">
+
+
+    <delete id="deleteCart" >
+        delete from shopping_cart
+        WHERE customer_id = #{customerId} and goods_sku_id in
+        <foreach item="skuId" collection="skuIdList" open="(" separator="," close=")">
+            #{skuId}
+        </foreach>
+    </delete>
+
+</mapper>
+

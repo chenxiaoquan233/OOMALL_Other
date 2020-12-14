@@ -31,8 +31,7 @@ public class DeleteCartListener implements RocketMQListener<String>, RocketMQPus
     @Override
     public void onMessage(String s) {
         CartDTO cart= JacksonUtil.toObj(s,CartDTO.class);
-        for(Long skuId:cart.getSkuIdList())
-            shoppingCartDao.deleteCartByCustomerAndSku(cart.getCustomerId(),skuId);
+        shoppingCartDao.deleteCartByCustomerAndSku(cart.getCustomerId(),cart.getSkuIdList());
     }
 
     @Override
