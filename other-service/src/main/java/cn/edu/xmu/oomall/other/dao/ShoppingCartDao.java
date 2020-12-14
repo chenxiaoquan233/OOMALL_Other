@@ -5,6 +5,7 @@ import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.mapper.CustomerPoMapper;
+import cn.edu.xmu.oomall.other.mapper.DeleteCartMapper;
 import cn.edu.xmu.oomall.other.mapper.ShoppingCartPoMapper;
 import cn.edu.xmu.oomall.other.model.bo.ShoppingCartBo;
 import cn.edu.xmu.oomall.other.model.po.FavouriteGoodsPo;
@@ -38,6 +39,8 @@ public class ShoppingCartDao {
     @Autowired
     private ShoppingCartPoMapper shoppingCartPoMapper;
 
+    @Autowired
+    private DeleteCartMapper deleteCartMapper;
 
     public ResponseCode clearCart(Long userId){
         ShoppingCartPoExample shoppingCartPoExample=new ShoppingCartPoExample();
@@ -61,12 +64,8 @@ public class ShoppingCartDao {
         else return ResponseCode.INTERNAL_SERVER_ERR;
     }
 
-    public void deleteCartByCustomerAndSku(Long userId,Long skuId){
-        ShoppingCartPoExample example=new ShoppingCartPoExample();
-        ShoppingCartPoExample.Criteria criteria=example.createCriteria();
-        criteria.andCustomerIdEqualTo(userId);
-        criteria.andGoodsSkuIdEqualTo(skuId);
-        shoppingCartPoMapper.deleteByExample(example);
+    public void deleteCartByCustomerAndSku(Long userId,List<Long> skuId){
+        deleteCartMapper.deleteCart(userId,skuId);
     }
 
     public List<ShoppingCartPo> getCartByUserId(Long userId, Integer page, Integer pageSize){
