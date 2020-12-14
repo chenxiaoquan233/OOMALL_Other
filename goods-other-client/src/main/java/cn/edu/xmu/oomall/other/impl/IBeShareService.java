@@ -1,4 +1,4 @@
-package cn.edu.xmu.oomall.impl;
+package cn.edu.xmu.oomall.other.impl;
 
 /**
  * 2 * @author: LiangJi3229

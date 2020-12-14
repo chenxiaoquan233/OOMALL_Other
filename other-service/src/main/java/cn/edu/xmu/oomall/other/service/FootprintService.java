@@ -11,7 +11,7 @@ import cn.edu.xmu.oomall.other.model.po.BeSharePo;
 import cn.edu.xmu.oomall.other.model.po.FootPrintPo;
 import cn.edu.xmu.oomall.other.model.vo.FootPrint.FootPrintVo;
 import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
-import cn.xmu.edu.goods.client.IGoodsService;
+import cn.edu.xmu.goods.client.IGoodsService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.dubbo.config.annotation.DubboReference;

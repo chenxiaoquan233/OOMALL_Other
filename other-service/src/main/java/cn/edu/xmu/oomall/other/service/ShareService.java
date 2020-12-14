@@ -4,8 +4,7 @@ import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.dto.EffectiveShareDTO;
-import cn.edu.xmu.oomall.dto.ShareDTO;
-import cn.edu.xmu.oomall.impl.IDubboOrderService;
+import cn.edu.xmu.oomall.service.IDubboOrderService;
 import cn.edu.xmu.oomall.other.dao.ShareDao;
 import cn.edu.xmu.oomall.other.dao.UserDao;
 import cn.edu.xmu.oomall.other.model.bo.BeSharedBo;
@@ -16,8 +15,7 @@ import cn.edu.xmu.oomall.other.model.po.ShareActivityPo;
 import cn.edu.xmu.oomall.other.model.po.SharePo;
 import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
 import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityVo;
-import cn.edu.xmu.oomall.other.service.factory.CalcPoint;
-import cn.xmu.edu.goods.client.IGoodsService;
+import cn.edu.xmu.goods.client.IGoodsService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -27,9 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -46,7 +42,7 @@ public class ShareService {
     private ShareDao shareDao;
     @Autowired
     private UserDao userDao;
-    @DubboReference
+    @DubboReference(registry = {"provider2"}, version = "0.0.1-SNAPSHOT", check = false)
     IDubboOrderService orderService;
 
     public void retPointToCustomer(){
@@ -89,9 +85,12 @@ public class ShareService {
         PageHelper.startPage(page,pageSize,true,true,null);
         PageInfo<BeSharePo> beSharePos=shareDao.findBeShare(userId, skuId,beginTime,endTime);
 
+        logger.debug("hererer");
+
         List<VoObject> beShares=beSharePos.getList().stream().map(BeSharedBo::new).map(beSharedBo -> {
             beSharedBo.setSku(new GoodsSkuSimpleVo(goodsService.getSku(beSharedBo.getSkuId())));return beSharedBo;
         }).collect(Collectors.toList());
+        logger.debug(beShares.toString());
 
         PageInfo<VoObject> retObj=new PageInfo<>(beShares);
         retObj.setPageNum(beSharePos.getPageNum());

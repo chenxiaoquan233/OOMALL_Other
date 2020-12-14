@@ -1,4 +1,4 @@
-package cn.edu.xmu.oomall.impl;
+package cn.edu.xmu.oomall.service;
 
 /**
  * @author Wang Zhizhou

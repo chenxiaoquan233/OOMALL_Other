@@ -5,7 +5,7 @@ import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.other.model.po.FavouriteGoodsPo;
 import cn.edu.xmu.oomall.other.model.vo.Favorite.FavoritesRetVo;
 import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
-import cn.xmu.edu.goods.client.dubbo.SkuDTO;
+import cn.edu.xmu.goods.client.dubbo.SkuDTO;
 import lombok.Data;
 
 import java.time.LocalDateTime;

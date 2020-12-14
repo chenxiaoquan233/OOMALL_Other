@@ -10,8 +10,8 @@ import cn.edu.xmu.oomall.other.model.po.FavouriteGoodsPo;
 import cn.edu.xmu.oomall.other.model.po.FavouriteGoodsPoExample;
 import cn.edu.xmu.oomall.other.model.po.ShoppingCartPo;
 import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
-import cn.xmu.edu.goods.client.IGoodsService;
-import cn.xmu.edu.goods.client.dubbo.SkuDTO;
+import cn.edu.xmu.goods.client.IGoodsService;
+import cn.edu.xmu.goods.client.dubbo.SkuDTO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -53,7 +53,7 @@ public class FavoriteDao {
     @Autowired
     private FavouriteGoodsPoMapper favouriteGoodsPoMapper;
 
-    @DubboReference(registry = {"provider1"})
+    @DubboReference(registry = {"provider2"}, version = "0.0.1-SNAPSHOT", check = false)
     public IGoodsService iGoodsService;
 
     public ReturnObject<PageInfo<VoObject>> getFavoritesByUserId(Long userId, Integer page, Integer pageSize){
@@ -68,9 +68,11 @@ public class FavoriteDao {
             logger.error("findFavorites: DataAccessException:" + e.getMessage());
             return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
         }
+        logger.debug("herehere");
         List<VoObject> ret = favoritesPos.stream().map(FavoriteBo::new).
                 map((x)->{x.setSkuSimpleVo(new GoodsSkuSimpleVo(iGoodsService.getSku(x.getGoodsSkuId())));return x;}).
                 collect(Collectors.toList());
+        logger.debug("ret:" + ret);
         PageInfo<FavouriteGoodsPo> favoritesPoPage = PageInfo.of(favoritesPos);
         PageInfo<VoObject> favoritesPage = new PageInfo<>(ret);
         favoritesPage.setPages(favoritesPoPage.getPages());

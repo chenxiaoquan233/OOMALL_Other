@@ -2,13 +2,13 @@ package cn.edu.xmu.oomall.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.dto.AftersaleDTO;
-import cn.edu.xmu.oomall.impl.IDubboOrderService;
+import cn.edu.xmu.oomall.service.IDubboOrderService;
 import cn.edu.xmu.oomall.other.model.po.AftersalePo;
 import cn.edu.xmu.oomall.other.model.vo.Aftersale.AftersaleRetVo;
-import com.alibaba.druid.filter.AutoLoad;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.apache.dubbo.config.annotation.DubboReference;
 
 import java.time.LocalDateTime;
@@ -21,6 +21,7 @@ import java.util.Map;
  * @version 创建时间：2020/12/3 下午15:16
  */
 @Data
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class AftersaleBo implements VoObject {
@@ -151,7 +152,9 @@ public class AftersaleBo implements VoObject {
         this.shopLogSn = po.getShopLogSn();
         this.id = po.getId();
 
-        AftersaleDTO aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(this.orderItemId);
+        //TODO dubbo
+        AftersaleDTO aftersaleDTO = new AftersaleDTO(1L, "tset", 2L, "ttt", 10L, 20);
+        //AftersaleDTO aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(this.orderItemId);
 
         this.orderId = aftersaleDTO.getOrderId();
         this.orderSn = aftersaleDTO.getOrderSn();
@@ -193,8 +196,6 @@ public class AftersaleBo implements VoObject {
         vo.setCustomerId(this.customerId);
         vo.setCustomerLogSn(this.customerLogSn);
         vo.setDetail(this.detail);
-        vo.setGmtCreate(this.gmtCreate);
-        vo.setGmtModified(this.gmtModified);
         vo.setId(this.id);
         vo.setMobile(this.mobile);
         vo.setOrderItemId(this.orderItemId);

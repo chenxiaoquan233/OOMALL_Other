@@ -27,7 +27,9 @@ public class AftersaleDao {
     private AftersalePoMapper aftersalePoMapper;
 
     public AftersalePo insertAftersale(AftersalePo po) {
+        logger.debug("PO here1:" + po);
         aftersalePoMapper.insertSelective(po);
+        logger.debug("PO here2:" + po);
         return po;
     }
 

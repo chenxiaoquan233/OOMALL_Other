@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 /**
@@ -20,7 +21,7 @@ public class AftersaleVo {
     private Integer type;
 
     @Min(1)
-    @NotBlank
+    @NotNull
     @ApiModelProperty(name = "数量", value = "1")
     private Integer quantity;
 
@@ -28,7 +29,7 @@ public class AftersaleVo {
     @ApiModelProperty(name = "原因", value = "坏了")
     private String reason;
 
-    @NotBlank
+    @NotNull
     @ApiModelProperty(name = "区域ID", value = "123")
     private Long regionId;
 
@@ -54,6 +55,7 @@ public class AftersaleVo {
         bo.setDetail(this.getDetail());
         bo.setConsignee(this.getConsignee());
         bo.setMobile(this.getMobile());
+        bo.setType(AftersaleBo.Type.getTypeByCode(this.getType()));
         return bo;
     }
 }

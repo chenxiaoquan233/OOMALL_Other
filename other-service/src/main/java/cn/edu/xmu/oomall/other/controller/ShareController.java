@@ -10,8 +10,8 @@ import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityVo;
 import cn.edu.xmu.oomall.other.service.ShareService;
 import cn.edu.xmu.oomall.other.service.factory.CalcPointFactory;
-import cn.xmu.edu.goods.client.IGoodsService;
-import cn.xmu.edu.goods.client.dubbo.ShopDTO;
+import cn.edu.xmu.goods.client.IGoodsService;
+import cn.edu.xmu.goods.client.dubbo.ShopDTO;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -40,7 +40,7 @@ public class ShareController {
     @Autowired
     private ShareService shareService;
 
-    @DubboReference
+    @DubboReference(registry = {"provider2"}, version = "0.0.1-SNAPSHOT", check = false)
     IGoodsService goodsService;
 
     //TODO:生成分享链接
@@ -178,7 +178,9 @@ public class ShareController {
                                     @RequestParam(defaultValue = "10") Integer pageSize)
     {
         if(shopId!=0) {
+            logger.debug("herehere");
             ShopDTO shopDTO = goodsService.getShopBySKUId(skuId);
+            logger.debug(shopDTO.toString());
             Long realShopId = shopDTO.getId();
             if (!realShopId.equals(shopId)) {
                 httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -198,6 +200,8 @@ public class ShareController {
                               @RequestParam(required = false)LocalDateTime endTime,
                               @RequestParam(defaultValue = "1") Integer page,
                               @RequestParam(defaultValue = "10") Integer pageSize){
+        //logger.debug(goodsService.getSku(280L).toString());
+        logger.debug(goodsService.getShopBySKUId(280L).toString());
         if(endTime.isBefore(beginTime)){
             return ResponseUtil.fail(ResponseCode.Log_Bigger);
         }

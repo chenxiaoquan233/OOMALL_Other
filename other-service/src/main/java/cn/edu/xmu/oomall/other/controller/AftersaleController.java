@@ -59,17 +59,20 @@ public class AftersaleController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @Audit
-    @PostMapping("/orderItems/{id}aftersales")
+    @PostMapping("/orderItems/{id}/aftersales")
     public Object createAftersale(@LoginUser Long userId, @Validated @RequestBody AftersaleVo vo, @PathVariable("id") Long orderItemId, BindingResult bindingResult) {
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(null != object) {
             logger.debug("Validate failed");
-            logger.debug("UserSignUpVo:" + vo);
 
             return object;
         }
 
-        return ResponseUtil.ok(aftersaleService.createAftersale(vo, orderItemId, userId));
+        AftersaleRetVo aftersaleRetVo = aftersaleService.createAftersale(vo, orderItemId, userId);
+
+        logger.debug("VO here:" + aftersaleRetVo);
+
+        return ResponseUtil.ok(aftersaleRetVo);
     }
 
     @ApiOperation(value = "买家查询所有的售后单", produces = "application/json")

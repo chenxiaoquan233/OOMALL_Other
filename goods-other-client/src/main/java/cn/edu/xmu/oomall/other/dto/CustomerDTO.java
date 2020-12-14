@@ -1,4 +1,4 @@
-package cn.xmu.edu.goods.client.dubbo;
+package cn.edu.xmu.oomall.other.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * @Author: Yifei Wang
- * @Date: 2020/12/6 10:48
+ * @author xincong yao
+ * @date 2020-11-16
  */
 @Data
 @AllArgsConstructor
@@ -17,8 +17,4 @@ public class CustomerDTO implements Serializable {
 	private Long id;
 	private String userName;
 	private String realName;
-
-	public CustomerDTO(Long id) {
-		this.id = id;
-	}
 }

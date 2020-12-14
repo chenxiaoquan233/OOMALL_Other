@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.other.model.vo.Aftersale;
 
 import lombok.Data;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 /**
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
  * @version 创建时间：2020/12/3 下午14:51
  */
 @Data
+@ToString
 public class AftersaleRetVo {
     private Long id;
     private Long orderItemId;
@@ -27,8 +29,4 @@ public class AftersaleRetVo {
     private String shopLogSn;
     private Byte state;
     private Byte beDeleted;
-
-    private LocalDateTime gmtCreate;
-
-    private LocalDateTime gmtModified;
 }

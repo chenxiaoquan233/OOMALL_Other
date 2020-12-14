@@ -2,9 +2,9 @@ package cn.edu.xmu.oomall.other.service;
 
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.oomall.dto.AftersaleDTO;
-import cn.edu.xmu.oomall.dto.ExchangeOrderDTO;
-import cn.edu.xmu.oomall.impl.IDubboOrderService;
-import cn.edu.xmu.oomall.impl.IDubboPaymentService;
+import cn.edu.xmu.oomall.dto.ExchangeOrderDto;
+import cn.edu.xmu.oomall.service.IDubboOrderService;
+import cn.edu.xmu.oomall.service.IDubboPaymentService;
 import cn.edu.xmu.oomall.other.dao.AddressDao;
 import cn.edu.xmu.oomall.other.dao.AftersaleDao;
 import cn.edu.xmu.oomall.other.model.bo.AftersaleBo;
@@ -56,9 +56,16 @@ public class AftersaleService {
         aftersaleBo.setCustomerId(userId);
         aftersaleBo.setOrderItemId(orderItemId);
         aftersaleBo.setServiceSn(UUID.randomUUID().toString());
+        aftersaleBo.setState(AftersaleBo.State.WAIT_ADMIN_AUDIT);
+        aftersaleBo.setBeDeleted((byte) 0);
 
+        logger.debug("BO here1:" + aftersaleBo);
+
+        //TODO dubbo
         AftersaleDTO aftersaleDTO = new AftersaleDTO(1L, "tset", 2L, "ttt", 10L, 20);
         //AftersaleDTO aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(orderItemId);
+
+        logger.debug("BO here2:" + aftersaleBo);
 
         aftersaleBo.setOrderId(aftersaleDTO.getOrderId());
         aftersaleBo.setOrderSn(aftersaleDTO.getOrderSn());
@@ -67,9 +74,15 @@ public class AftersaleService {
         aftersaleBo.setShopId(aftersaleDTO.getShopId());
         aftersaleBo.setQuantity(Math.min(aftersaleBo.getQuantity(), aftersaleDTO.getQuantity()));
 
+        logger.debug("BO here3:" + aftersaleBo);
+
         AftersalePo aftersalePo = aftersaleDao.insertAftersale(aftersaleBo.createPo());
 
+        logger.debug("BO here3.5:" + aftersaleBo);
+
         aftersaleBo.setId(aftersalePo.getId());
+
+        logger.debug("BO here4:" + aftersaleBo);
 
         return aftersaleBo.createRetVo();
     }
@@ -133,6 +146,19 @@ public class AftersaleService {
         return ResponseCode.OK;
     }
 
+    public void test() {
+        iDubboOrderService.createExchangeOrder(
+                new ExchangeOrderDto(
+                        112L,
+                        345L,
+                        1,
+                        100028L,
+                        "12300010002",
+                        "testuser",
+                        0L,
+                        "this is addr"));
+    }
+
     public ResponseCode adminReceive(Long aftersaleId, Long shopId, AftersaleReceiveVo vo) {
         AftersalePo aftersalePo = aftersaleDao.getAftersaleById(aftersaleId);
 
@@ -143,10 +169,12 @@ public class AftersaleService {
         aftersalePo.setConclusion(vo.getConclusion());
         if(vo.isConfirm()) {
             if(aftersalePo.getType().equals(AftersaleBo.Type.RETURN.getCode().byteValue())) {
+                //TODO dubbo
                 iDubboPaymentService.createRefund(aftersaleId, aftersalePo.getOrderItemId(), aftersalePo.getQuantity());
                 aftersalePo.setState((byte) 3);
             } else if(aftersalePo.getType().equals(AftersaleBo.Type.EXCHANGE.getCode().byteValue())) {
-                iDubboOrderService.createExchangeOrder(
+                //TODO dubbo
+                /*iDubboOrderService.createExchangeOrder(
                         new ExchangeOrderDTO(
                                 aftersalePo.getCustomerId(),
                                 aftersalePo.getShopId(),
@@ -155,7 +183,7 @@ public class AftersaleService {
                                 aftersalePo.getMobile(),
                                 aftersalePo.getConsignee(),
                                 aftersalePo.getRegionId()));
-                aftersalePo.setState((byte) 4);
+                aftersalePo.setState((byte) 4);*/
             }
         }
 
