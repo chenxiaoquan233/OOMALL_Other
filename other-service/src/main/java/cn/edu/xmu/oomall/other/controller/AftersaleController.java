@@ -7,7 +7,7 @@ import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.oomall.other.model.vo.Aftersale.*;
-import cn.edu.xmu.oomall.other.service.AfterSaleService;
+import cn.edu.xmu.oomall.other.service.AftersaleService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +16,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @author XQChen
@@ -27,14 +25,14 @@ import java.util.List;
  */
 @RestController /*Restful的Controller对象*/
 @RequestMapping(produces = "application/json;charset=UTF-8")
-public class AfterSaleController {
-    private static final Logger logger = LoggerFactory.getLogger(AfterSaleController.class);
+public class AftersaleController {
+    private static final Logger logger = LoggerFactory.getLogger(AftersaleController.class);
 
     @Autowired
     private HttpServletResponse httpServletResponse;
 
     @Autowired
-    private AfterSaleService afterSaleService;
+    private AftersaleService aftersaleService;
 
     @ApiOperation(value = "获得售后单的所有状态", produces = "application/json")
     @ApiImplicitParams({
@@ -45,10 +43,10 @@ public class AfterSaleController {
     })
     @Audit
     @GetMapping("/aftersales/states")
-    public Object getAfterSaleAllStates() {
+    public Object getAftersaleAllStates() {
         logger.debug("getAfterSaleAllStates");
 
-        return ResponseUtil.ok(afterSaleService.getAfterSaleAllStates());
+        return ResponseUtil.ok(aftersaleService.getAftersaleAllStates());
     }
 
     @ApiOperation(value = "买家提交售后单", produces = "application/json")
@@ -62,7 +60,7 @@ public class AfterSaleController {
     })
     @Audit
     @PostMapping("/orderItems/{id}aftersales")
-    public Object createAfterSale(@LoginUser Long userId, @Validated @RequestBody AftersaleVo vo, @PathVariable("id") Long orderItemId, BindingResult bindingResult) {
+    public Object createAftersale(@LoginUser Long userId, @Validated @RequestBody AftersaleVo vo, @PathVariable("id") Long orderItemId, BindingResult bindingResult) {
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(null != object) {
             logger.debug("Validate failed");
@@ -71,7 +69,7 @@ public class AfterSaleController {
             return object;
         }
 
-        return ResponseUtil.ok(afterSaleService.createAfterSale(vo, orderItemId, userId));
+        return ResponseUtil.ok(aftersaleService.createAftersale(vo, orderItemId, userId));
     }
 
     @ApiOperation(value = "买家查询所有的售后单", produces = "application/json")
@@ -92,7 +90,7 @@ public class AfterSaleController {
     })
     @Audit
     @GetMapping("/aftersales")
-    public Object getAllAfterSale(
+    public Object getAllAftersale(
             @LoginUser Long userId,
             @RequestParam(required = false) Long spuId,
             @RequestParam(required = false) Long skuId,
@@ -104,7 +102,7 @@ public class AfterSaleController {
             @RequestParam(required = false) Integer type,
             @RequestParam(required = false) Integer state) {
 
-        return ResponseUtil.ok(afterSaleService.getAllAftersales(userId, null, beginTime, endTime, page, pageSize, type, state));
+        return ResponseUtil.ok(aftersaleService.getAllAftersales(userId, null, beginTime, endTime, page, pageSize, type, state));
     }
 
     @ApiOperation(value = "买家查询所有的售后单", produces = "application/json")
@@ -125,7 +123,7 @@ public class AfterSaleController {
     })
     @Audit
     @GetMapping("/shops/{id}/aftersales")
-    public Object adminGetAllAfterSale(
+    public Object adminGetAllAftersale(
             @LoginUser Long userId,
             @Depart Long did,
             @PathVariable("id") Long shopId,
@@ -144,7 +142,7 @@ public class AfterSaleController {
             return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
         }
 
-        return ResponseUtil.ok(afterSaleService.getAllAftersales(userId, shopId, beginTime, endTime, page, pageSize, type, state));
+        return ResponseUtil.ok(aftersaleService.getAllAftersales(userId, shopId, beginTime, endTime, page, pageSize, type, state));
     }
 
     @ApiOperation(value = "买家根据售后单id查询售后单信息", produces = "application/json")
@@ -157,8 +155,8 @@ public class AfterSaleController {
     })
     @Audit
     @GetMapping("/aftersales/{id}")
-    public Object getAfterSaleById(@LoginUser Long userId, @PathVariable("id") Long aftersaleId) {
-        Object object = afterSaleService.getAftersaleById(userId, aftersaleId);
+    public Object getAftersaleById(@LoginUser Long userId, @PathVariable("id") Long aftersaleId) {
+        Object object = aftersaleService.getAftersaleById(userId, aftersaleId);
 
         if(object.equals(ResponseCode.RESOURCE_ID_NOTEXIST))
         {
@@ -181,8 +179,8 @@ public class AfterSaleController {
     })
     @Audit
     @PutMapping("/aftersales/{id}")
-    public Object modifyAfterSaleById(@LoginUser Long userId, @PathVariable("id") Long aftersaleId, @Validated AftersaleModifyVo vo) {
-        ResponseCode responseCode = afterSaleService.modifyAftersaleById(userId, aftersaleId, vo);
+    public Object modifyAftersaleById(@LoginUser Long userId, @PathVariable("id") Long aftersaleId, @Validated AftersaleModifyVo vo) {
+        ResponseCode responseCode = aftersaleService.modifyAftersaleById(userId, aftersaleId, vo);
 
         if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -202,7 +200,7 @@ public class AfterSaleController {
     @Audit
     @DeleteMapping("/aftersales/{id}")
     public Object deleteAftersaleById(@LoginUser Long userId, @PathVariable("id") Long id) {
-        ResponseCode responseCode = afterSaleService.deleteAftersaleById(userId, id);
+        ResponseCode responseCode = aftersaleService.deleteAftersaleById(userId, id);
 
         if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -231,7 +229,7 @@ public class AfterSaleController {
             return object;
         }
 
-        ResponseCode responseCode = afterSaleService.addWayBillNumber(userId, id, vo.getLogsn());
+        ResponseCode responseCode = aftersaleService.addWayBillNumber(userId, id, vo.getLogsn());
 
         if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -251,7 +249,7 @@ public class AfterSaleController {
     @Audit
     @PutMapping("/aftersales/{id}/confirm")
     public Object confirmAftersaleEnd(@LoginUser Long userId, @PathVariable("id") Long id) {
-        ResponseCode responseCode = afterSaleService.confirmAftersaleEnd(userId, id);
+        ResponseCode responseCode = aftersaleService.confirmAftersaleEnd(userId, id);
 
         if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -271,13 +269,13 @@ public class AfterSaleController {
     })
     @Audit
     @GetMapping("/shops/{shopId}/aftersales/{id}")
-    public Object adminGetAfterSaleById(@LoginUser Long userId, @Depart Long did, @PathVariable("shopId") Long shopId, @PathVariable("id") Long id) {
+    public Object adminGetAftersaleById(@LoginUser Long userId, @Depart Long did, @PathVariable("shopId") Long shopId, @PathVariable("id") Long id) {
         if(!did.equals(shopId)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
         }
 
-        Object object = afterSaleService.adminGetAftersaleById(shopId, id);
+        Object object = aftersaleService.adminGetAftersaleById(shopId, id);
         if(object.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail((ResponseCode) object);
@@ -297,7 +295,7 @@ public class AfterSaleController {
     })
     @Audit
     @PutMapping("/shops/{shopId}/aftersales/{id}/confirm")
-    public Object adminConfirmAfterSale(
+    public Object adminConfirmAftersale(
             @LoginUser Long userId,
             @Depart Long did,
             @PathVariable("shopId") Long shopId,
@@ -317,7 +315,7 @@ public class AfterSaleController {
             return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
         }
 
-        ResponseCode responseCode = afterSaleService.adminConfirm(id, shopId, vo);
+        ResponseCode responseCode = aftersaleService.adminConfirm(id, shopId, vo);
 
         if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -358,7 +356,7 @@ public class AfterSaleController {
             return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
         }
 
-        ResponseCode responseCode = afterSaleService.adminReceive(id, shopId, vo);
+        ResponseCode responseCode = aftersaleService.adminReceive(id, shopId, vo);
 
         if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -399,7 +397,7 @@ public class AfterSaleController {
             return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
         }
 
-        ResponseCode responseCode = afterSaleService.adminDeliver(id, shopId, vo.getLogSn());
+        ResponseCode responseCode = aftersaleService.adminDeliver(id, shopId, vo.getLogSn());
 
         if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);

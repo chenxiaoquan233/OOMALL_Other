@@ -1,0 +1,44 @@
+{
+  "getAftersaleAllStates01": {
+    "errno": 0,
+    "data": [
+      {
+        "code": 0,
+        "name": "待管理员审核"
+      },
+      {
+        "code": 1,
+        "name": "待买家发货"
+      },
+      {
+        "code": 2,
+        "name": "买家已发货"
+      },
+      {
+        "code": 3,
+        "name": "待店家退款"
+      },
+      {
+        "code": 4,
+        "name": "待店家发货"
+      },
+      {
+        "code": 5,
+        "name": "店家已发货"
+      },
+      {
+        "code": 6,
+        "name": "审核不通过"
+      },
+      {
+        "code": 7,
+        "name": "取消"
+      },
+      {
+        "code": 8,
+        "name": "已结束"
+      }
+    ],
+    "errmsg": "成功"
+  }
+}
