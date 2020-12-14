@@ -4,6 +4,7 @@ import cn.edu.xmu.ooad.util.JacksonUtil;
 import cn.edu.xmu.oomall.other.dao.FootprintDao;
 import cn.edu.xmu.oomall.other.model.bo.FootPrintBo;
 import cn.edu.xmu.oomall.other.model.po.FootPrintPo;
+import cn.edu.xmu.oomall.other.model.vo.FootPrint.FootPrintVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 
 /**
- * 日志消费者
+ * 足迹消费者
  * @author Ji Cao
  */
 @Slf4j
@@ -30,11 +31,15 @@ public class FootprintConsumerListener implements RocketMQListener<String>, Rock
 
     private static final Logger logger = LoggerFactory.getLogger(FootprintConsumerListener.class);
 
+    /**
+     * 待修改
+     * @param message
+     */
     @Override
     public void onMessage(String message) {
-        FootPrintPo footPrintPo = JacksonUtil.toObj(message,FootPrintPo.class);
-        logger.debug("onMessage: got message footprint =" + footPrintPo);
-        footprintDao.addFootprint(footPrintPo);
+        FootPrintVo footPrintVo = JacksonUtil.toObj(message, FootPrintVo.class);
+        logger.debug("onMessage: got message footprint =" + footPrintVo);
+        footprintDao.addFootprint(footPrintVo);
     }
 
     @Override

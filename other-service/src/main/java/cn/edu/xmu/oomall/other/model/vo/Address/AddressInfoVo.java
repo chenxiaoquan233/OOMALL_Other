@@ -1,16 +1,17 @@
 package cn.edu.xmu.oomall.other.model.vo.Address;
 
 import lombok.Data;
-import org.apache.tomcat.jni.Address;
-import org.apache.tomcat.jni.Local;
 
 import java.time.LocalDateTime;
+
+
 /**
  * @author Ji Cao
- * @version 创建时间：2020/12/3 下午18:57
+ * @version 创建时间：2020/12/13 下午18:57
  */
+
 @Data
-public class AddressRetVo {
+public class AddressInfoVo {
     private Long id;
     private Long regionId;
     private String detail;
@@ -18,5 +19,5 @@ public class AddressRetVo {
     private String mobile;
     private Boolean beDefault;
     private LocalDateTime gmtCreate;
-    private LocalDateTime gmtModified;
+    private Integer state;
 }

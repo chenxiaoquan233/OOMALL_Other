@@ -7,6 +7,7 @@ import cn.edu.xmu.oomall.other.mapper.FootPrintPoMapper;
 import cn.edu.xmu.oomall.other.model.bo.FootPrintBo;
 import cn.edu.xmu.oomall.other.model.po.FootPrintPo;
 import cn.edu.xmu.oomall.other.model.po.FootPrintPoExample;
+import cn.edu.xmu.oomall.other.model.vo.FootPrint.FootPrintVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
@@ -32,11 +33,14 @@ public class FootprintDao {
 
     /**
      * 增加足迹
-     * @param footPrintPo
-     * @return
+     * @param footPrintVo 足迹Vo
+     * @return ResponseCode
      */
-    public ResponseCode addFootprint(FootPrintPo footPrintPo)
+    public ResponseCode addFootprint(FootPrintVo footPrintVo)
     {
+        FootPrintPo footPrintPo = new FootPrintPo();
+        footPrintPo.setGoodsSkuId(footPrintVo.getGoodsSkuId());
+        footPrintPo.setCustomerId(footPrintVo.getCustomerId());
         footPrintPo.setGmtCreate(LocalDateTime.now());
         footPrintPo.setGmtModified(null);
         try{
@@ -58,7 +62,6 @@ public class FootprintDao {
     }
     /**
      * 分页查询所有足迹
-     * @param did 店id
      * @param userId  用户ID
      * @param beginTime  开始时间
      * @param endTime  结束时间
@@ -66,17 +69,14 @@ public class FootprintDao {
      * @param pageSize 每页大小
      * @return ReturnObject<List> 角色列表
      */
-    public PageInfo<FootPrintPo> getFootprints(Long did,Long userId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
+    public PageInfo<FootPrintPo> getFootprints(Long userId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
         FootPrintPoExample example=new FootPrintPoExample();
         FootPrintPoExample.Criteria criteria=example.createCriteria();
         criteria.andCustomerIdEqualTo(userId);
         criteria.andGmtCreateGreaterThan(beginTime);
         criteria.andGmtCreateLessThan(endTime);
-        List<FootPrintPo> footPrints = null;
-        footPrints = footPrintPoMapper.selectByExample(example);
-
+        List<FootPrintPo> footPrints = footPrintPoMapper.selectByExample(example);
         return new PageInfo<>(footPrints);
-
     }
 
     

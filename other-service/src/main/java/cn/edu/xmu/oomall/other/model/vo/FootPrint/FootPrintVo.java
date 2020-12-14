@@ -14,9 +14,6 @@ import javax.validation.constraints.NotNull;
 @Data
 @ApiModel
 public class FootPrintVo {
-    @NotNull(message = "SkuId不能为空")
-    @ApiModelProperty(name = "goodSkuID", value = "0")
-    private Long goodSkuID;
-
-
+    private Long customerId;
+    private Long goodsSkuId;
 }
