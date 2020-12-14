@@ -42,12 +42,12 @@ public class ShareController {
     public IGoodsService goodsService=new GoodsService();
 
 
-    //TODO:生成分享链接
+    //DONE:生成分享链接
     //Done:接受点击分享连接信息
     //以完成：下单后更改分享成功
     //Done:七天后返回返点
     //TODO:分享活动加入redis中 ps:在下线或上限活动时，记得清空对应商品的缓存
-    //TODO:支付时扣除返点
+    //DONE:支付时扣除返点
     //Topic
     /***
      * 平台或店家创建新的分享活动
