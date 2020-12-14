@@ -38,13 +38,13 @@ import java.util.stream.Collectors;
 public class AdvertiseService {
     private static final Logger logger = LoggerFactory.getLogger(AfterSaleService.class);
 
-    @Value("${privilegeservice.dav.username}")
+    //@Value("${privilegeservice.dav.username}")
     private String davUsername;
 
-    @Value("${privilegeservice.dav.password}")
+    //@Value("${privilegeservice.dav.password}")
     private String davPassword;
 
-    @Value("${privilegeservice.dav.baseUrl}")
+    //@Value("${privilegeservice.dav.baseUrl}")
     private String baseUrl;
 
 
