@@ -1,9 +1,9 @@
 package cn.edu.xmu.oomall.service;
 
-import cn.edu.xmu.oomall.dto.AftersaleDTO;
-import cn.edu.xmu.oomall.dto.EffectiveShareDTO;
+import cn.edu.xmu.oomall.dto.AftersaleDto;
+import cn.edu.xmu.oomall.dto.EffectiveShareDto;
 import cn.edu.xmu.oomall.dto.ExchangeOrderDto;
-import cn.edu.xmu.oomall.dto.OrderItemDTO;
+import cn.edu.xmu.oomall.dto.OrderItemDto;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public interface IDubboOrderService {
      * @param orderItemId
      * @return
      */
-    AftersaleDTO getAfterSaleByOrderItemId(Long orderItemId);
+    AftersaleDto getAfterSaleByOrderItemId(Long orderItemId);
 
     /**
      * 商铺是否拥有某个order
@@ -49,7 +49,7 @@ public interface IDubboOrderService {
      * @param orderItemId
      * @return
      */
-    OrderItemDTO getOrderItem(Long orderItemId);
+    OrderItemDto getOrderItem(Long orderItemId);
 
 
     /**
@@ -77,7 +77,7 @@ public interface IDubboOrderService {
      * 返回确认收货后七天到八天且未退款的订单项信息
      * @return
      */
-    List<EffectiveShareDTO> getEffectiveShareRecord();
+    List<EffectiveShareDto> getEffectiveShareRecord();
 
     /**
      * 创建换货订单

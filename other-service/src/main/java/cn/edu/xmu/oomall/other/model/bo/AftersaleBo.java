@@ -1,7 +1,7 @@
 package cn.edu.xmu.oomall.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
-import cn.edu.xmu.oomall.dto.AftersaleDTO;
+import cn.edu.xmu.oomall.dto.AftersaleDto;
 import cn.edu.xmu.oomall.service.IDubboOrderService;
 import cn.edu.xmu.oomall.other.model.po.AftersalePo;
 import cn.edu.xmu.oomall.other.model.vo.Aftersale.AftersaleRetVo;
@@ -153,8 +153,8 @@ public class AftersaleBo implements VoObject {
         this.id = po.getId();
 
         //TODO dubbo
-        AftersaleDTO aftersaleDTO = new AftersaleDTO(1L, "tset", 2L, "ttt", 10L, 20);
-        //AftersaleDTO aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(this.orderItemId);
+        AftersaleDto aftersaleDTO = new AftersaleDto(1L, "tset", 2L, "ttt", 10L, 20);
+        //AftersaleDto aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(this.orderItemId);
 
         this.orderId = aftersaleDTO.getOrderId();
         this.orderSn = aftersaleDTO.getOrderSn();

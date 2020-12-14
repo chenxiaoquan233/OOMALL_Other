@@ -13,16 +13,12 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderItemDTO implements Serializable {
+public class AftersaleDto implements Serializable {
 
-    private Long id;
-    private Long skuId;
     private Long orderId;
-    private String name;
+    private String orderSn;
+    private Long skuId;
+    private String skuName;
+    private Long shopId;
     private Integer quantity;
-    private Long price;
-    private Long discount;
-    private Long couponActivityId;
-    private Long beShareId;
-
 }

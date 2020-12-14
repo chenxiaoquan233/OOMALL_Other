@@ -15,13 +15,13 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDTO implements Serializable {
+public class OrderDto implements Serializable {
 
     private Long id;
     private Long customerId;
     private Long shopId;
     private String orderSn;
-    private List<OrderDTO> subOrders;
+    private List<OrderDto> subOrders;
     private Long pid;
     private String consignee;
     private Long regionId;
@@ -43,5 +43,5 @@ public class OrderDTO implements Serializable {
     private Integer state;
     private Integer subState;
     private Integer beDeleted;
-    private List<OrderItemDTO> orderItems;
+    private List<OrderItemDto> orderItems;
 }

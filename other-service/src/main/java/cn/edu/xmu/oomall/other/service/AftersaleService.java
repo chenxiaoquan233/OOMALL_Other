@@ -1,7 +1,7 @@
 package cn.edu.xmu.oomall.other.service;
 
 import cn.edu.xmu.ooad.util.ResponseCode;
-import cn.edu.xmu.oomall.dto.AftersaleDTO;
+import cn.edu.xmu.oomall.dto.AftersaleDto;
 import cn.edu.xmu.oomall.dto.ExchangeOrderDto;
 import cn.edu.xmu.oomall.service.IDubboOrderService;
 import cn.edu.xmu.oomall.service.IDubboPaymentService;
@@ -62,8 +62,8 @@ public class AftersaleService {
         logger.debug("BO here1:" + aftersaleBo);
 
         //TODO dubbo
-        AftersaleDTO aftersaleDTO = new AftersaleDTO(1L, "tset", 2L, "ttt", 10L, 20);
-        //AftersaleDTO aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(orderItemId);
+        AftersaleDto aftersaleDTO = new AftersaleDto(1L, "tset", 2L, "ttt", 10L, 20);
+        //AftersaleDto aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(orderItemId);
 
         logger.debug("BO here2:" + aftersaleBo);
 

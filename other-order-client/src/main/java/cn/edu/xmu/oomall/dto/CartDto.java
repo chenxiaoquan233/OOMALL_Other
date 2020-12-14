@@ -5,21 +5,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
-/**
- * @author xincong yao
- * @date 2020-12-7
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ShareDTO implements Serializable {
-
-    private Long orderItemId;
+public class CartDto implements Serializable {
 
     private Long customerId;
 
-    private Long skuId;
+    private List<Long> skuIdList;
 
-    private Long beSharedId;
 }

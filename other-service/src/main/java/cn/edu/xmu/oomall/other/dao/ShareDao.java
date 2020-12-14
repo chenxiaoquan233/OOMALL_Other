@@ -4,8 +4,8 @@ import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.JacksonUtil;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
-import cn.edu.xmu.oomall.dto.EffectiveShareDTO;
-import cn.edu.xmu.oomall.dto.ShareDTO;
+import cn.edu.xmu.oomall.dto.EffectiveShareDto;
+import cn.edu.xmu.oomall.dto.ShareDto;
 import cn.edu.xmu.oomall.other.mapper.*;
 import cn.edu.xmu.oomall.other.model.bo.ShareActivityBo;
 import cn.edu.xmu.oomall.other.model.po.*;
@@ -120,7 +120,7 @@ public class ShareDao {
         return new PageInfo<>(sharePos);
     }
     /*在下单时查找第一个有效的分享成功记录*/
-    public ShareDTO getFirstBeShared(Long customerId, Long skuId, Long orderItemId) {
+    public ShareDto getFirstBeShared(Long customerId, Long skuId, Long orderItemId) {
         BeSharePoExample example=new BeSharePoExample();
         BeSharePoExample.Criteria criteria=example.createCriteria();
         criteria.andCustomerIdEqualTo(customerId);
@@ -130,7 +130,7 @@ public class ShareDao {
         BeSharePo po=beSharePos.get(0);
         po.setOrderId(orderItemId);
         beSharePoMapper.updateByPrimaryKey(po);
-        return new ShareDTO(po.getOrderId(),po.getCustomerId(),po.getGoodsSkuId(),po.getId());
+        return new ShareDto(po.getOrderId(),po.getCustomerId(),po.getGoodsSkuId(),po.getId());
     }
 
     public ShareActivityBo getShareActivityById(Long id){
@@ -266,9 +266,9 @@ public class ShareDao {
 
     }
 
-    public void retPointByShareDTOS(List<EffectiveShareDTO> shareDTOS) {
+    public void retPointByShareDTOS(List<EffectiveShareDto> shareDTOS) {
         Map<Long, CalcPoint> shareActivityMap=new HashMap<>();
-        for(EffectiveShareDTO shareDTO:shareDTOS){
+        for(EffectiveShareDto shareDTO:shareDTOS){
             BeSharePo beSharePo=beSharePoMapper.selectByPrimaryKey(shareDTO.getBeSharedId());
             CalcPoint calcPoint;
             Long activityId=beSharePo.getShareActivityId();

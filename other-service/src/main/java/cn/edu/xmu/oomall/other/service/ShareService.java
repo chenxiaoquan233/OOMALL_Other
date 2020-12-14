@@ -3,7 +3,7 @@ package cn.edu.xmu.oomall.other.service;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
-import cn.edu.xmu.oomall.dto.EffectiveShareDTO;
+import cn.edu.xmu.oomall.dto.EffectiveShareDto;
 import cn.edu.xmu.oomall.service.IDubboOrderService;
 import cn.edu.xmu.oomall.other.dao.ShareDao;
 import cn.edu.xmu.oomall.other.dao.UserDao;
@@ -46,7 +46,7 @@ public class ShareService {
     IDubboOrderService orderService;
 
     public void retPointToCustomer(){
-        List<EffectiveShareDTO> shareDTOS=orderService.getEffectiveShareRecord();
+        List<EffectiveShareDto> shareDTOS=orderService.getEffectiveShareRecord();
         shareDao.retPointByShareDTOS(shareDTOS);
 
     }
