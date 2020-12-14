@@ -1,4 +1,4 @@
-package cn.edu.xmu.oomall.other.util;
+package cn.edu.xmu.oomall.other;
 
 import cn.edu.xmu.ooad.util.Common;
 import com.auth0.jwt.JWT;
@@ -7,14 +7,16 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import java.util.*;
 
 /**
  * @author XQChen
- * @version 创建时间：2020/12/6 下午10:28
+ * @version 创建时间：2020/12/14 下午3:38
  */
-public class TestStub {
-    private static final Logger logger = LoggerFactory.getLogger(TestStub.class);
+public class Stub {
+
+    private static final Logger logger = LoggerFactory.getLogger(Stub.class);
 
     // 秘钥
     static final String SECRET = "Role-Privilege-Token";

@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
  * @version 创建时间：2020/12/10 上午10:21
  */
 @Service
-public class AfterSaleService {
-    private static final Logger logger = LoggerFactory.getLogger(AfterSaleService.class);
+public class AftersaleService {
+    private static final Logger logger = LoggerFactory.getLogger(AftersaleService.class);
 
     @Autowired
     private AftersaleDao aftersaleDao;
@@ -43,13 +43,13 @@ public class AfterSaleService {
     @DubboReference(registry = {"provider2"}, version = "0.0.1-SNAPSHOT")
     private IDubboPaymentService iDubboPaymentService;
 
-    public List<AftersaleStateVo> getAfterSaleAllStates() {
+    public List<AftersaleStateVo> getAftersaleAllStates() {
         logger.debug("getAfterSaleAllStates");
 
         return Arrays.stream(AftersaleBo.State.values()).map(AftersaleStateVo::new).collect(Collectors.toList());
     }
 
-    public AftersaleRetVo createAfterSale(AftersaleVo vo, Long orderItemId, Long userId) {
+    public AftersaleRetVo createAftersale(AftersaleVo vo, Long orderItemId, Long userId) {
         logger.debug("createAfterSale");
 
         AftersaleBo aftersaleBo = vo.createBo();

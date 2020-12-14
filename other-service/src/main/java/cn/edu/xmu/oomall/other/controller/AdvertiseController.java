@@ -6,16 +6,13 @@ import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseVo;
 import cn.edu.xmu.oomall.other.service.AdvertiseService;
-import cn.edu.xmu.oomall.other.service.AfterSaleService;
 import io.swagger.annotations.*;
-import io.swagger.models.auth.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 

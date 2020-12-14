@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class AdvertiseService {
-    private static final Logger logger = LoggerFactory.getLogger(AfterSaleService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AftersaleService.class);
 
     //@Value("${advertisment-service.dav.username}")
     private String davUsername;
