@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartDto implements Serializable {
+public class CartDTO implements Serializable {
 
     private Long customerId;
 

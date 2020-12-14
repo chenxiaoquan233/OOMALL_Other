@@ -2,15 +2,16 @@ package cn.edu.xmu.oomall.other.service;
 
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.oomall.dto.AftersaleDTO;
-import cn.edu.xmu.oomall.dto.OrderDTO;
+import cn.edu.xmu.oomall.dto.ExchangeOrderDTO;
 import cn.edu.xmu.oomall.impl.IDubboOrderService;
+import cn.edu.xmu.oomall.impl.IDubboPaymentService;
+import cn.edu.xmu.oomall.other.dao.AddressDao;
 import cn.edu.xmu.oomall.other.dao.AftersaleDao;
 import cn.edu.xmu.oomall.other.model.bo.AftersaleBo;
 import cn.edu.xmu.oomall.other.model.po.AftersalePo;
 import cn.edu.xmu.oomall.other.model.vo.Aftersale.*;
 import com.github.pagehelper.PageInfo;
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.aspectj.lang.annotation.After;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,14 @@ public class AfterSaleService {
     @Autowired
     private AftersaleDao aftersaleDao;
 
-    @DubboReference
+    @Autowired
+    private AddressDao addressDao;
+
+    @DubboReference(registry = {"provider2"}, version = "0.0.1-SNAPSHOT")
     private IDubboOrderService iDubboOrderService;
+
+    @DubboReference(registry = {"provider2"}, version = "0.0.1-SNAPSHOT")
+    private IDubboPaymentService iDubboPaymentService;
 
     public List<AftersaleStateVo> getAfterSaleAllStates() {
         logger.debug("getAfterSaleAllStates");
@@ -133,9 +140,28 @@ public class AfterSaleService {
         if(!aftersalePo.getShopId().equals(shopId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
         if(!aftersalePo.getState().equals((byte) 2)) return ResponseCode.AFTERSALE_STATENOTALLOW;
 
-        //TODO API存疑
-        //TODO 若退款则调用退款,换货生成新的订单
-        return null;
+        aftersalePo.setConclusion(vo.getConclusion());
+        if(vo.isConfirm()) {
+            if(aftersalePo.getType().equals(AftersaleBo.Type.RETURN.getCode().byteValue())) {
+                iDubboPaymentService.createRefund(aftersaleId, aftersalePo.getOrderItemId(), aftersalePo.getQuantity());
+                aftersalePo.setState((byte) 3);
+            } else if(aftersalePo.getType().equals(AftersaleBo.Type.EXCHANGE.getCode().byteValue())) {
+                iDubboOrderService.createExchangeOrder(
+                        new ExchangeOrderDTO(
+                                aftersalePo.getCustomerId(),
+                                aftersalePo.getShopId(),
+                                aftersalePo.getQuantity(),
+                                aftersalePo.getOrderItemId(),
+                                aftersalePo.getMobile(),
+                                aftersalePo.getConsignee(),
+                                aftersalePo.getRegionId()));
+                aftersalePo.setState((byte) 4);
+            }
+        }
+
+        aftersaleDao.updateAftersale(aftersalePo);
+
+        return ResponseCode.OK;
     }
 
     public ResponseCode adminConfirm(Long aftersaleId, Long shopId, AftersaleConfirmVo vo) {

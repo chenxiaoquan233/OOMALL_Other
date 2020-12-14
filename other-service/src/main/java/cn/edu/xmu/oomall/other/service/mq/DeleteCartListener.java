@@ -1,7 +1,7 @@
 package cn.edu.xmu.oomall.other.service.mq;
 
 import cn.edu.xmu.ooad.util.JacksonUtil;
-import cn.edu.xmu.oomall.dto.CartDto;
+import cn.edu.xmu.oomall.dto.CartDTO;
 import cn.edu.xmu.oomall.other.dao.ShoppingCartDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
@@ -30,7 +30,7 @@ public class DeleteCartListener implements RocketMQListener<String>, RocketMQPus
     private RocketMQTemplate rocketMQTemplate;
     @Override
     public void onMessage(String s) {
-        CartDto cart= JacksonUtil.toObj(s,CartDto.class);
+        CartDTO cart= JacksonUtil.toObj(s,CartDTO.class);
         for(Long skuId:cart.getSkuIdList())
             shoppingCartDao.deleteCartByCustomerAndSku(cart.getCustomerId(),skuId);
     }

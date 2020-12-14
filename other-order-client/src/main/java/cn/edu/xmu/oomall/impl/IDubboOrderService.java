@@ -2,7 +2,7 @@ package cn.edu.xmu.oomall.impl;
 
 import cn.edu.xmu.oomall.dto.AftersaleDTO;
 import cn.edu.xmu.oomall.dto.EffectiveShareDTO;
-import cn.edu.xmu.oomall.dto.ExchangeOrderDto;
+import cn.edu.xmu.oomall.dto.ExchangeOrderDTO;
 import cn.edu.xmu.oomall.dto.OrderItemDTO;
 
 import java.util.List;
@@ -84,5 +84,5 @@ public interface IDubboOrderService {
      * @param dto 换货订单所需的信息
      * @return 成功返回0, 错误返回500
      */
-    Integer createExchangeOrder(ExchangeOrderDto dto);
+    Integer createExchangeOrder(ExchangeOrderDTO dto);
 }

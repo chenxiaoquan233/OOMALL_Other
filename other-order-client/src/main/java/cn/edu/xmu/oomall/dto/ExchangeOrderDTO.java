@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExchangeOrderDto implements Serializable {
+public class ExchangeOrderDTO implements Serializable {
 
     Long customerId;
     Long shopId;
@@ -24,5 +24,7 @@ public class ExchangeOrderDto implements Serializable {
     String mobile;
     String consignee;
     Long regionId;
-    String address;
+
+    //TODO: talk to yxc
+    //String address;
 }
