@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.other.model.vo.FootPrint;
 
+import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
@@ -12,6 +13,6 @@ import java.time.LocalDateTime;
 @Data
 public class FootPrintRetVo {
     private Long id;
-    private Long goodsSpuId;
+    private GoodsSkuSimpleVo goodsRetVo;
     private LocalDateTime gmtCreate;
 }

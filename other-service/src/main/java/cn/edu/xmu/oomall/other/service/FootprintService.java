@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -47,10 +48,10 @@ public class FootprintService {
 
     public ResponseCode addFootprint(Long userId, Long id)
     {
-        FootPrintPo footPrintPo = new FootPrintPo();
-        footPrintPo.setCustomerId(userId);
-        footPrintPo.setGoodsSkuId(id);
-        String json = JacksonUtil.toJson(footPrintPo);
+        FootPrintVo footPrintVo = new FootPrintVo();
+        footPrintVo.setCustomerId(userId);
+        footPrintVo.setGoodsSkuId(id);
+        String json = JacksonUtil.toJson(footPrintVo);
         Message message = MessageBuilder.withPayload(json).build();
         rocketMQTemplate.sendOneWay("footprint-topic",message);
         logger.debug(json);
@@ -59,10 +60,12 @@ public class FootprintService {
 
     public ReturnObject<PageInfo<VoObject>> getFootprints(Long did,Long userId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
         PageHelper.startPage(page,pageSize,true,true,null);
-        PageInfo<FootPrintPo> footPrintPos = footprintDao.getFootprints(did,userId, beginTime, endTime, page, pageSize);
-        List<VoObject> footprints = footPrintPos.getList().stream().map(FootPrintBo::new)
-                .map(x->{ x.setGoodsRetVo(new GoodsSkuSimpleVo(goodsService.getSku(x.getSkuId())));
-        return x;}).collect(Collectors.toList());
+        PageInfo<FootPrintPo> footPrintPos = footprintDao.getFootprints(userId, beginTime, endTime, page, pageSize);
+        List<VoObject> footprints = footPrintPos.getList().stream().map(FootPrintBo::new).map(x->{
+                x.setSkuSimpleVo(new GoodsSkuSimpleVo(goodsService.getSku(x.getSkuId())));
+                return x;
+        }).collect(Collectors.toList());
+
         PageInfo<VoObject> retObj=new PageInfo<>(footprints);
         retObj.setPageNum(footPrintPos.getPageNum());
         retObj.setPageSize(footPrintPos.getPageSize());

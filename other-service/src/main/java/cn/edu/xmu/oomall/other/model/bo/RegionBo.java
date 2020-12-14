@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.other.model.po.RegionPo;
+import cn.edu.xmu.oomall.other.model.vo.Address.RegionRetVo;
 import cn.edu.xmu.oomall.other.model.vo.Address.RegionVo;
 import lombok.Data;
 
@@ -58,7 +59,15 @@ public class RegionBo implements VoObject {
 
     @Override
     public Object createVo() {
-        return null;
+        RegionRetVo regionRetVo = new RegionRetVo();
+        regionRetVo.setId(this.getId());
+        regionRetVo.setPid(this.getPid());
+        regionRetVo.setName(this.getName());
+        regionRetVo.setPostalCode(this.getPostalCode());
+        regionRetVo.setState(this.getState().getCode());
+        regionRetVo.setGmtCreate(this.getGmtCreate());
+        regionRetVo.setGmtModified(this.getGmtModified());
+        return regionRetVo;
     }
 
     @Override

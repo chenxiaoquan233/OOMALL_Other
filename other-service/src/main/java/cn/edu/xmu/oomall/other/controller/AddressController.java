@@ -7,6 +7,7 @@ import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
+import cn.edu.xmu.oomall.other.model.vo.Address.AddressRetVo;
 import cn.edu.xmu.oomall.other.model.vo.Address.AddressVo;
 import cn.edu.xmu.oomall.other.model.vo.Address.RegionVo;
 import cn.edu.xmu.oomall.other.service.AddressService;
@@ -53,9 +54,10 @@ public class AddressController {
         {
             return Common.processFieldErrors(result,httpServletResponse);
         }
-        ReturnObject returnObj = addressService.addAddress(userId,addressVo);
+        ReturnObject<VoObject> returnObj = addressService.addAddress(userId,addressVo);
         if(returnObj.getCode() == ResponseCode.OK){
-            return ResponseUtil.ok();
+            Object returnVo = returnObj.getData().createSimpleVo();
+            return Common.decorateReturnObject(new ReturnObject(returnVo));
         }
         else return ResponseUtil.fail(returnObj.getCode());
     }
@@ -102,8 +104,7 @@ public class AddressController {
     @PutMapping("/addresses/{id}/default")
     public Object updateDefaultAddress(@LoginUser Long userId, @PathVariable("id")Long id)
     {
-        ReturnObject<VoObject> retObj = addressService.updateDefaultAddress(userId,id);
-        ResponseCode responseCode = retObj.getCode();
+        ResponseCode responseCode = addressService.updateDefaultAddress(userId,id).getCode();
         if(responseCode.equals(ResponseCode.OK)){
             return ResponseUtil.ok();
         } else {
@@ -134,10 +135,9 @@ public class AddressController {
         if(result.hasErrors()){
             return Common.processFieldErrors(result,httpServletResponse);
         }
-        ReturnObject<VoObject> retObj = addressService.updateAddress(userId,id,addressVo);
-        ResponseCode responseCode = retObj.getCode();
+        ResponseCode responseCode = addressService.updateAddress(userId,id,addressVo).getCode();
         if(responseCode.equals(ResponseCode.OK)){
-            return ResponseUtil.ok(retObj.getData());
+            return ResponseUtil.ok();
         } else {
             return ResponseUtil.fail(responseCode);
         }
@@ -207,7 +207,7 @@ public class AddressController {
     })
     @Audit
     @PostMapping("/regions/{id}/subregions")
-    public Object addSubRegion(@PathVariable("id")Long id, @RequestBody RegionVo regionVo,BindingResult bindingResult)
+    public Object addSubRegion(@PathVariable("id")Long id, @RequestBody(required = true) RegionVo regionVo,BindingResult bindingResult)
     {
         Object returnObject = Common.processFieldErrors(bindingResult,httpServletResponse);
         if (null != returnObject) {
@@ -238,7 +238,7 @@ public class AddressController {
     })
     @Audit
     @PutMapping("/regions/{id}")
-    public Object updateRegion(@PathVariable("id") Long id, RegionVo regionVo,BindingResult bindingResult)
+    public Object updateRegion(@PathVariable("id") Long id, @RequestBody(required = true) RegionVo regionVo,BindingResult bindingResult)
     {
         Object returnObject = Common.processFieldErrors(bindingResult,httpServletResponse);
         if (null != returnObject) {
