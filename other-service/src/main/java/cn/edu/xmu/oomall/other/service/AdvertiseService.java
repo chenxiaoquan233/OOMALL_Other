@@ -82,29 +82,22 @@ public class AdvertiseService {
     public ResponseCode uploadAdvertiseImgById(Integer id, MultipartFile multipartFile) {
         AdvertiseBo bo = advertiseDao.getAdvertiseById(id.longValue());
         if(bo==null)return ResponseCode.RESOURCE_ID_NOTEXIST;
-        System.out.println("Bo Ok");
         try{
             System.out.println(davUsername+davPassword+baseUrl);
             ReturnObject returnObject = ImgHelper.remoteSaveImg(multipartFile,2,davUsername,davPassword,baseUrl);
-            System.out.println("Save Img");
             if(!returnObject.getCode().equals(ResponseCode.OK))
                 return returnObject.getCode();
-            System.out.println("Save Img Ok");
             String oldFilename = bo.getImageUrl();
             bo.setImageUrl(baseUrl+returnObject.getData().toString());
             ResponseCode updateRetCode=advertiseDao.updateAdvertisementById(bo);
-            System.out.println("Update DB");
             if(!updateRetCode.equals(ResponseCode.OK)){
                 ImgHelper.deleteRemoteImg(returnObject.getData().toString(),davUsername,davPassword,"");
                 return updateRetCode;
             }
-            System.out.println("Update DB Ok");
             if(oldFilename!=null){
                 ImgHelper.deleteRemoteImg(oldFilename,davUsername,davPassword,"");
             }
-            System.out.println("remove old File Ok");
         }catch (Exception e){
-            System.out.println("Exception");
             return ResponseCode.FILE_NO_WRITE_PERMISSION;
         }
         return ResponseCode.OK;
