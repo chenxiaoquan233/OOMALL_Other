@@ -8,22 +8,32 @@ import cn.edu.xmu.oomall.dto.EffectiveShareDTO;
 import cn.edu.xmu.oomall.dto.ShareDTO;
 import cn.edu.xmu.oomall.other.mapper.*;
 import cn.edu.xmu.oomall.other.model.bo.ShareActivityBo;
+import cn.edu.xmu.oomall.other.model.bo.ShareBo;
 import cn.edu.xmu.oomall.other.model.po.*;
 import cn.edu.xmu.oomall.other.service.factory.CalcPoint;
 import cn.edu.xmu.oomall.other.service.factory.CalcPointFactory;
+import cn.edu.xmu.oomall.other.util.DefaultRedisFinder;
+import cn.edu.xmu.oomall.other.util.ShareActivityRedisFinder;
+import cn.edu.xmu.oomall.other.util.ShopRedisFinder;
+import cn.edu.xmu.oomall.other.util.SkuRedisFinder;
+import cn.xmu.edu.goods.client.IGoodsService;
 import com.github.pagehelper.PageInfo;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -32,7 +42,7 @@ import java.util.stream.Collectors;
  * @version 创建时间：2020/12/5 下午3:10
  */
 @Repository
-public class ShareDao {
+public class ShareDao implements InitializingBean {
     private static final Logger logger = LoggerFactory.getLogger(ShareDao.class);
 
     @Autowired
@@ -50,14 +60,19 @@ public class ShareDao {
     @Autowired
     UpdateRebateMapper updateRebateMapper;
 
+    @DubboReference
+    IGoodsService goodsService;
+
     @Autowired
     RocketMQTemplate rocketMQTemplate;
 
     @Autowired
-    RedisTemplate<String,String> redisTemplate;
+    RedisTemplate<String, Serializable> redisTemplate;
 
     @Autowired
     CalcPointFactory calcPointFactory;
+
+    ShareActivityRedisFinder redisFinder;
 
     @Value("${share-activity.enable-redis}")
     boolean redisEnable;
@@ -234,6 +249,7 @@ public class ShareDao {
         /*冲突活动的要求:开始时间在新活动的结束时间之前，结束时间在新活动的开始活动之后*/
         criteria.andBeginTimeLessThan(endTime);
         criteria.andEndTimeGreaterThan(beginTime);
+        criteria.andStateEqualTo(online);
         /*是默认分享，查找shopId*/
         if(goodsSkuId==0)
             criteria.andShopIdEqualTo(shopId);
@@ -285,5 +301,119 @@ public class ShareDao {
             sharePoMapper.updateByPrimaryKey(sharePo);
             updateRebateMapper.updateRebateByPrimaryKey(sharePo.getSharerId(),Long.valueOf(point));
         }
+    }
+    final private String skuRedis="skuShareActivity";
+    final private String shopRedis="shopShareActivity";
+    final private String defaultRedis="defaultShareActivity";
+    private ShareActivityBo loadFromRedis(Long skuId){
+        ShareActivityBo ret;
+        if(redisTemplate.opsForHash().hasKey(skuRedis,String.valueOf(skuId))){
+            ret= (ShareActivityBo) redisTemplate.opsForHash().get(skuRedis,String.valueOf(skuId));
+            if(ret!=null) {
+                return ret;
+            }
+        }
+
+        return null;
+    }
+    public ShareActivityBo loadShareActivity(Long skuId){
+        ShareActivityBo bo = null;
+        if(redisEnable){
+            bo=redisFinder.getBoFromRedis(skuId,null);
+        }
+        else{
+            bo=getValidShareActivityBySkuId(skuId);
+            if(bo==null)bo=getValidDefaultShareActivityByShopId(goodsService.getShopBySKUId(skuId).getId());
+            if(bo==null)bo=getValidDefaultShareActivityByShopId(0L);
+        }
+        return bo;
+    }
+
+    /**
+     * 找到当前或下一个满足skuid和shopid的活动 shopid为0表示平台
+     * @param skuId
+     * @param shopId
+     * @return
+     */
+    public ShareActivityBo findNowOrNextFirstActivity(Long skuId,Long shopId){
+        LocalDateTime now=LocalDateTime.now();
+        ShareActivityPoExample nowExample =new ShareActivityPoExample();
+        ShareActivityPoExample.Criteria nowCriteria= nowExample.createCriteria();
+        nowCriteria.andBeginTimeLessThanOrEqualTo(now);
+        nowCriteria.andEndTimeGreaterThan(now);
+        nowCriteria.andStateEqualTo(online);
+        if(skuId!=null){
+            nowCriteria.andGoodsSkuIdEqualTo(skuId);
+        }
+        if(shopId!=null){
+            nowCriteria.andShopIdEqualTo(shopId);
+        }
+        List<ShareActivityPo> nowPos=shareActivityPoMapper.selectByExample(nowExample);
+        if(nowPos.size()>0){
+            return new ShareActivityBo(nowPos.get(0));
+        }
+        ShareActivityPoExample nextExample=new ShareActivityPoExample();
+        ShareActivityPoExample.Criteria nextCriteria=nextExample.createCriteria();
+        nextCriteria.andBeginTimeGreaterThan(now);
+        nextCriteria.andStateEqualTo(online);
+        if(skuId!=null){
+            nextCriteria.andGoodsSkuIdEqualTo(skuId);
+        }
+        if(shopId!=null){
+            nextCriteria.andShopIdEqualTo(shopId);
+        }
+        nextExample.setOrderByClause("begin_time asc");
+        List<ShareActivityPo> nextPos=shareActivityPoMapper.selectByExample(nextExample);
+        if(nextPos.size()>0){
+            return new ShareActivityBo(nowPos.get(0));
+        }
+        else return null;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        ShareActivityRedisFinder.init(redisTemplate,goodsService,this);
+        ShareActivityRedisFinder skuFinder=new SkuRedisFinder("sku","shop"),
+                shopFinder=new ShopRedisFinder("shop"),
+                defaultFinder=new DefaultRedisFinder("default");
+        redisFinder=skuFinder;
+        skuFinder.setNext(shopFinder);
+        shopFinder.setNext(defaultFinder);
+    }
+
+    public ReturnObject<VoObject> createShare(Long skuId, Long customerId, ShareActivityBo shareActivityBo) {
+        ShareBo bo=null;
+        SharePo po=null;
+        if(redisEnable) {
+            bo = (ShareBo) redisTemplate.opsForValue().get("share_" + skuId + "_" + customerId);
+        }
+        if(bo==null){
+            SharePoExample example=new SharePoExample();
+            SharePoExample.Criteria criteria=example.createCriteria();
+            criteria.andGoodsSkuIdEqualTo(skuId);
+            criteria.andSharerIdEqualTo(customerId);
+            criteria.andShareActivityIdEqualTo(shareActivityBo.getId());
+            List<SharePo> sharePos=sharePoMapper.selectByExample(example);
+            if(sharePos.size()>0)po=sharePos.get(0);
+            else{
+                po=new SharePo();
+                po.setQuantity(0);
+                po.setGmtCreate(LocalDateTime.now());
+                po.setGoodsSkuId(skuId);
+                po.setSharerId(customerId);
+                po.setShareActivityId(shareActivityBo.getId());
+                sharePoMapper.insertSelective(po);
+            }
+
+        }
+        if(redisEnable){
+            if(po!=null) {
+                redisTemplate.opsForValue().set("share_" + skuId + "_" + customerId, new ShareBo(po));
+                redisTemplate.expire("share_" + skuId + "_" + customerId,
+                        ShareActivityRedisFinder.getExpireTime(shareActivityBo.getEndTime()), TimeUnit.SECONDS);
+            }
+        }
+        return new ReturnObject<>(bo==null?new ShareBo(po):bo);
+
     }
 }

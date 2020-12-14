@@ -3,13 +3,11 @@ package cn.edu.xmu.oomall.other.controller;
 import cn.edu.xmu.ooad.annotation.Audit;
 import cn.edu.xmu.ooad.annotation.LoginUser;
 import cn.edu.xmu.ooad.model.VoObject;
-import cn.edu.xmu.ooad.util.Common;
-import cn.edu.xmu.ooad.util.ResponseCode;
-import cn.edu.xmu.ooad.util.ResponseUtil;
-import cn.edu.xmu.ooad.util.ReturnObject;
+import cn.edu.xmu.ooad.util.*;
 import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityVo;
 import cn.edu.xmu.oomall.other.service.ShareService;
 import cn.edu.xmu.oomall.other.service.factory.CalcPointFactory;
+import cn.edu.xmu.oomall.other.util.ServiceStub.GoodsService;
 import cn.xmu.edu.goods.client.IGoodsService;
 import cn.xmu.edu.goods.client.dubbo.ShopDTO;
 import com.github.pagehelper.PageInfo;
@@ -40,14 +38,16 @@ public class ShareController {
     @Autowired
     private ShareService shareService;
 
-    @DubboReference
-    IGoodsService goodsService;
+    //@DubboReference
+    public IGoodsService goodsService=new GoodsService();
+
 
     //TODO:生成分享链接
     //Done:接受点击分享连接信息
     //以完成：下单后更改分享成功
     //Done:七天后返回返点
     //TODO:分享活动加入redis中 ps:在下线或上限活动时，记得清空对应商品的缓存
+    //TODO:支付时扣除返点
     //Topic
     /***
      * 平台或店家创建新的分享活动
@@ -74,19 +74,26 @@ public class ShareController {
         if(object!=null){
             return object;
         }
-        ShopDTO shopDTO=goodsService.getShopBySKUId(skuId);
-        if(shopDTO==null){
+        //SHOPID为0 skuId为0 代表平台默认
+        //shopId不为0 skuId为0 代表店铺默认
+        //skuid不为0 shopid不为0 代表商店某个商品
+        if(shopId==0&&skuId!=0){
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return ResponseUtil.fail(ResponseCode.OK,"资源不存在");
+            return ResponseUtil.fail(ResponseCode.OK,"平台活动无法设置skuId");
         }
-        else if(shopId!=0){
+        if(skuId!=0) {
+            ShopDTO shopDTO = goodsService.getShopBySKUId(skuId);
+            if (shopDTO == null) {
+                httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return ResponseUtil.fail(ResponseCode.OK, "资源不存在");
+            }
             Long realShopId=shopDTO.getId();
-            if(!realShopId.equals(shopId)){
+            if(!realShopId.equals(shopId)) {
                 httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                return ResponseUtil.fail(ResponseCode.OK,"非法资源");
+                return ResponseUtil.fail(ResponseCode.OK, "非法资源");
             }
         }
-
+        //logger.info("read this?"+ JacksonUtil.toJson(shareActivityVo));
         return Common.getRetObject(shareService.addShareActivity(shopId,skuId,shareActivityVo));
     }
 
@@ -110,7 +117,7 @@ public class ShareController {
     public Object getShares(@LoginUser Long userId, @RequestParam(required = false) Long skuId,
                             @RequestParam(required = false) LocalDateTime beginTime, @RequestParam(required = false) LocalDateTime endTime,
                             @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize){
-        if(endTime.isBefore(beginTime)){
+        if(beginTime!=null&&endTime!=null&&endTime.isBefore(beginTime)){
             return ResponseUtil.fail(ResponseCode.Log_Bigger);
         }
         if(page <= 0 || pageSize <= 0) {
@@ -179,6 +186,10 @@ public class ShareController {
     {
         if(shopId!=0) {
             ShopDTO shopDTO = goodsService.getShopBySKUId(skuId);
+            if(shopDTO==null){
+                httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return ResponseUtil.fail(ResponseCode.OK, "资源不存在");
+            }
             Long realShopId = shopDTO.getId();
             if (!realShopId.equals(shopId)) {
                 httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -198,7 +209,7 @@ public class ShareController {
                               @RequestParam(required = false)LocalDateTime endTime,
                               @RequestParam(defaultValue = "1") Integer page,
                               @RequestParam(defaultValue = "10") Integer pageSize){
-        if(endTime.isBefore(beginTime)){
+        if(beginTime!=null&&endTime!=null&&endTime.isBefore(beginTime)){
             return ResponseUtil.fail(ResponseCode.Log_Bigger);
         }
         ReturnObject<PageInfo<VoObject>> retObj=shareService.getBeShared(userId, skuId,beginTime,endTime,page,pageSize);
@@ -224,11 +235,15 @@ public class ShareController {
                               @RequestParam(required = false)LocalDateTime endTime,
                               @RequestParam(defaultValue = "1") Integer page,
                               @RequestParam(defaultValue = "10") Integer pageSize){
-        if(endTime.isBefore(beginTime)){
+        if(beginTime!=null&&endTime!=null&&endTime.isBefore(beginTime)){
             return ResponseUtil.fail(ResponseCode.Log_Bigger);
         }
         if(shopId!=0) {
             ShopDTO shopDTO = goodsService.getShopBySKUId(skuId);
+            if(shopDTO==null){
+                httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return ResponseUtil.fail(ResponseCode.OK, "资源不存在");
+            }
             Long realShopId = shopDTO.getId();
             if (!realShopId.equals(shopId)) {
                 httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -281,6 +296,16 @@ public class ShareController {
         //是否需要判断SKUID属于SHOPID
         ReturnObject<PageInfo<VoObject>> retObj=shareService.getShareActivities(shopId,skuId,page,pageSize);
         return Common.getPageRetObject(retObj);
+    }
+    @Audit
+    @PostMapping("/skus/{id}/shares")
+    public Object getLink(@LoginUser Long userId,@PathVariable("id")Long skuId){
+        ReturnObject ret=shareService.getShareLink(skuId,userId);
+        if(ret==null){
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail(ResponseCode.OK,"没有有效的活动");
+        }
+        return Common.getRetObject(ret);
     }
 
 }

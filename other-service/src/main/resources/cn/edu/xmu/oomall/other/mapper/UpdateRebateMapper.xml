@@ -4,6 +4,6 @@
     <update id="updateRebateByPrimaryKey">
         update customer
         set point=point+#{add}
-        where id=#{id}
+        where id=#{id} and point+#{add}>=0
     </update>
 </mapper>

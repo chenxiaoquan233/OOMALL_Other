@@ -5,6 +5,7 @@ import cn.edu.xmu.oomall.other.model.po.ShareActivityPo;
 import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityRetVo;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
  * @version 创建时间：2020/12/2 下午6:53
  */
 @Data
-public class ShareActivityBo implements VoObject {
+public class ShareActivityBo implements VoObject, Serializable {
     private Long id;
     private Long shopId;
     private Long goodSkuId;
@@ -42,6 +43,7 @@ public class ShareActivityBo implements VoObject {
         shareActivityRetVo.setBeginTime(this.beginTime);
         shareActivityRetVo.setEndTime(this.endTime);
         shareActivityRetVo.setId(this.id);
+        shareActivityRetVo.setGoodSkuId(this.goodSkuId);
         shareActivityRetVo.setShopId(this.shopId);
         shareActivityRetVo.setState(this.state.intValue());
         return shareActivityRetVo;
