@@ -24,7 +24,7 @@ import java.time.format.DateTimeFormatter;
  * @version 创建时间：2020/12/12 上午10:44
  */
 @RestController
-@RequestMapping(value = "/advertisement", produces = "application/json;charset=UTF-8")
+@RequestMapping(produces = "application/json;charset=UTF-8")
 public class AdvertiseController {
     private static final Logger logger = LoggerFactory.getLogger(AdvertiseController.class);
 
@@ -38,6 +38,7 @@ public class AdvertiseController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
+    @Audit
     @GetMapping("/advertisement/states")
     public Object getAdvertisementStates(@LoginUser Long userId){
           return ResponseUtil.ok(advertiseService.getAllAdvertisementStates());
@@ -52,6 +53,7 @@ public class AdvertiseController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
+    @Audit
     @PutMapping("/shops/{did}/advertisement/{id}/default")
     public Object setAdvertisementDefaultById(@LoginUser Long user, @PathVariable("did") Integer did, @PathVariable("id") Integer id){
         ResponseCode responseCode=advertiseService.setAdvertisementDefaultById(id);
@@ -69,6 +71,7 @@ public class AdvertiseController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
+    @Audit
     @PutMapping("/shops/{did}/advertisement/{id}")
     public Object updateAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id, @RequestBody AdvertiseVo advertiseVo){
         ResponseCode responseCode=advertiseService.updateAdvertisementById(advertiseVo);
@@ -85,6 +88,7 @@ public class AdvertiseController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
+    @Audit
     @DeleteMapping("/shops/{did}/advertisement/{id}")
     public Object deleteAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id){
         ResponseCode responseCode=advertiseService.deleteAdvertisementById(id);
@@ -115,6 +119,7 @@ public class AdvertiseController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
+    @Audit
     @PostMapping("/shops/{did}/advertisement/{id}/uploadImg")
     public Object uploadAdvertisementImgById(@LoginUser Long user, @PathVariable("id") Integer id, @RequestParam("img")MultipartFile multipartFile){
         ResponseCode responseCode=advertiseService.uploadAdvertiseImgById(id,multipartFile);
@@ -134,6 +139,7 @@ public class AdvertiseController {
             @ApiResponse(code = 0,   message = "成功"),
             @ApiResponse(code = 608,   message = "广告状态禁止")
     })
+    @Audit
     @PutMapping("/shops/{did}/advertisement/{id}/onshelves")
     public Object onshelvesAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id){
         ResponseCode responseCode=advertiseService.onshelvesAdvertisementById(id);
@@ -152,6 +158,7 @@ public class AdvertiseController {
             @ApiResponse(code = 0,   message = "成功"),
             @ApiResponse(code = 608,   message = "广告状态禁止")
     })
+    @Audit
     @PutMapping("/shops/{did}/advertisement/{id}/offshelves")
     public Object offshelvesAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id){
         ResponseCode responseCode=advertiseService.offshelvesAdvertisementById(id);
@@ -170,6 +177,7 @@ public class AdvertiseController {
             @ApiResponse(code = 0,   message = "成功"),
             @ApiResponse(code = 608,   message = "广告状态禁止")
     })
+    @Audit
     @PutMapping("/shops/{did}/advertisement/{id}/audit")
     public Object auditAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id){
         ResponseCode responseCode=advertiseService.auditAdvertisementById(id);
@@ -192,6 +200,7 @@ public class AdvertiseController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
+    @Audit
     @GetMapping("/shops/{did}/timesegments/{id}/advertisement")
     public Object getAdvertisementsByTimeSegmentId(@LoginUser Long user,@PathVariable("did") Integer did, @PathVariable("id") Integer id,
                                                    @RequestParam(required = false) String beginDate, @RequestParam(required = false) String endDate,
@@ -221,6 +230,7 @@ public class AdvertiseController {
             @ApiResponse(code = 0,   message = "成功"),
             @ApiResponse(code=603, message="达到时段广告上限")
     })
+    @Audit
     @PostMapping("/shops/{did}/timesegments/{id}/advertisement")
     public Object createAdvertisementsByTimeSegmentId(@LoginUser Long user,  @PathVariable("did") Integer did, @PathVariable("id") Integer id, @RequestBody AdvertiseVo advertiseVo){
         ResponseCode responseCode=advertiseService.createAdvertiseByTimeSegId(id,advertiseVo);
@@ -242,6 +252,7 @@ public class AdvertiseController {
             @ApiResponse(code = 0,   message = "成功"),
             @ApiResponse(code=603, message="达到时段广告上限")
     })
+    @Audit
     @PostMapping("/shops/{did}/timesegments/{tid}/advertisement/{id}")
     public Object createAdvertisementsByTimeSegmentIdAndId(@LoginUser Long user, @PathVariable("did") Integer did, @PathVariable("tid") Integer tid, @PathVariable("id") Integer id){
         ResponseCode responseCode=advertiseService.createAdvertiseByTimeSegIdAndId(id,tid);
