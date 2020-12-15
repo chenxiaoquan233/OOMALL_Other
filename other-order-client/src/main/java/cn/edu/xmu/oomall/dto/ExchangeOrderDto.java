@@ -24,5 +24,7 @@ public class ExchangeOrderDto implements Serializable {
     String mobile;
     String consignee;
     Long regionId;
+
+    //TODO: talk to yxc
     String address;
 }

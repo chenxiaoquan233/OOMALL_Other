@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.other.model.po.AdvertisementPo;
+import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseRetVo;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseStatesRetVo;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseVo;
 import lombok.Data;
@@ -84,16 +85,44 @@ public class AdvertiseBo implements VoObject {
 
     @Override
     public Object createVo() {
-        AdvertiseVo advertiseVo = new AdvertiseVo();
-        advertiseVo.setContent(this.content);
-        advertiseVo.setLink(this.link);
-        advertiseVo.setSeg_id(this.segId);
-        advertiseVo.setWeight(this.weight);
-        return advertiseVo;
+        AdvertiseRetVo ret = new AdvertiseRetVo();
+        ret.setId(id);
+        ret.setSegId(segId);
+        ret.setLink(link);
+        ret.setContent(content);
+        ret.setImagePath(imageUrl);
+        ret.setState((byte)state.getCode().intValue());
+        ret.setWeight(weight);
+        ret.setBeginDate(beginDate);
+        ret.setEndDate(endDate);
+        ret.setRepeat(repeats);
+        ret.setDefault_(beDefault);
+        ret.setGmtCreate(gmtCreate);
+        ret.setGmtModified(gmtModified);
+        return ret;
     }
 
     @Override
     public Object createSimpleVo() {
         return null;
+    }
+
+    public AdvertisementPo getAdvertisePo(){
+        AdvertisementPo ret = new AdvertisementPo();
+        ret.setId(id);
+        ret.setSegId(segId);
+        ret.setLink(link);
+        ret.setContent(content);
+        ret.setImageUrl(imageUrl);
+        ret.setState((byte)state.getCode().intValue());
+        ret.setWeight(weight);
+        ret.setBeginDate(beginDate);
+        ret.setEndDate(endDate);
+        ret.setRepeats((byte)(repeats?1:0));
+        ret.setMessage(message);
+        ret.setBeDefault((byte)(beDefault?1:0));
+        ret.setGmtCreate(gmtCreate);
+        ret.setGmtModified(gmtModified);
+        return ret;
     }
 }

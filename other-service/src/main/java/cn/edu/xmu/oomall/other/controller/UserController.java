@@ -11,9 +11,9 @@ import cn.edu.xmu.oomall.other.model.vo.User.*;
 import cn.edu.xmu.ooad.annotation.LoginUser;
 import cn.edu.xmu.oomall.other.service.UserService;
 import cn.edu.xmu.oomall.other.util.IpUtil;
-import cn.xmu.edu.goods.client.IGoodsService;
-import cn.xmu.edu.goods.client.IShopService;
-import cn.xmu.edu.goods.client.dubbo.ShopDTO;
+import cn.edu.xmu.goods.client.IGoodsService;
+import cn.edu.xmu.goods.client.IShopService;
+import cn.edu.xmu.goods.client.dubbo.ShopDTO;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -42,10 +42,10 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @DubboReference(version = "0.0.1-SNAPSHOT", registry = {"provider1"})
+    @DubboReference(version = "0.0.1-SNAPSHOT", registry = {"provider2"})
     private IShopService shopService;
 
-    @DubboReference(version = "0.0.1-SNAPSHOT", registry = {"provider1"})
+    @DubboReference(version = "0.0.1-SNAPSHOT", registry = {"provider2"})
     private IGoodsService goodsService;
 
     /***

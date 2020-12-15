@@ -1,23 +1,13 @@
 package cn.edu.xmu.oomall.other.util;
 
 import cn.edu.xmu.ooad.util.Common;
-import cn.edu.xmu.ooad.util.JacksonUtil;
-import cn.edu.xmu.ooad.util.ResponseCode;
-import cn.edu.xmu.oomall.other.model.vo.User.UserLoginVo;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.*;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 /**
  * @author XQChen

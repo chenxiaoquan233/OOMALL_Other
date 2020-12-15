@@ -55,7 +55,7 @@ public class AddressService {
 
     public ReturnObject<VoObject> deleteAddress(Long userId, Long id)
     {
-        return addressDao.deleteAddress(userId,id);
+        return addressDao.deleteAddress(id);
     }
 
 

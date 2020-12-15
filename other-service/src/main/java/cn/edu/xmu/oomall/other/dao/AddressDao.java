@@ -90,13 +90,17 @@ public class AddressDao {
         PageHelper.startPage(page,pageSize,true,true,null);
         try{
             addressPos =  addressPoMapper.selectByExample(example);
+            if(addressPos.size() == 0)return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
         }
         catch (DataAccessException e){
             StringBuilder message = new StringBuilder().append("getAddresses: ").append(e.getMessage());
             logger.error(message.toString());
             return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
         }
-        List<VoObject> ret =addressPos.stream().map(AddressBo::new).collect(Collectors.toList());
+        List<VoObject> ret =addressPos.stream().map(AddressBo::new).map(x->{
+            x.setState(regionPoMapper.selectByPrimaryKey(x.getRegionId()).getState());
+            return x;
+        }).collect(Collectors.toList());
         PageInfo<AddressPo> addressesPoPage = PageInfo.of(addressPos);
         PageInfo<VoObject> addressesPage = new PageInfo<>(ret);
         addressesPage.setPages(addressesPoPage.getPages());
@@ -171,11 +175,10 @@ public class AddressDao {
 
     /**
      * 买家删除地址
-     * @param userId
      * @param id
      * @return
      */
-    public ReturnObject<VoObject> deleteAddress(Long userId, Long id){
+    public ReturnObject<VoObject> deleteAddress(Long id){
         try{
             addressPoMapper.deleteByPrimaryKey(id);
         }catch (DataAccessException e)
@@ -228,7 +231,7 @@ public class AddressDao {
         if(regionPos.isEmpty()){
             return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
         }
-        if(regionPos.get(0).getState() == (byte)1){
+        if(regionPos.get(0).getState().equals((byte)1)){
             return new ReturnObject<>(ResponseCode.REGION_OBSOLETE);
         }
         try{

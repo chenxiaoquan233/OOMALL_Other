@@ -8,7 +8,7 @@ import cn.edu.xmu.oomall.other.dao.UserDao;
 import cn.edu.xmu.oomall.other.model.bo.ShoppingCartBo;
 import cn.edu.xmu.oomall.other.model.po.ShoppingCartPo;
 import cn.edu.xmu.oomall.other.model.vo.ShoppingCart.ShoppingCartRetVo;
-import cn.xmu.edu.goods.client.IGoodsService;
+import cn.edu.xmu.goods.client.IGoodsService;
 import com.github.pagehelper.PageInfo;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;

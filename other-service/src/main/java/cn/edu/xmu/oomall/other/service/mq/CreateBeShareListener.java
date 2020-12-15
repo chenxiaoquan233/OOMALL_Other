@@ -1,8 +1,6 @@
 package cn.edu.xmu.oomall.other.service.mq;
 
 import cn.edu.xmu.ooad.util.JacksonUtil;
-import cn.edu.xmu.oomall.dto.ShareDTO;
-import cn.edu.xmu.oomall.other.dao.ShareDao;
 import cn.edu.xmu.oomall.other.mapper.BeSharePoMapper;
 import cn.edu.xmu.oomall.other.model.po.BeSharePo;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +8,6 @@ import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.apache.rocketmq.spring.core.RocketMQPushConsumerLifecycleListener;
-import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

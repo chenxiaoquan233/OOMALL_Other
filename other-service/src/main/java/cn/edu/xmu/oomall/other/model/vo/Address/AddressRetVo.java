@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.other.model.vo.Address;
 
 import lombok.Data;
 import org.apache.tomcat.jni.Address;
+import org.apache.tomcat.jni.Local;
 
 import java.time.LocalDateTime;
 /**
@@ -18,6 +19,4 @@ public class AddressRetVo {
     private Boolean beDefault;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
-
-
 }

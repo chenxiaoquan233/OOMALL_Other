@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.other.model.po.FootPrintPo;
+import cn.edu.xmu.oomall.other.model.vo.FootPrint.FootPrintRetVo;
 import cn.edu.xmu.oomall.other.model.vo.FootPrint.FootPrintVo;
 import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
 import lombok.Data;
@@ -17,7 +18,7 @@ public class FootPrintBo implements VoObject {
     private Long id;
     private Long customerId;
     private Long skuId;
-    private GoodsSkuSimpleVo goodsRetVo;
+    private GoodsSkuSimpleVo skuSimpleVo;
     private LocalDateTime gmtCreate;
     public FootPrintBo(){}
     public FootPrintBo(FootPrintPo po)
@@ -29,7 +30,12 @@ public class FootPrintBo implements VoObject {
     }
     @Override
     public Object createVo() {
-        return  null;
+        FootPrintRetVo footPrintRetVo = new FootPrintRetVo();
+        footPrintRetVo.setId(this.getId());
+        footPrintRetVo.setGoodsRetVo(this.getSkuSimpleVo());
+        footPrintRetVo.setGmtCreate(LocalDateTime.now());
+        return footPrintRetVo;
+
     }
 
     @Override

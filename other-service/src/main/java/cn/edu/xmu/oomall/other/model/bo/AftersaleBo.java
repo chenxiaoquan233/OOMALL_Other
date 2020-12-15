@@ -1,12 +1,15 @@
 package cn.edu.xmu.oomall.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
+import cn.edu.xmu.oomall.dto.AftersaleDto;
+import cn.edu.xmu.oomall.service.IDubboOrderService;
 import cn.edu.xmu.oomall.other.model.po.AftersalePo;
 import cn.edu.xmu.oomall.other.model.vo.Aftersale.AftersaleRetVo;
-import com.alibaba.druid.filter.AutoLoad;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.apache.dubbo.config.annotation.DubboReference;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -18,9 +21,14 @@ import java.util.Map;
  * @version 创建时间：2020/12/3 下午15:16
  */
 @Data
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class AftersaleBo implements VoObject {
+
+    @DubboReference(registry = {"provider1"}, version = "0.0.1-SNAPSHOT")
+    private IDubboOrderService iDubboOrderService;
+
     /**
      * 售后类型
      */
@@ -88,7 +96,7 @@ public class AftersaleBo implements VoObject {
     }
     private Long id;
     private Long orderId;
-    private Long orderSn;
+    private String orderSn;
     private Long orderItemId;
     private Long skuId;
     private String skuName;
@@ -122,14 +130,36 @@ public class AftersaleBo implements VoObject {
         return null;
     }
 
-    /**
-     * TODO not finished
-     * @param po
-     */
     public AftersaleBo(AftersalePo po) {
         this.customerId = po.getCustomerId();
-        po.getBeDeleted();
-        po.getConclusion();
+        this.beDeleted = po.getBeDeleted();
+        this.conclusion = po.getConclusion();
+        this.type = AftersaleBo.Type.getTypeByCode(po.getType().intValue());
+        this.shopId = po.getShopId();
+        this.state = AftersaleBo.State.getTypeByCode(po.getState().intValue());
+        this.consignee = po.getConsignee();
+        this.customerLogSn = po.getCustomerLogSn();
+        this.detail = po.getDetail();
+        this.gmtCreate = po.getGmtCreate();
+        this.gmtModified = po.getGmtModified();
+        this.mobile = po.getMobile();
+        this.orderItemId = po.getOrderItemId();
+        this.quantity = po.getQuantity();
+        this.reason = po.getReason();
+        this.refund = po.getRefund();
+        this.regionId = po.getRegionId();
+        this.serviceSn = po.getServiceSn();
+        this.shopLogSn = po.getShopLogSn();
+        this.id = po.getId();
+
+        //TODO dubbo
+        AftersaleDto aftersaleDTO = new AftersaleDto(1L, "tset", 2L, "ttt", 10L, 20);
+        //AftersaleDto aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(this.orderItemId);
+
+        this.orderId = aftersaleDTO.getOrderId();
+        this.orderSn = aftersaleDTO.getOrderSn();
+        this.skuId = aftersaleDTO.getSkuId();
+        this.skuName = aftersaleDTO.getSkuName();
     }
 
     public AftersalePo createPo() {
@@ -166,8 +196,6 @@ public class AftersaleBo implements VoObject {
         vo.setCustomerId(this.customerId);
         vo.setCustomerLogSn(this.customerLogSn);
         vo.setDetail(this.detail);
-        vo.setGmtCreate(this.gmtCreate);
-        vo.setGmtModified(this.gmtModified);
         vo.setId(this.id);
         vo.setMobile(this.mobile);
         vo.setOrderItemId(this.orderItemId);

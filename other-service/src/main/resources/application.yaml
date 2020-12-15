@@ -106,3 +106,9 @@ pagehelper:
 
 share-activity:
   enable-redis: true
+
+advertisement-service:
+  dav:
+    username: other
+    password: 123456
+    baseUrl: http://106.52.203.83/webdav/
