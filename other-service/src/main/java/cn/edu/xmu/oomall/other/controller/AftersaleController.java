@@ -68,19 +68,22 @@ public class AftersaleController {
             return object;
         }
 
-        AftersaleRetVo aftersaleRetVo = aftersaleService.createAftersale(vo, orderItemId, userId);
+        Object retObject = aftersaleService.createAftersale(vo, orderItemId, userId);
 
-        logger.debug("VO here:" + aftersaleRetVo);
 
-        return ResponseUtil.ok(aftersaleRetVo);
+
+        if(retObject.equals(ResponseCode.RESOURCE_ID_NOTEXIST))
+        {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail((ResponseCode) retObject);
+        }
+
+        return ResponseUtil.ok(retObject);
     }
 
     @ApiOperation(value = "买家查询所有的售后单", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String",  name = "authorization", value = "用户token",    required = true),
-            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "spuId",         value = "SPU Id"),
-            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "skuId",         value = "sku ID"),
-            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "orderItemId",   value = "orderItem Id"),
             @ApiImplicitParam(paramType = "query",  dataType = "String",  name = "beginTime",     value = "开始时间"),
             @ApiImplicitParam(paramType = "query",  dataType = "String",  name = "endTime",       value = "结束时间"),
             @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "page",          value = "页码"),
@@ -95,9 +98,6 @@ public class AftersaleController {
     @GetMapping("/aftersales")
     public Object getAllAftersale(
             @LoginUser Long userId,
-            @RequestParam(required = false) Long spuId,
-            @RequestParam(required = false) Long skuId,
-            @RequestParam(required = false) Long orderItemId,
             @RequestParam(required = false) LocalDateTime beginTime,
             @RequestParam(required = false) LocalDateTime endTime,
             @RequestParam(required = false, defaultValue = "1") Integer page,

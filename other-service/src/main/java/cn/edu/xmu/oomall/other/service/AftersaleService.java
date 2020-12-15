@@ -49,8 +49,8 @@ public class AftersaleService {
         return Arrays.stream(AftersaleBo.State.values()).map(AftersaleStateVo::new).collect(Collectors.toList());
     }
 
-    public AftersaleRetVo createAftersale(AftersaleVo vo, Long orderItemId, Long userId) {
-        logger.debug("createAfterSale");
+    public Object createAftersale(AftersaleVo vo, Long orderItemId, Long userId) {
+        if(!addressDao.hasRegion(vo.getRegionId())) return ResponseCode.RESOURCE_ID_NOTEXIST;
 
         AftersaleBo aftersaleBo = vo.createBo();
         aftersaleBo.setCustomerId(userId);
@@ -59,30 +59,25 @@ public class AftersaleService {
         aftersaleBo.setState(AftersaleBo.State.WAIT_ADMIN_AUDIT);
         aftersaleBo.setBeDeleted((byte) 0);
 
-        logger.debug("BO here1:" + aftersaleBo);
+        AftersaleDto aftersaleDTO = null;
 
         //TODO dubbo
-        AftersaleDto aftersaleDTO = new AftersaleDto(1L, "tset", 2L, "ttt", 10L, 20);
+        if(orderItemId.equals(1L))
+            aftersaleDTO = new AftersaleDto(1L, "tset", 2L, "ttt", 10L, 20);
         //AftersaleDto aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(orderItemId);
 
-        logger.debug("BO here2:" + aftersaleBo);
+        if(aftersaleDTO == null)
+            return ResponseCode.RESOURCE_ID_NOTEXIST;
 
         aftersaleBo.setOrderId(aftersaleDTO.getOrderId());
         aftersaleBo.setOrderSn(aftersaleDTO.getOrderSn());
         aftersaleBo.setSkuId(aftersaleDTO.getSkuId());
         aftersaleBo.setSkuName(aftersaleDTO.getSkuName());
         aftersaleBo.setShopId(aftersaleDTO.getShopId());
-        aftersaleBo.setQuantity(Math.min(aftersaleBo.getQuantity(), aftersaleDTO.getQuantity()));
-
-        logger.debug("BO here3:" + aftersaleBo);
 
         AftersalePo aftersalePo = aftersaleDao.insertAftersale(aftersaleBo.createPo());
 
-        logger.debug("BO here3.5:" + aftersaleBo);
-
         aftersaleBo.setId(aftersalePo.getId());
-
-        logger.debug("BO here4:" + aftersaleBo);
 
         return aftersaleBo.createRetVo();
     }

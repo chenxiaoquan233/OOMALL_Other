@@ -309,4 +309,7 @@ public class AddressDao {
         return new ReturnObject<>(ResponseCode.OK);
     }
 
+    public Boolean hasRegion(Long id) {
+        return regionPoMapper.selectByPrimaryKey(id) != null;
+    }
 }
