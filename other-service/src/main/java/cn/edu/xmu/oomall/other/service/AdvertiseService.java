@@ -103,8 +103,8 @@ public class AdvertiseService {
         return ResponseCode.OK;
     }
 
-    public Object getAdvertiseByTimeSegmentId(Integer id, LocalDate beginDate, LocalDate endDate, Integer page, Integer pageSize) {
-        return advertiseDao.getAdvertiseByTimeSegmentId(id.longValue(),beginDate,endDate,page,pageSize);
+    public List<Object> getAdvertiseByTimeSegmentId(Integer id, LocalDate beginDate, LocalDate endDate) {
+        return advertiseDao.getAdvertiseByTimeSegmentId(id.longValue(),beginDate,endDate).stream().map(x->x.createVo()).collect(Collectors.toList());
     }
 
     public ResponseCode createAdvertiseByTimeSegId(Integer id, AdvertiseVo advertiseVo) {

@@ -109,63 +109,89 @@ public class AdvertiseDao {
         return new AdvertiseBo(po);
     }
 
-    public ReturnObject<PageInfo<Object>> getAdvertiseByTimeSegmentId(Long id, LocalDate beginDate, LocalDate endDate, Integer page, Integer pageSize) {
+    public List<AdvertiseBo> getAdvertiseByTimeSegmentId(Long id, LocalDate beginDate, LocalDate endDate) {
         AdvertisementPoExample example = new AdvertisementPoExample();
         AdvertisementPoExample.Criteria criteria=example.createCriteria();
         criteria.andSegIdEqualTo(id);
         criteria.andBeginDateEqualTo(beginDate);
         criteria.andEndDateEqualTo(endDate);
-        List<AdvertisementPo> advertisementPoList=null;
-        PageHelper.startPage(page,pageSize,true,true,null);
-        try{
-            advertisementPoList=advertisementPoMapper.selectByExample(example);
-        }catch (Exception e){
-            return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
-        }
-        List<Object> ret = advertisementPoList.stream().map(AdvertiseBo::new).map(AdvertiseBo::createVo).collect(Collectors.toList());
-        PageInfo<AdvertisementPo> advertisementPoPageInfo = PageInfo.of(advertisementPoList);
-        PageInfo<Object> pageRet = new PageInfo<>(ret);
-        pageRet.setPages(advertisementPoPageInfo.getPages());
-        pageRet.setPageNum(advertisementPoPageInfo.getPageNum());
-        pageRet.setPageSize(advertisementPoPageInfo.getPageSize());
-        pageRet.setTotal(advertisementPoPageInfo.getTotal());
-        return new ReturnObject<>(pageRet);
+        List<AdvertisementPo> advertisementPoList=advertisementPoMapper.selectByExample(example);
+        advertisementPoList.sort((x1,x2)-> {
+            int diff=x1.getWeight()-x2.getWeight();
+            if(diff<0)return 1;
+            else if(diff==0)return 0;
+            else return -1;
+        });
+        if(advertisementPoList.size()<=8)return advertisementPoList.stream().map(AdvertiseBo::new).collect(Collectors.toList());
+        else return advertisementPoList.subList(0,8).stream().map(AdvertiseBo::new).collect(Collectors.toList());
+//        PageHelper.startPage(page,pageSize,true,true,null);
+//        try{
+//            advertisementPoList=advertisementPoMapper.selectByExample(example);
+//        }catch (Exception e){
+//            return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
+//        }
+//        List<Object> ret = advertisementPoList.stream().map(AdvertiseBo::new).map(AdvertiseBo::createVo).collect(Collectors.toList());
+//        PageInfo<AdvertisementPo> advertisementPoPageInfo = PageInfo.of(advertisementPoList);
+//        PageInfo<Object> pageRet = new PageInfo<>(ret);
+//        pageRet.setPages(advertisementPoPageInfo.getPages());
+//        pageRet.setPageNum(advertisementPoPageInfo.getPageNum());
+//        pageRet.setPageSize(advertisementPoPageInfo.getPageSize());
+//        pageRet.setTotal(advertisementPoPageInfo.getTotal());
+//        return new ReturnObject<>(pageRet);
     }
 
     public ResponseCode createAdvertiseByTimeSegId(long segId, AdvertiseBo bo) {
-        AdvertisementPoExample example=new AdvertisementPoExample();
-        AdvertisementPoExample.Criteria criteria=example.createCriteria();
-        criteria.andSegIdEqualTo(segId);
-        List<AdvertisementPo> advertisementPoList=advertisementPoMapper.selectByExample(example);
-        if(advertisementPoList.size()>=8)return ResponseCode.ADVERTISEMENT_OUTLIMIT;
-        AdvertisementPo po;
-        try{po = bo.getAdvertisePo();
-        po.setSegId(segId);
-        advertisementPoMapper.insert(po);}
-        catch (Exception e){return ResponseCode.INTERNAL_SERVER_ERR;}
-        return ResponseCode.OK;
+//        AdvertisementPoExample example=new AdvertisementPoExample();
+//        AdvertisementPoExample.Criteria criteria=example.createCriteria();
+//        criteria.andSegIdEqualTo(segId);
+//        List<AdvertisementPo> advertisementPoList=advertisementPoMapper.selectByExample(example);
+//        if(advertisementPoList.size()>=8)return ResponseCode.ADVERTISEMENT_OUTLIMIT;
+//        AdvertisementPo po;
+//        try{po = bo.getAdvertisePo();
+//        po.setSegId(segId);
+//        advertisementPoMapper.insert(po);}
+//        catch(Exception e){return ResponseCode.INTERNAL_SERVER_ERR;}
+//        return ResponseCode.OK; // qm你wsm要这么对我
+        try {
+            advertisementPoMapper.insert(bo.getAdvertisePo());
+        }catch (Exception e){
+            return  ResponseCode.INTERNAL_SERVER_ERR;
+        }return ResponseCode.OK;
     }
 
     public ResponseCode createAdvertiseByTimeSegIdAndId(long id, long tid) {
-        AdvertisementPoExample example = new AdvertisementPoExample();
-        AdvertisementPoExample.Criteria criteria=example.createCriteria();
-        criteria.andSegIdEqualTo(id);
-        List<AdvertisementPo> advertisementPoList=advertisementPoMapper.selectByExample(example);
-        AdvertisementPo po=advertisementPoMapper.selectByPrimaryKey(id);
-        if(po!=null && po.getSegId()==tid)return ResponseCode.OK;
-        if(advertisementPoList.size()>=8)return ResponseCode.ADVERTISEMENT_OUTLIMIT;
-        try {
-            if (po == null) {
+//        AdvertisementPoExample example = new AdvertisementPoExample();
+//        AdvertisementPoExample.Criteria criteria=example.createCriteria();
+//        criteria.andSegIdEqualTo(id);
+//        List<AdvertisementPo> advertisementPoList=advertisementPoMapper.selectByExample(example);
+//        AdvertisementPo po=advertisementPoMapper.selectByPrimaryKey(id);
+//        if(po!=null && po.getSegId()==tid)return ResponseCode.OK;
+//        if(advertisementPoList.size()>=8)return ResponseCode.ADVERTISEMENT_OUTLIMIT;
+//        try {
+//            if (po == null) {
+//                po = new AdvertisementPo();
+//                po.setSegId(tid);
+//                advertisementPoMapper.insert(po);
+//            } else {
+//                po.setSegId(tid);
+//                advertisementPoMapper.updateByPrimaryKey(po);
+//            }
+//            return ResponseCode.OK;
+//        }catch (Exception e){
+//            return ResponseCode.INTERNAL_SERVER_ERR;
+//        }
+        AdvertisementPo po = advertisementPoMapper.selectByPrimaryKey(id);
+        try{
+            if(po==null){
                 po = new AdvertisementPo();
+                po.setId(id);
                 po.setSegId(tid);
                 advertisementPoMapper.insert(po);
-            } else {
-                po.setSegId(tid);
+            }else{
+                po.setSegId(id);
                 advertisementPoMapper.updateByPrimaryKey(po);
             }
             return ResponseCode.OK;
-        }catch (Exception e){
-            return ResponseCode.INTERNAL_SERVER_ERR;
-        }
+        }catch (Exception e){return ResponseCode.INTERNAL_SERVER_ERR;}
     }
 }

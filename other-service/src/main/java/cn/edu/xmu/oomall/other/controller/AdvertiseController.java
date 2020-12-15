@@ -190,9 +190,7 @@ public class AdvertiseController {
             @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "did", value = "店ID", required = true),
             @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "id", value = "广告id", required = true),
             @ApiImplicitParam(paramType = "query", dataType = "String", name = "beginDate", value = "广告开始日期"),
-            @ApiImplicitParam(paramType = "query", dataType = "String", name = "endDate", value = "广告结束日期"),
-            @ApiImplicitParam(paramType = "query", dataType = "Integer", name = "page", value = "页码"),
-            @ApiImplicitParam(paramType = "query", dataType = "Integer", name = "pageSize", value = "每页数目")
+            @ApiImplicitParam(paramType = "query", dataType = "String", name = "endDate", value = "广告结束日期")
     })
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
@@ -200,8 +198,7 @@ public class AdvertiseController {
     @Audit
     @GetMapping("/shops/{did}/timesegments/{id}/advertisement")
     public Object getAdvertisementsByTimeSegmentId(@LoginUser Long user,@PathVariable("did") Integer did, @PathVariable("id") Integer id,
-                                                   @RequestParam(required = false) String beginDate, @RequestParam(required = false) String endDate,
-                                                   @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize){
+                                                   @RequestParam(required = false) String beginDate, @RequestParam(required = false) String endDate){
         // 进来的query是String的LocalDate我贞德找不到例子了QAQ
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate beginDate_,endDate_;
@@ -211,7 +208,7 @@ public class AdvertiseController {
         }catch (Exception e){
             return ResponseUtil.fail(ResponseCode.INTERNAL_SERVER_ERR);
         }
-        return advertiseService.getAdvertiseByTimeSegmentId(id,beginDate_,endDate_,page,pageSize);
+        return advertiseService.getAdvertiseByTimeSegmentId(id,beginDate_,endDate_);
     }
 
 
