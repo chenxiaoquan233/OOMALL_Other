@@ -13,6 +13,16 @@ public class ShopRedisFinder extends ShareActivityRedisFinder{
     }
 
     @Override
+    public void deleteNext(Long skuId, Long shopId) {
+        if(shopId!=0){
+            deleteRedis(shopId);
+        }
+        else{
+            deleteNext(skuId,shopId);
+        }
+    }
+
+    @Override
     public ShareActivityBo getNext(Long id) {
         return next.getBoFromRedis(null,0L);
     }

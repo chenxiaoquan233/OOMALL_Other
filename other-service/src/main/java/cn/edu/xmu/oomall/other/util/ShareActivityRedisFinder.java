@@ -38,6 +38,7 @@ public abstract class ShareActivityRedisFinder {
         Long gapTime= Duration.between(now,time).toSeconds();
         return Math.max(expireTime,gapTime);
     }
+    public abstract void deleteNext(Long skuId, Long shopId);
     public abstract ShareActivityBo getNext(Long id);
     public ShareActivityBo getBoFromRedis(Long skuId, Long shopId){
         ShareActivityBo bo = null;
@@ -69,6 +70,9 @@ public abstract class ShareActivityRedisFinder {
     public ShareActivityBo getRedis(Long id){
         return (ShareActivityBo) redisTemplate.opsForValue().get(redisName+String.valueOf(id));
         //return (ShareActivityBo) redisTemplate.opsForHash().get(redisName,String.valueOf(id));
+    }
+    public void deleteRedis(Long id){
+        redisTemplate.delete(redisName+String.valueOf(id));
     }
     public boolean hashKey(Long id){
         return redisTemplate.hasKey(redisName+String.valueOf(id));

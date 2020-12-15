@@ -203,6 +203,10 @@ public class ShareDao implements InitializingBean {
         newVal.setId(shareActivityId);
         newVal.setState(offline);
         shareActivityPoMapper.updateByPrimaryKeySelective(newVal);
+        if(redisEnable){
+            redisTemplate.delete("ssa_" + newVal.getId());
+            redisFinder.deleteNext(newVal.getGoodsSkuId(),newVal.getShopId());
+        }
         return ResponseCode.OK;
     }
 
@@ -222,6 +226,12 @@ public class ShareDao implements InitializingBean {
         newVal.setId(shareActivityId);
         newVal.setState(online);
         shareActivityPoMapper.updateByPrimaryKeySelective(newVal);
+        //newVal中有更新后的值
+        logger.debug(JacksonUtil.toJson(newVal));
+        if(redisEnable){
+            redisTemplate.delete("ssa_" + newVal.getId());
+            redisFinder.deleteNext(newVal.getGoodsSkuId(),newVal.getShopId());
+        }
         return ResponseCode.OK;
     }
 
@@ -301,20 +311,6 @@ public class ShareDao implements InitializingBean {
             sharePoMapper.updateByPrimaryKey(sharePo);
             updateRebateMapper.updateRebateByPrimaryKey(sharePo.getSharerId(),Long.valueOf(point));
         }
-    }
-    final private String skuRedis="skuShareActivity";
-    final private String shopRedis="shopShareActivity";
-    final private String defaultRedis="defaultShareActivity";
-    private ShareActivityBo loadFromRedis(Long skuId){
-        ShareActivityBo ret;
-        if(redisTemplate.opsForHash().hasKey(skuRedis,String.valueOf(skuId))){
-            ret= (ShareActivityBo) redisTemplate.opsForHash().get(skuRedis,String.valueOf(skuId));
-            if(ret!=null) {
-                return ret;
-            }
-        }
-
-        return null;
     }
     public ShareActivityBo loadShareActivity(Long skuId){
         ShareActivityBo bo = null;
@@ -408,8 +404,8 @@ public class ShareDao implements InitializingBean {
         }
         if(redisEnable){
             if(po!=null) {
-                redisTemplate.opsForValue().set("share_" + skuId + "_" + customerId, new ShareBo(po));
-                redisTemplate.expire("share_" + skuId + "_" + customerId,
+                redisTemplate.opsForHash().put("ssa_" + po.getShareActivityId(),String.valueOf(customerId),new ShareBo(po));
+                redisTemplate.expire("ssa_" + po.getShareActivityId(),
                         ShareActivityRedisFinder.getExpireTime(shareActivityBo.getEndTime()), TimeUnit.SECONDS);
             }
         }
