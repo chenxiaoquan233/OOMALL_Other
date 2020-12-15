@@ -7,9 +7,8 @@ import cn.edu.xmu.ooad.util.*;
 import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityVo;
 import cn.edu.xmu.oomall.other.service.ShareService;
 import cn.edu.xmu.oomall.other.service.factory.CalcPointFactory;
-import cn.edu.xmu.oomall.other.util.ServiceStub.GoodsService;
-import cn.xmu.edu.goods.client.IGoodsService;
-import cn.xmu.edu.goods.client.dubbo.ShopDTO;
+import cn.edu.xmu.goods.client.IGoodsService;
+import cn.edu.xmu.goods.client.dubbo.ShopDTO;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -38,8 +37,8 @@ public class ShareController {
     @Autowired
     private ShareService shareService;
 
-    //@DubboReference
-    public IGoodsService goodsService=new GoodsService();
+    @DubboReference(registry = {"provider2"}, version = "0.0.1-SNAPSHOT", check = false)
+    IGoodsService goodsService;
 
 
     //DONE:生成分享链接

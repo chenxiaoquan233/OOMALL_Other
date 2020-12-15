@@ -16,7 +16,7 @@ import cn.edu.xmu.oomall.other.util.DefaultRedisFinder;
 import cn.edu.xmu.oomall.other.util.ShareActivityRedisFinder;
 import cn.edu.xmu.oomall.other.util.ShopRedisFinder;
 import cn.edu.xmu.oomall.other.util.SkuRedisFinder;
-import cn.xmu.edu.goods.client.IGoodsService;
+import cn.edu.xmu.goods.client.IGoodsService;
 import com.github.pagehelper.PageInfo;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;

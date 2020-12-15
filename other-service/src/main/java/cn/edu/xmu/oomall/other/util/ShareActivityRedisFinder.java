@@ -2,7 +2,7 @@ package cn.edu.xmu.oomall.other.util;
 
 import cn.edu.xmu.oomall.other.dao.ShareDao;
 import cn.edu.xmu.oomall.other.model.bo.ShareActivityBo;
-import cn.xmu.edu.goods.client.IGoodsService;
+import cn.edu.xmu.goods.client.IGoodsService;
 import lombok.Data;
 import org.springframework.data.redis.core.RedisTemplate;
 

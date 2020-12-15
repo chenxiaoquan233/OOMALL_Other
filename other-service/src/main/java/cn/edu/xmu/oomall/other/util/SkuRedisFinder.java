@@ -1,7 +1,7 @@
 package cn.edu.xmu.oomall.other.util;
 
 import cn.edu.xmu.oomall.other.model.bo.ShareActivityBo;
-import cn.xmu.edu.goods.client.dubbo.ShopDTO;
+import cn.edu.xmu.goods.client.dubbo.ShopDTO;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
