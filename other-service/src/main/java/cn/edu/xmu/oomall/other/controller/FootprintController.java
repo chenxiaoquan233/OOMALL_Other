@@ -16,18 +16,21 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author Ji Cao
  * @version 创建时间：2020/12/6 上午10:56
  */
 @RestController /*Restful的Controller对象*/
-@RequestMapping(value = "/footprints", produces = "application/json;charset=UTF-8")
+@RequestMapping(produces = "application/json;charset=UTF-8")
 public class FootprintController {
     private static final Logger logger = LoggerFactory.getLogger(FootprintController.class);
 
@@ -66,10 +69,16 @@ public class FootprintController {
     })
     @Audit
     @GetMapping("/shops/{did}/footprints")
-    public Object getFootprints(@PathVariable("did")Long did,@RequestParam(required = true)Long userId, @RequestParam(required = true) LocalDateTime beginTime,@RequestParam(required = true) LocalDateTime endTime, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
-        if(beginTime == null) return Common.getRetObject(new ReturnObject<>(ResponseCode.Log_BEGIN_NULL));
-        if(endTime == null) return Common.getRetObject(new ReturnObject<>(ResponseCode.Log_END_NULL));
-        if(endTime.isBefore(beginTime))return Common.getRetObject(new ReturnObject<>(ResponseCode.Log_Bigger));
+    public Object getFootprints(@PathVariable("did")Long did, @RequestParam(required = false)Long userId,
+                                @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime beginTime,
+                                @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime,
+                                @RequestParam(defaultValue = "1") Integer page,
+                                @RequestParam(defaultValue = "10") Integer pageSize) {
+//        if(beginTime == null) return Common.getRetObject(new ReturnObject<>(ResponseCode.Log_BEGIN_NULL));
+//        if(endTime == null) return Common.getRetObject(new ReturnObject<>(ResponseCode.Log_END_NULL));
+        if(endTime!=null&&beginTime!=null)
+            if(endTime.isBefore(beginTime))
+                return Common.getRetObject(new ReturnObject<>(ResponseCode.Log_Bigger));
         ReturnObject<PageInfo<VoObject>> returnObject = footprintService.getFootprints(did,userId,beginTime,endTime,page, pageSize);
         return Common.getPageRetObject(returnObject);
     }
