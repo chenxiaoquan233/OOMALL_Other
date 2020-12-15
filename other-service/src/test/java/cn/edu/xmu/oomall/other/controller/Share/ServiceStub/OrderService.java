@@ -1,10 +1,10 @@
 package cn.edu.xmu.oomall.other.controller.Share.ServiceStub;
 
-import cn.edu.xmu.oomall.dto.AftersaleDTO;
-import cn.edu.xmu.oomall.dto.EffectiveShareDTO;
+import cn.edu.xmu.oomall.dto.AftersaleDto;
+import cn.edu.xmu.oomall.dto.EffectiveShareDto;
 import cn.edu.xmu.oomall.dto.ExchangeOrderDto;
-import cn.edu.xmu.oomall.dto.OrderItemDTO;
-import cn.edu.xmu.oomall.impl.IDubboOrderService;
+import cn.edu.xmu.oomall.dto.OrderItemDto;
+import cn.edu.xmu.oomall.service.IDubboOrderService;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class OrderService implements IDubboOrderService {
     @Override
-    public AftersaleDTO getAfterSaleByOrderItemId(Long orderItemId) {
+    public AftersaleDto getAfterSaleByOrderItemId(Long orderItemId) {
         return null;
     }
 
@@ -35,7 +35,7 @@ public class OrderService implements IDubboOrderService {
     }
 
     @Override
-    public OrderItemDTO getOrderItem(Long orderItemId) {
+    public OrderItemDto getOrderItem(Long orderItemId) {
         return null;
     }
 
@@ -55,7 +55,7 @@ public class OrderService implements IDubboOrderService {
     }
 
     @Override
-    public List<EffectiveShareDTO> getEffectiveShareRecord() {
+    public List<EffectiveShareDto> getEffectiveShareRecord() {
         return null;
     }
 
