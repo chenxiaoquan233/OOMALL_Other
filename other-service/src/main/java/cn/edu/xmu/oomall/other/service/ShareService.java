@@ -3,9 +3,8 @@ package cn.edu.xmu.oomall.other.service;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
-import cn.edu.xmu.oomall.dto.EffectiveShareDTO;
-import cn.edu.xmu.oomall.dto.ShareDTO;
-import cn.edu.xmu.oomall.impl.IDubboOrderService;
+import cn.edu.xmu.oomall.dto.EffectiveShareDto;
+import cn.edu.xmu.oomall.service.IDubboOrderService;
 import cn.edu.xmu.oomall.other.dao.ShareDao;
 import cn.edu.xmu.oomall.other.dao.UserDao;
 import cn.edu.xmu.oomall.other.model.bo.BeSharedBo;
@@ -19,7 +18,7 @@ import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityVo;
 import cn.edu.xmu.oomall.other.service.factory.CalcPoint;
 import cn.edu.xmu.oomall.other.util.ServiceStub.GoodsService;
 import cn.edu.xmu.oomall.other.util.ServiceStub.OrderService;
-import cn.xmu.edu.goods.client.IGoodsService;
+import cn.edu.xmu.goods.client.IGoodsService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -43,19 +42,17 @@ import java.util.stream.Collectors;
 public class ShareService {
     private static final Logger logger = LoggerFactory.getLogger(ShareService.class);
 
-
+    @DubboReference
+    IGoodsService goodsService;
     @Autowired
     private ShareDao shareDao;
     @Autowired
     private UserDao userDao;
-    //@DubboReference
-    public IDubboOrderService orderService=new OrderService();
-    //@DubboReference
-    public IGoodsService goodsService=new GoodsService();
-
+    @DubboReference(registry = {"provider2"}, version = "0.0.1-SNAPSHOT", check = false)
+    IDubboOrderService orderService;
 
     public void retPointToCustomer(){
-        List<EffectiveShareDTO> shareDTOS=orderService.getEffectiveShareRecord();
+        List<EffectiveShareDto> shareDTOS=orderService.getEffectiveShareRecord();
         shareDao.retPointByShareDTOS(shareDTOS);
 
     }
