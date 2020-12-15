@@ -174,16 +174,17 @@ public class AftersaleService {
                 aftersalePo.setState((byte) 3);
             } else if(aftersalePo.getType().equals(AftersaleBo.Type.EXCHANGE.getCode().byteValue())) {
                 //TODO dubbo
-                /*iDubboOrderService.createExchangeOrder(
-                        new ExchangeOrderDTO(
+                iDubboOrderService.createExchangeOrder(
+                        new ExchangeOrderDto(
                                 aftersalePo.getCustomerId(),
                                 aftersalePo.getShopId(),
                                 aftersalePo.getQuantity(),
                                 aftersalePo.getOrderItemId(),
                                 aftersalePo.getMobile(),
                                 aftersalePo.getConsignee(),
-                                aftersalePo.getRegionId()));
-                aftersalePo.setState((byte) 4);*/
+                                aftersalePo.getRegionId(),
+                                aftersalePo.getDetail()));
+                aftersalePo.setState((byte) 4);
             }
         }
 

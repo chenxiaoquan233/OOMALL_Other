@@ -40,5 +40,29 @@
       }
     ],
     "errmsg": "成功"
+  },
+  "createAftersale01": {
+    "errno": 0,
+    "data": {
+      "id": 3,
+      "orderItemId": 1,
+      "customerId": 0,
+      "shopId": 10,
+      "serviceSn": "be5ed962-3bd5-4439-8b5c-1208d50e7de0",
+      "type": 0,
+      "reason": "for test",
+      "conclusion": null,
+      "refund": null,
+      "quantity": 1,
+      "regionId": 0,
+      "detail": "this is a test",
+      "consignee": "testuser",
+      "mobile": "12300010001",
+      "customerLogSn": null,
+      "shopLogSn": null,
+      "state": 0,
+      "beDeleted": 0
+    },
+    "errmsg": "成功"
   }
 }

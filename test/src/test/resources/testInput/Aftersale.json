@@ -1,3 +1,11 @@
 {
-
+  "createAftersale01": {
+    "type": 0,
+    "quantity": 1,
+    "reason": "for test",
+    "regionId": 0,
+    "detail": "this is detailed address",
+    "consignee": "testuser",
+    "mobile": "12300010001"
+  }
 }

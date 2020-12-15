@@ -41,7 +41,10 @@ public class AftersaleTest {
         }
     }
 
-
+    /**
+     * 正确获取所有售后状态
+     * @throws Exception
+     */
     @Test
     public void getAftersaleAllStates01() throws Exception {
         String adminToken = Stub.createToken(0L, 0L, 100000);
@@ -60,6 +63,33 @@ public class AftersaleTest {
         String expect = JacksonUtil.parseSubnodeToString(expectedOutput, "/getAftersaleAllStates01");
 
         logger.debug("getAftersaleAllStates01: response: -=" + response + "=-, expect: -=" + expect + "=-");
+
+        JSONAssert.assertEquals(expect, response, true);
+    }
+
+    /**
+     * 正确创建售后单
+     * @throws Exception
+     */
+    @Test
+    public void createAftersale01() throws Exception {
+        String userToken = Stub.createToken(0L, -2L, 100000);
+
+        String input = JacksonUtil.parseSubnodeToString(testInput, "/createAftersale01");
+
+        String response = new String(Objects.requireNonNull(webClient
+                .post()
+                .uri("/orderItems/1/aftersales")
+                .bodyValue(input)
+                .header("authorization", userToken)
+                .exchange()
+                .expectHeader()
+                .contentType("application/json;charset=UTF-8")
+                .expectBody()
+                .returnResult()
+                .getResponseBodyContent()));
+
+        String expect = JacksonUtil.parseSubnodeToString(expectedOutput, "/createAftersale01");
 
         JSONAssert.assertEquals(expect, response, true);
     }
