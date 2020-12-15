@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.other.service.factory;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -8,15 +9,19 @@ import java.util.List;
  * 4 num按件数，1代表一件商品 rate按万分之一计算 1代表1/10000
  * 5 example: {"num":[0,10,50,100],"rate":[0,50,100,130]}
  */
+//TODO:修改格式以适应需求
 public class CalcPoint {
     ShareActivityStrategy strategy;
     public CalcPoint(ShareActivityStrategy s){
         strategy=s;
     }
     public Integer getPoint(Long price,Integer plusQuantity,Integer oldQuantity){
-        Integer newQuantity=oldQuantity+plusQuantity;
-        Integer[] num=strategy.getNum();
-        Integer[] rate=strategy.getRate();
+        oldQuantity*=100;
+        plusQuantity*=100;
+        Integer newQuantity=(oldQuantity+plusQuantity);
+        if(newQuantity<=strategy.rule[0].num)return 0;
+        Integer[] num= (Integer[]) Arrays.stream(strategy.rule).map(rule -> rule.num).toArray();
+        Integer[] rate=(Integer[]) Arrays.stream(strategy.rule).map(rule -> rule.rate).toArray();
         int cnt=0;
         for(cnt=0;cnt<num.length;cnt++){
             if(cnt+1== num.length||num[cnt+1]>=newQuantity)break;

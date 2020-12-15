@@ -11,17 +11,19 @@ import java.util.List;
  */
 @Data
 public class ShareActivityStrategy {
-    Integer[] num;
-    Integer[] rate;
+    @Data
+    class Rule{
+        Integer num;
+        Integer rate;
+    }
+    public Rule[] rule;
     boolean validate(){
-        if(num==null||rate==null)return false;
-        if(num.length!=rate.length)return false;
-        if(num[0]!=0)return false;
-        for(int i=0;i<num.length;i++){
+        if(rule==null)return false;
+        for(int i=0;i<rule.length;i++){
             if(i!=0){
-                if(num[i]<=num[i-1])return false;
-                if(rate[i]<0)return false;
+                if(rule[i].num<=rule[i-1].num)return false;
             }
+            if(rule[i].rate<0)return false;
         }
         return true;
     }
