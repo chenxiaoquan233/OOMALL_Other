@@ -3,8 +3,9 @@ package cn.edu.xmu.oomall.other.service;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
-import cn.edu.xmu.oomall.dto.EffectiveShareDto;
-import cn.edu.xmu.oomall.service.IDubboOrderService;
+import cn.edu.xmu.oomall.dto.EffectiveShareDTO;
+import cn.edu.xmu.oomall.dto.ShareDTO;
+import cn.edu.xmu.oomall.impl.IDubboOrderService;
 import cn.edu.xmu.oomall.other.dao.ShareDao;
 import cn.edu.xmu.oomall.other.dao.UserDao;
 import cn.edu.xmu.oomall.other.model.bo.BeSharedBo;
@@ -15,17 +16,23 @@ import cn.edu.xmu.oomall.other.model.po.ShareActivityPo;
 import cn.edu.xmu.oomall.other.model.po.SharePo;
 import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
 import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityVo;
-import cn.edu.xmu.goods.client.IGoodsService;
+import cn.edu.xmu.oomall.other.service.factory.CalcPoint;
+import cn.edu.xmu.oomall.other.util.ServiceStub.GoodsService;
+import cn.edu.xmu.oomall.other.util.ServiceStub.OrderService;
+import cn.xmu.edu.goods.client.IGoodsService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -36,17 +43,19 @@ import java.util.stream.Collectors;
 public class ShareService {
     private static final Logger logger = LoggerFactory.getLogger(ShareService.class);
 
-    @DubboReference
-    IGoodsService goodsService;
+
     @Autowired
     private ShareDao shareDao;
     @Autowired
     private UserDao userDao;
-    @DubboReference(registry = {"provider2"}, version = "0.0.1-SNAPSHOT", check = false)
-    IDubboOrderService orderService;
+    //@DubboReference
+    public IDubboOrderService orderService=new OrderService();
+    //@DubboReference
+    public IGoodsService goodsService=new GoodsService();
+
 
     public void retPointToCustomer(){
-        List<EffectiveShareDto> shareDTOS=orderService.getEffectiveShareRecord();
+        List<EffectiveShareDTO> shareDTOS=orderService.getEffectiveShareRecord();
         shareDao.retPointByShareDTOS(shareDTOS);
 
     }
@@ -58,6 +67,14 @@ public class ShareService {
         return shareDao.onlineShareActivity(shopId,shareActivityId);
     }
 
+    public ReturnObject<VoObject> getShareLink(Long skuId,Long customerId){
+        //获取有效的shareActivity
+        ShareActivityBo shareActivityBo=shareDao.loadShareActivity(skuId);
+        if(shareActivityBo==null){
+            return null;
+        }
+        else return shareDao.createShare(skuId,customerId,shareActivityBo);
+    }
     public ReturnObject<VoObject> addShareActivity(Long shopId, Long skuId, ShareActivityVo vo){
         ShareActivityBo bo=vo.createBo();
         bo.setState((byte)0);
@@ -68,6 +85,7 @@ public class ShareService {
     public ReturnObject<PageInfo<VoObject>> findShares(Long skuId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
         PageHelper.startPage(page,pageSize,true,true,null);
         PageInfo<SharePo> sharePos=shareDao.findShares(skuId, beginTime,endTime);
+        //TODO:考虑存储goods以加快速度
 
         List<VoObject> shares=sharePos.getList().stream().map(ShareBo::new)
                 .map(shareBo -> {shareBo.setSku(new GoodsSkuSimpleVo(goodsService.getSku(shareBo.getSkuId())));return shareBo;
@@ -84,13 +102,10 @@ public class ShareService {
     public ReturnObject<PageInfo<VoObject>> getBeShared(Long userId, Long skuId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize) {
         PageHelper.startPage(page,pageSize,true,true,null);
         PageInfo<BeSharePo> beSharePos=shareDao.findBeShare(userId, skuId,beginTime,endTime);
-
-        logger.debug("hererer");
-
+        //TODO:考虑存储goods以加快速度
         List<VoObject> beShares=beSharePos.getList().stream().map(BeSharedBo::new).map(beSharedBo -> {
             beSharedBo.setSku(new GoodsSkuSimpleVo(goodsService.getSku(beSharedBo.getSkuId())));return beSharedBo;
         }).collect(Collectors.toList());
-        logger.debug(beShares.toString());
 
         PageInfo<VoObject> retObj=new PageInfo<>(beShares);
         retObj.setPageNum(beSharePos.getPageNum());
@@ -117,6 +132,11 @@ public class ShareService {
         return shareDao.updateShareActivity(shopId,shareActivityId,vo.createBo().createPo());
     }
 
+//    @Override
+//    public void afterPropertiesSet() throws Exception {
+//        goodsService=new GoodsService();
+//        orderService=new OrderService();
+//    }
 
 
 //    public BeSharedBo selectValidFirstBeShared(Long customerId, Long skuId){

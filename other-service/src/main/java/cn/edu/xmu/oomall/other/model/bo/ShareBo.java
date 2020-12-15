@@ -7,6 +7,7 @@ import cn.edu.xmu.oomall.other.model.vo.Share.ShareRetVo;
 import cn.edu.xmu.oomall.other.model.vo.Share.ShareVo;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
  * @version 创建时间：2020/12/2 下午6:12
  */
 @Data
-public class ShareBo implements VoObject {
+public class ShareBo implements VoObject, Serializable {
     private Long id;
     private Long sharerId;
     private Long skuId;
