@@ -10,6 +10,7 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -198,17 +199,9 @@ public class AdvertiseController {
     @Audit
     @GetMapping("/shops/{did}/timesegments/{id}/advertisement")
     public Object getAdvertisementsByTimeSegmentId(@LoginUser Long user,@PathVariable("did") Integer did, @PathVariable("id") Integer id,
-                                                   @RequestParam(required = false) String beginDate, @RequestParam(required = false) String endDate){
-        // 进来的query是String的LocalDate我贞德找不到例子了QAQ
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate beginDate_,endDate_;
-        try {
-            beginDate_ = LocalDate.parse(beginDate, dateFormatter);
-            endDate_ = LocalDate.parse(endDate,dateFormatter);
-        }catch (Exception e){
-            return ResponseUtil.fail(ResponseCode.INTERNAL_SERVER_ERR);
-        }
-        return advertiseService.getAdvertiseByTimeSegmentId(id,beginDate_,endDate_);
+                                                   @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate beginDate,
+                                                   @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate endDate){
+        return ResponseUtil.ok(advertiseService.getAdvertiseByTimeSegmentId(id, beginDate, endDate));
     }
 
 
