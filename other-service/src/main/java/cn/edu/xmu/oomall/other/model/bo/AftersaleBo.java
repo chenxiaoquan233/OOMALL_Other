@@ -26,7 +26,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class AftersaleBo implements VoObject {
 
-    @DubboReference(registry = {"provider1"}, version = "0.0.1-SNAPSHOT")
+    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
     private IDubboOrderService iDubboOrderService;
 
     /**

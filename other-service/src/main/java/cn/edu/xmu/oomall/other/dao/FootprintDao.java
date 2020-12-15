@@ -72,9 +72,12 @@ public class FootprintDao {
     public PageInfo<FootPrintPo> getFootprints(Long userId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
         FootPrintPoExample example=new FootPrintPoExample();
         FootPrintPoExample.Criteria criteria=example.createCriteria();
-        criteria.andCustomerIdEqualTo(userId);
-        criteria.andGmtCreateGreaterThan(beginTime);
-        criteria.andGmtCreateLessThan(endTime);
+        if(userId!=null)
+            criteria.andCustomerIdEqualTo(userId);
+        if(beginTime!=null)
+            criteria.andGmtCreateGreaterThan(beginTime);
+        if(endTime!=null)
+            criteria.andGmtCreateLessThan(endTime);
         List<FootPrintPo> footPrints = footPrintPoMapper.selectByExample(example);
         return new PageInfo<>(footPrints);
     }

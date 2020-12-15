@@ -1,4 +1,4 @@
-package cn.edu.xmu.oomall.other.service.GoodsInterface;
+package cn.edu.xmu.oomall.other.service.provide;
 
 import cn.edu.xmu.oomall.other.dto.TimeSegmentDTO;
 import cn.edu.xmu.oomall.other.impl.ITimeSegmentService;
@@ -12,7 +12,7 @@ import java.util.List;
  * @author XQChen
  * @version 创建时间：2020/12/9 下午10:12
  */
-@DubboService(registry = {"provider1"}, version = "0.0.1-SNAPSHOT")
+@DubboService(version = "0.0.1-SNAPSHOT")
 public class ITimeSegmentServiceImpl implements ITimeSegmentService {
     @Autowired
     private TimeSegmentDao timeSegmentDao;

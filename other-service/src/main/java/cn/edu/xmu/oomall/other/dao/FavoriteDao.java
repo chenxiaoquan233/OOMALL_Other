@@ -53,7 +53,7 @@ public class FavoriteDao {
     @Autowired
     private FavouriteGoodsPoMapper favouriteGoodsPoMapper;
 
-    @DubboReference(registry = {"provider2"}, version = "0.0.1-SNAPSHOT", check = false)
+    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
     public IGoodsService iGoodsService;
 
     public ReturnObject<PageInfo<VoObject>> getFavoritesByUserId(Long userId, Integer page, Integer pageSize){

@@ -37,10 +37,10 @@ public class AftersaleService {
     @Autowired
     private AddressDao addressDao;
 
-    @DubboReference(registry = {"provider2"}, version = "0.0.1-SNAPSHOT")
+    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
     private IDubboOrderService iDubboOrderService;
 
-    @DubboReference(registry = {"provider2"}, version = "0.0.1-SNAPSHOT")
+    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
     private IDubboPaymentService iDubboPaymentService;
 
     public List<AftersaleStateVo> getAftersaleAllStates() {

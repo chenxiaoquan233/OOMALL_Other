@@ -1,4 +1,4 @@
-package cn.edu.xmu.oomall.other.service.OrderInterface;
+package cn.edu.xmu.oomall.other.service.provide;
 
 import cn.edu.xmu.oomall.other.dao.UserDao;
 import cn.edu.xmu.oomall.other.impl.IRebateService;
@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author XQChen
  * @version 创建时间：2020/12/5 上午12:09
  */
-@DubboService(registry = {"provider1"}, version = "0.0.1-SNAPSHOT")
+@DubboService(version = "0.0.1-SNAPSHOT")
 public class IRebateServiceImpl implements IRebateService {
 
     @Autowired
