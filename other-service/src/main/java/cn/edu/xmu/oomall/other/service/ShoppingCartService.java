@@ -30,7 +30,7 @@ public class ShoppingCartService {
     @Autowired
     private ShoppingCartDao shoppingCartDao;
 
-    @DubboReference(registry = {"provider1"})
+    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
     IGoodsService iGoodsService;
 
 //    public Long getPrice(Long skuId){

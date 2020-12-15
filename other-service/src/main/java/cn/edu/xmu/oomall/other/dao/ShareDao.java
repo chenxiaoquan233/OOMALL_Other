@@ -60,7 +60,7 @@ public class ShareDao implements InitializingBean {
     @Autowired
     UpdateRebateMapper updateRebateMapper;
 
-    @DubboReference
+    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
     IGoodsService goodsService;
 
     @Autowired

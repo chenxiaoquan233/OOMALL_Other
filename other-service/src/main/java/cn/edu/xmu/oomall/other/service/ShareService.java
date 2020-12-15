@@ -42,13 +42,13 @@ import java.util.stream.Collectors;
 public class ShareService {
     private static final Logger logger = LoggerFactory.getLogger(ShareService.class);
 
-    @DubboReference
+    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
     IGoodsService goodsService;
     @Autowired
     private ShareDao shareDao;
     @Autowired
     private UserDao userDao;
-    @DubboReference(registry = {"provider2"}, version = "0.0.1-SNAPSHOT", check = false)
+    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
     IDubboOrderService orderService;
 
     public void retPointToCustomer(){

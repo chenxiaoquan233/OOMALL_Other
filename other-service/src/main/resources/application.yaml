@@ -11,6 +11,8 @@ server:
       max: 1000
 
 dubbo:
+  registry:
+    address: nacos://47.115.162.144:8848
   # 配置服务信息
   application:
     name: other
@@ -26,9 +28,6 @@ dubbo:
   consumer:
     timeout: 4000
     check: false
-  registries:
-    provider1:
-      address: nacos://47.115.162.144:8848
 
 spring:
   main:

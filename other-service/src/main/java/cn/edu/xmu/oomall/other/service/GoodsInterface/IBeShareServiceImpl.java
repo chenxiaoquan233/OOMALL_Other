@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 3 * @date: 2020/12/12 下午8:28
  * 4
  */
-@DubboService(registry = {"provider1"}, version = "0.0.1-SNAPSHOT")
+@DubboService(version = "0.0.1-SNAPSHOT")
 public class IBeShareServiceImpl implements IBeShareService {
     @Autowired
     ShareDao shareDao;

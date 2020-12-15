@@ -40,7 +40,7 @@ public class FootprintService {
     @Autowired
     private FootprintDao footprintDao;
 
-    @DubboReference
+    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
     IGoodsService goodsService;
 
     @Resource
