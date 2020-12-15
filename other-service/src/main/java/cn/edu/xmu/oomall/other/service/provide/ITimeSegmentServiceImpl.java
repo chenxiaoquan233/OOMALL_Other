@@ -1,4 +1,4 @@
-package cn.edu.xmu.oomall.other.service.GoodsInterface;
+package cn.edu.xmu.oomall.other.service.provide;
 
 import cn.edu.xmu.oomall.other.dto.TimeSegmentDTO;
 import cn.edu.xmu.oomall.other.impl.ITimeSegmentService;

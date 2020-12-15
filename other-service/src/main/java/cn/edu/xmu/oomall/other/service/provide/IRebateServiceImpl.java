@@ -1,4 +1,4 @@
-package cn.edu.xmu.oomall.other.service.OrderInterface;
+package cn.edu.xmu.oomall.other.service.provide;
 
 import cn.edu.xmu.oomall.other.dao.UserDao;
 import cn.edu.xmu.oomall.other.impl.IRebateService;
