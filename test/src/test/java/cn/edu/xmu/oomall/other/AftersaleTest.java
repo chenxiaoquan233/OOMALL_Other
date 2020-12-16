@@ -332,4 +332,124 @@ public class AftersaleTest {
 
         JSONAssert.assertEquals(expect, response, true);
     }
+
+    /**
+     * 用户成功查询售后单
+     */
+    @Test
+    public void getAllAftersale01() throws JSONException {
+        String userToken = Stub.createToken(0L, -2L, 100000);
+
+        String response = new String(Objects.requireNonNull(webClient
+                .get()
+                .uri("/aftersales?page=1&pageSize=3&beginTime=2019-01-01T00:00:00&endTime=2021-01-01T00:00:00&type=0&state=0")
+                .header("authorization", userToken)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .returnResult()
+                .getResponseBodyContent()));
+
+        String expect = JacksonUtil.parseSubnodeToString(expectedOutput, "/getAllAftersale01");
+
+        JSONAssert.assertEquals(expect, response, new CustomComparator(JSONCompareMode.LENIENT,
+                new Customization("data.total", (o1, o2) -> true),
+                new Customization("data.pages", (o1, o2) -> true),
+                new Customization("data.list", (o1, o2) -> true)));
+    }
+
+    //TODO 细化用户对售后单的查询，添加各种参数的错误测试、不存在的参数测试，以及其他内部逻辑的无效等价类测试
+
+    /**
+     * 管理员成功查询售后单
+     */
+    @Test
+    public void adminGetAllAftersale01() throws JSONException {
+        String adminToken = Stub.createToken(0L, 0L, 100000);
+
+        String response = new String(Objects.requireNonNull(webClient
+                .get()
+                .uri("/shops/0/aftersales?page=1&pageSize=3&beginTime=2019-01-01T00:00:00&endTime=2021-01-01T00:00:00&type=0&state=0")
+                .header("authorization", adminToken)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .returnResult()
+                .getResponseBodyContent()));
+
+        String expect = JacksonUtil.parseSubnodeToString(expectedOutput, "/getAllAftersale01");
+
+        JSONAssert.assertEquals(expect, response, new CustomComparator(JSONCompareMode.LENIENT,
+                new Customization("data.total", (o1, o2) -> true),
+                new Customization("data.pages", (o1, o2) -> true),
+                new Customization("data.list", (o1, o2) -> true)));
+    }
+
+    //TODO 细化管理员对售后单的查询，添加各种参数的错误测试、不存在的参数测试，以及其他内部逻辑的无效等价类测试
+
+    /**
+     * 用户成功根据ID查询售后单
+     */
+    @Test
+    public void getAftersaleById01() throws JSONException {
+        String adminToken = Stub.createToken(0L, -2L, 100000);
+
+        String response = new String(Objects.requireNonNull(webClient
+                .get()
+                .uri("/aftersales/4")
+                .header("authorization", adminToken)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .returnResult()
+                .getResponseBodyContent()));
+
+        String expect = JacksonUtil.parseSubnodeToString(expectedOutput, "/getAftersaleById01");
+
+        JSONAssert.assertEquals(expect, response, true);
+    }
+
+    /**
+     * 用户根据ID查询不属于自己的售后单
+     */
+    @Test
+    public void getAftersaleById02() throws JSONException {
+        String adminToken = Stub.createToken(0L, -2L, 100000);
+
+        String response = new String(Objects.requireNonNull(webClient
+                .get()
+                .uri("/aftersales/2")
+                .header("authorization", adminToken)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .returnResult()
+                .getResponseBodyContent()));
+
+        String expect = JacksonUtil.parseSubnodeToString(expectedOutput, "/getAftersaleById02");
+
+        JSONAssert.assertEquals(expect, response, true);
+    }
+
+    /**
+     * 用户查询售后单ID不存在
+     */
+    @Test
+    public void getAftersaleById03() throws JSONException {
+        String adminToken = Stub.createToken(0L, -2L, 100000);
+
+        String response = new String(Objects.requireNonNull(webClient
+                .get()
+                .uri("/aftersales/20000")
+                .header("authorization", adminToken)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .returnResult()
+                .getResponseBodyContent()));
+
+        String expect = JacksonUtil.parseSubnodeToString(expectedOutput, "/getAftersaleById03");
+
+        JSONAssert.assertEquals(expect, response, true);
+    }
 }
