@@ -44,18 +44,18 @@
   "createAftersale01": {
     "errno": 0,
     "data": {
-      "id": 3,
+      "id": "",
       "orderItemId": 1,
       "customerId": 0,
       "shopId": 10,
-      "serviceSn": "be5ed962-3bd5-4439-8b5c-1208d50e7de0",
+      "serviceSn": "",
       "type": 0,
       "reason": "for test",
       "conclusion": null,
       "refund": null,
       "quantity": 1,
       "regionId": 0,
-      "detail": "this is a test",
+      "detail": "this is detailed address",
       "consignee": "testuser",
       "mobile": "12300010001",
       "customerLogSn": null,
@@ -64,5 +64,56 @@
       "beDeleted": 0
     },
     "errmsg": "成功"
+  },
+  "createAftersale13": {
+    "errno": 504,
+    "errmsg": "操作的资源id不存在"
+  },
+  "createAftersale14": {
+    "errno": 504,
+    "errmsg": "操作的资源id不存在"
+  },
+  "getAllAftersale01": {
+    "errno": 0,
+    "data": {
+      "page": 1,
+      "pageSize": 3,
+      "total": 10,
+      "pages": 4,
+      "list": []
+    },
+    "errmsg": "成功"
+  },
+  "getAftersaleById01": {
+    "errno": 0,
+    "data": {
+      "id": 4,
+      "orderItemId": 1,
+      "customerId": 0,
+      "shopId": 10,
+      "serviceSn": "488ee4ec-0db3-4a38-bfa3-ad909f029c3b",
+      "type": 0,
+      "reason": "for test",
+      "conclusion": null,
+      "refund": null,
+      "quantity": 1,
+      "regionId": 0,
+      "detail": "this is detailed address",
+      "consignee": "testuser",
+      "mobile": "12300010001",
+      "customerLogSn": null,
+      "shopLogSn": null,
+      "state": 0,
+      "beDeleted": 0
+    },
+    "errmsg": "成功"
+  },
+  "getAftersaleById02": {
+    "errno": 505,
+    "errmsg": "操作的资源id不是自己的对象"
+  },
+  "getAftersaleById03": {
+    "errno": 504,
+    "errmsg": "操作的资源id不存在"
   }
 }

@@ -113,17 +113,16 @@ public class AdvertiseDao {
         AdvertisementPoExample example = new AdvertisementPoExample();
         AdvertisementPoExample.Criteria criteria=example.createCriteria();
         criteria.andSegIdEqualTo(id);
-        criteria.andBeginDateEqualTo(beginDate);
-        criteria.andEndDateEqualTo(endDate);
+        if(beginDate!=null)
+            criteria.andBeginDateEqualTo(beginDate);
+        if(endDate!=null)
+            criteria.andEndDateEqualTo(endDate);
+        example.setOrderByClause("weight DESC");
         List<AdvertisementPo> advertisementPoList=advertisementPoMapper.selectByExample(example);
-        advertisementPoList.sort((x1,x2)-> {
-            int diff=x1.getWeight()-x2.getWeight();
-            if(diff<0)return 1;
-            else if(diff==0)return 0;
-            else return -1;
-        });
-        if(advertisementPoList.size()<=8)return advertisementPoList.stream().map(AdvertiseBo::new).collect(Collectors.toList());
-        else return advertisementPoList.subList(0,8).stream().map(AdvertiseBo::new).collect(Collectors.toList());
+        if(advertisementPoList.size()<=8)
+            return advertisementPoList.stream().map(AdvertiseBo::new).collect(Collectors.toList());
+        else
+            return advertisementPoList.subList(0,8).stream().map(AdvertiseBo::new).collect(Collectors.toList());
 //        PageHelper.startPage(page,pageSize,true,true,null);
 //        try{
 //            advertisementPoList=advertisementPoMapper.selectByExample(example);

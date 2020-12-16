@@ -7,5 +7,122 @@
     "detail": "this is detailed address",
     "consignee": "testuser",
     "mobile": "12300010001"
+  },
+  "createAftersale02": {
+    "type": 8,
+    "quantity": 1,
+    "reason": "for test",
+    "regionId": 0,
+    "detail": "this is detailed address",
+    "consignee": "testuser",
+    "mobile": "12300010001"
+  },
+  "createAftersale03": {
+    "type": "",
+    "quantity": 1,
+    "reason": "for test",
+    "regionId": 0,
+    "detail": "this is detailed address",
+    "consignee": "testuser",
+    "mobile": "12300010001"
+  },
+  "createAftersale04": {
+    "type": 0,
+    "quantity": -20,
+    "reason": "for test",
+    "regionId": 0,
+    "detail": "this is detailed address",
+    "consignee": "testuser",
+    "mobile": "12300010001"
+  },
+  "createAftersale05": {
+    "type": 0,
+    "quantity": "",
+    "reason": "for test",
+    "regionId": 0,
+    "detail": "this is detailed address",
+    "consignee": "testuser",
+    "mobile": "12300010001"
+  },
+  "createAftersale06": {
+    "type": 0,
+    "quantity": 1,
+    "reason": "",
+    "regionId": 0,
+    "detail": "this is detailed address",
+    "consignee": "testuser",
+    "mobile": "12300010001"
+  },
+  "createAftersale07": {
+    "type": 0,
+    "quantity": 1,
+    "reason": "test",
+    "regionId": -20,
+    "detail": "this is detailed address",
+    "consignee": "testuser",
+    "mobile": "12300010001"
+  },
+  "createAftersale08": {
+    "type": 0,
+    "quantity": 1,
+    "reason": "test",
+    "regionId": "",
+    "detail": "this is detailed address",
+    "consignee": "testuser",
+    "mobile": "12300010001"
+  },
+  "createAftersale09": {
+    "type": 0,
+    "quantity": 1,
+    "reason": "test",
+    "regionId": 0,
+    "detail": "",
+    "consignee": "testuser",
+    "mobile": "12300010001"
+  },
+  "createAftersale10": {
+    "type": 0,
+    "quantity": 1,
+    "reason": "test",
+    "regionId": 0,
+    "detail": "this is detailed address",
+    "consignee": "",
+    "mobile": "12300010001"
+  },
+  "createAftersale11": {
+    "type": 0,
+    "quantity": 1,
+    "reason": "test",
+    "regionId": 0,
+    "detail": "this is detailed address",
+    "consignee": "testuser",
+    "mobile": ""
+  },
+  "createAftersale12": {
+    "type": 0,
+    "quantity": 1,
+    "reason": "test",
+    "regionId": 0,
+    "detail": "this is detailed address",
+    "consignee": "testuser",
+    "mobile": "wrong mobile"
+  },
+  "createAftersale13": {
+    "type": 0,
+    "quantity": 1,
+    "reason": "test",
+    "regionId": 0,
+    "detail": "this is detailed address",
+    "consignee": "testuser",
+    "mobile": "12300010001"
+  },
+  "createAftersale14": {
+    "type": 0,
+    "quantity": 1,
+    "reason": "test",
+    "regionId": 1,
+    "detail": "this is detailed address",
+    "consignee": "testuser",
+    "mobile": "12300010001"
   }
 }

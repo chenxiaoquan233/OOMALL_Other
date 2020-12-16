@@ -5,10 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 
 /**
  * @author Ji Cao
@@ -17,6 +14,9 @@ import javax.validation.constraints.Pattern;
 @ApiModel(description = "售后传值对象")
 @Data
 public class AftersaleVo {
+    @Max(2)
+    @Min(0)
+    @NotNull
     @ApiModelProperty(name = "售后类别", value = "0")
     private Integer type;
 
@@ -29,6 +29,7 @@ public class AftersaleVo {
     @ApiModelProperty(name = "原因", value = "坏了")
     private String reason;
 
+    @Min(0)
     @NotNull
     @ApiModelProperty(name = "区域ID", value = "123")
     private Long regionId;

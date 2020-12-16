@@ -83,9 +83,7 @@ public class AddressDao {
     public ReturnObject<PageInfo<VoObject>> getAddresses(Long userId,  Integer page, Integer pageSize){
         AddressPoExample example = new AddressPoExample();
         AddressPoExample.Criteria criteria = example.createCriteria();
-        if(userId!=null){
-            criteria.andCustomerIdEqualTo(userId);
-        }
+        criteria.andCustomerIdEqualTo(userId);
         List<AddressPo> addressPos = null;
         PageHelper.startPage(page,pageSize,true,true,null);
         try{
@@ -98,7 +96,12 @@ public class AddressDao {
             return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
         }
         List<VoObject> ret =addressPos.stream().map(AddressBo::new).map(x->{
-            x.setState(regionPoMapper.selectByPrimaryKey(x.getRegionId()).getState());
+            RegionPo region=regionPoMapper.selectByPrimaryKey(x.getRegionId());
+            if(region==null)
+                x.setState((byte)1);
+            else
+                x.setState(region.getState());
+            //x.setState(regionPoMapper.selectByPrimaryKey(x.getRegionId()).getState());
             return x;
         }).collect(Collectors.toList());
         PageInfo<AddressPo> addressesPoPage = PageInfo.of(addressPos);
@@ -306,4 +309,7 @@ public class AddressDao {
         return new ReturnObject<>(ResponseCode.OK);
     }
 
+    public Boolean hasRegion(Long id) {
+        return regionPoMapper.selectByPrimaryKey(id) != null;
+    }
 }

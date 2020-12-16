@@ -78,7 +78,8 @@ public class AdvertiseBo implements VoObject {
         this.endDate=advertisementPo.getEndDate();
         this.repeats=advertisementPo.getRepeats()==(byte)1;
         this.message= advertisementPo.getMessage();
-        this.beDefault= advertisementPo.getBeDefault()==(byte)1;
+        if(advertisementPo.getBeDefault()!=null)
+            this.beDefault= advertisementPo.getBeDefault()==(byte)1;
         this.gmtCreate=advertisementPo.getGmtCreate();
         this.gmtModified= advertisementPo.getGmtModified();
     }

@@ -8,15 +8,19 @@ import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.oomall.other.model.vo.Aftersale.*;
 import cn.edu.xmu.oomall.other.service.AftersaleService;
+import cn.edu.xmu.oomall.other.util.PageInfoHelper;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
 
 /**
@@ -68,19 +72,22 @@ public class AftersaleController {
             return object;
         }
 
-        AftersaleRetVo aftersaleRetVo = aftersaleService.createAftersale(vo, orderItemId, userId);
+        Object retObject = aftersaleService.createAftersale(vo, orderItemId, userId);
 
-        logger.debug("VO here:" + aftersaleRetVo);
 
-        return ResponseUtil.ok(aftersaleRetVo);
+
+        if(retObject.equals(ResponseCode.RESOURCE_ID_NOTEXIST))
+        {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail((ResponseCode) retObject);
+        }
+
+        return ResponseUtil.ok(retObject);
     }
 
     @ApiOperation(value = "买家查询所有的售后单", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String",  name = "authorization", value = "用户token",    required = true),
-            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "spuId",         value = "SPU Id"),
-            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "skuId",         value = "sku ID"),
-            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "orderItemId",   value = "orderItem Id"),
             @ApiImplicitParam(paramType = "query",  dataType = "String",  name = "beginTime",     value = "开始时间"),
             @ApiImplicitParam(paramType = "query",  dataType = "String",  name = "endTime",       value = "结束时间"),
             @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "page",          value = "页码"),
@@ -95,25 +102,19 @@ public class AftersaleController {
     @GetMapping("/aftersales")
     public Object getAllAftersale(
             @LoginUser Long userId,
-            @RequestParam(required = false) Long spuId,
-            @RequestParam(required = false) Long skuId,
-            @RequestParam(required = false) Long orderItemId,
-            @RequestParam(required = false) LocalDateTime beginTime,
-            @RequestParam(required = false) LocalDateTime endTime,
-            @RequestParam(required = false, defaultValue = "1") Integer page,
-            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
-            @RequestParam(required = false) Integer type,
-            @RequestParam(required = false) Integer state) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime beginTime,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime,
+            @RequestParam(required = false, defaultValue = "1") @Min(1) Integer page,
+            @RequestParam(required = false, defaultValue = "10") @Min(1) Integer pageSize,
+            @RequestParam(required = false) @Min(0) @Max(2) Integer type,
+            @RequestParam(required = false) @Min(0) @Max(9) Integer state) {
 
-        return ResponseUtil.ok(aftersaleService.getAllAftersales(userId, null, beginTime, endTime, page, pageSize, type, state));
+        return ResponseUtil.ok(PageInfoHelper.process(aftersaleService.getAllAftersales(userId, null, beginTime, endTime, page, pageSize, type, state)));
     }
 
-    @ApiOperation(value = "买家查询所有的售后单", produces = "application/json")
+    @ApiOperation(value = "管理员查询所有的售后单", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String",  name = "authorization", value = "用户token",    required = true),
-            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "spuId",         value = "SPU Id"),
-            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "skuId",         value = "sku ID"),
-            @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "orderItemId",   value = "orderItem Id"),
             @ApiImplicitParam(paramType = "query",  dataType = "String",  name = "beginTime",     value = "开始时间"),
             @ApiImplicitParam(paramType = "query",  dataType = "String",  name = "endTime",       value = "结束时间"),
             @ApiImplicitParam(paramType = "query",  dataType = "Integer", name = "page",          value = "页码"),
@@ -130,22 +131,19 @@ public class AftersaleController {
             @LoginUser Long userId,
             @Depart Long did,
             @PathVariable("id") Long shopId,
-            @RequestParam(required = false) Long spuId,
-            @RequestParam(required = false) Long skuId,
-            @RequestParam(required = false) Long orderItemId,
-            @RequestParam(required = false) LocalDateTime beginTime,
-            @RequestParam(required = false) LocalDateTime endTime,
-            @RequestParam(required = false, defaultValue = "1") Integer page,
-            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
-            @RequestParam(required = false) Integer type,
-            @RequestParam(required = false) Integer state) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime beginTime,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime,
+            @RequestParam(required = false, defaultValue = "1") @Min(1) Integer page,
+            @RequestParam(required = false, defaultValue = "10") @Min(1) Integer pageSize,
+            @RequestParam(required = false) @Min(0) @Max(2) Integer type,
+            @RequestParam(required = false) @Min(0) @Max(2) Integer state) {
 
-        if(!did.equals(shopId)) {
+        if(!did.equals(0L) && !did.equals(shopId)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
         }
 
-        return ResponseUtil.ok(aftersaleService.getAllAftersales(userId, shopId, beginTime, endTime, page, pageSize, type, state));
+        return ResponseUtil.ok(PageInfoHelper.process(aftersaleService.getAllAftersales(userId, shopId, beginTime, endTime, page, pageSize, type, state)));
     }
 
     @ApiOperation(value = "买家根据售后单id查询售后单信息", produces = "application/json")
@@ -161,13 +159,16 @@ public class AftersaleController {
     public Object getAftersaleById(@LoginUser Long userId, @PathVariable("id") Long aftersaleId) {
         Object object = aftersaleService.getAftersaleById(userId, aftersaleId);
 
-        if(object.equals(ResponseCode.RESOURCE_ID_NOTEXIST))
-        {
+        logger.debug("object: " + object);
+
+        if(object.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail((ResponseCode) object);
         }
-        if(object.equals(ResponseCode.RESOURCE_ID_OUTSCOPE))
-            return ResponseUtil.fail((ResponseCode) object, ((ResponseCode) object).getMessage());
+        if(object.equals(ResponseCode.RESOURCE_ID_OUTSCOPE)) {
+            logger.debug("outscope");
+            return ResponseUtil.fail((ResponseCode) object);
+        }
         return ResponseUtil.ok(object);
     }
 
