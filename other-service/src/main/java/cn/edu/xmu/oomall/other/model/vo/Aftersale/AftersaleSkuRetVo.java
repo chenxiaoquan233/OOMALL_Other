@@ -1,20 +1,21 @@
 package cn.edu.xmu.oomall.other.model.vo.Aftersale;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+import java.time.LocalDateTime;
 /**
- * @author XQChen
- * @version 创建时间：2020/12/16 上午10:22
+ * @author Ji Cao
+ * @version 创建时间：2020/12/3 下午14:51
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class AftersaleRetVo {
+@ToString
+public class AftersaleSkuRetVo {
     private Long id;
     private Long orderId;
     private Long orderItemId;
+    private Long skuId;
+    private String skuName;
     private Long customerId;
     private Long shopId;
     private String serviceSn;

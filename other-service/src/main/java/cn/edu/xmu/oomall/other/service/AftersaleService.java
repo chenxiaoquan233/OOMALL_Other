@@ -62,9 +62,9 @@ public class AftersaleService {
         AftersaleDto aftersaleDTO = null;
 
         //TODO dubbo
-        if(orderItemId.equals(1L))
-            aftersaleDTO = new AftersaleDto(1L, "tset", 2L, "ttt", 10L, 20);
-        //AftersaleDto aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(orderItemId);
+        //if(orderItemId.equals(1L))
+        //    aftersaleDTO = new AftersaleDto(1L, "tset", 2L, "ttt", 10L, 20);
+        aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(orderItemId);
 
         if(aftersaleDTO == null)
             return ResponseCode.RESOURCE_ID_NOTEXIST;
@@ -79,7 +79,7 @@ public class AftersaleService {
 
         aftersaleBo.setId(aftersalePo.getId());
 
-        return aftersaleBo.createRetVo();
+        return aftersaleBo.createSkuRetVo();
     }
 
     public PageInfo<AftersaleRetVo> getAllAftersales(
@@ -108,7 +108,7 @@ public class AftersaleService {
 
         if(aftersalePo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
         if(!aftersalePo.getCustomerId().equals(userId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
-        return new AftersaleBo(aftersalePo).createRetVo();
+        return new AftersaleBo(aftersalePo).createSkuRetVo();
     }
 
     public ResponseCode modifyAftersaleById(Long userId, Long aftersaleId, AftersaleModifyVo vo) {
