@@ -6,13 +6,11 @@ import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.mapper.AdvertisementPoMapper;
 import cn.edu.xmu.oomall.other.mapper.AftersalePoMapper;
+import cn.edu.xmu.oomall.other.mapper.TimeSegmentPoMapper;
 import cn.edu.xmu.oomall.other.model.bo.AdvertiseBo;
 import cn.edu.xmu.oomall.other.model.bo.TimeSegmentBo;
 import cn.edu.xmu.oomall.other.model.bo.UserBo;
-import cn.edu.xmu.oomall.other.model.po.AddressPoExample;
-import cn.edu.xmu.oomall.other.model.po.AdvertisementPo;
-import cn.edu.xmu.oomall.other.model.po.AdvertisementPoExample;
-import cn.edu.xmu.oomall.other.model.po.TimeSegmentPo;
+import cn.edu.xmu.oomall.other.model.po.*;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseRetVo;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseStatesRetVo;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseVo;
@@ -46,6 +44,8 @@ public class AdvertiseDao {
     @Autowired
     private AdvertisementPoMapper advertisementPoMapper;
 
+    @Autowired
+    private TimeSegmentPoMapper timeSegmentPoMapper;
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -95,12 +95,41 @@ public class AdvertiseDao {
     }
 
 
-    public List<AdvertiseBo> getCurrentAdvertisements() {
+    /*查询默认广告*/
+    public AdvertiseBo getDefaultAd(){
         AdvertisementPoExample example = new AdvertisementPoExample();
         AdvertisementPoExample.Criteria  criteria= example.createCriteria();
-        criteria.andBeginDateLessThanOrEqualTo(LocalDate.now());
-        criteria.andEndDateGreaterThanOrEqualTo(LocalDate.now());
-        return advertisementPoMapper.selectByExample(example).stream().map(x->new AdvertiseBo(x)).collect(Collectors.toList());
+        criteria.andStateEqualTo(AdvertiseBo.State.NORM.getCode().byteValue()); //上架
+        criteria.andBeDefaultEqualTo((byte)1); //默认
+        List<AdvertisementPo> advertisementPoList=advertisementPoMapper.selectByExample(example);
+        if(advertisementPoList.size()==0)
+            return null;
+        else return new AdvertiseBo(advertisementPoList.get(0));
+    }
+
+    /*查询当前时间段*/
+    public TimeSegmentPo getNowTimeSegment(){
+        TimeSegmentPoExample timeSegmentPoExample=new TimeSegmentPoExample();
+        TimeSegmentPoExample.Criteria timeCriteria=timeSegmentPoExample.createCriteria();
+        timeCriteria.andBeginTimeLessThan(LocalDateTime.now());
+        timeCriteria.andEndTimeGreaterThan(LocalDateTime.now());
+        timeCriteria.andTypeEqualTo(TimeSegmentBo.Type.ADS.getCode().byteValue());
+        List<TimeSegmentPo> timePoList=timeSegmentPoMapper.selectByExample(timeSegmentPoExample);
+        if(timePoList.size()==0)
+            return null;
+        else return timePoList.get(0);
+    }
+
+    public List<AdvertisementPo> getAdvertisements(Long segId) {
+        AdvertisementPoExample example = new AdvertisementPoExample();
+        AdvertisementPoExample.Criteria criteria=example.createCriteria();
+        criteria.andSegIdEqualTo(segId);
+        example.setOrderByClause("weight DESC");
+        List<AdvertisementPo> advertisementPoList=advertisementPoMapper.selectByExample(example);
+        if(advertisementPoList.size()<=8)
+            return advertisementPoList;
+        else
+            return advertisementPoList.subList(0,8);
     }
 
     public AdvertiseBo getAdvertiseById(Long id){
@@ -150,7 +179,7 @@ public class AdvertiseDao {
 //        po.setSegId(segId);
 //        advertisementPoMapper.insert(po);}
 //        catch(Exception e){return ResponseCode.INTERNAL_SERVER_ERR;}
-//        return ResponseCode.OK; // qm你wsm要这么对我
+//        return ResponseCode.OK;
         try {
             advertisementPoMapper.insert(bo.getAdvertisePo());
         }catch (Exception e){
