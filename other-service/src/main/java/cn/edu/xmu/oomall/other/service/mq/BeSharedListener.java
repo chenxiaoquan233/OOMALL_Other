@@ -15,11 +15,11 @@ import org.springframework.stereotype.Component;
 /**
  * 2 * @author: LiangJi3229
  * 3 * @date: 2020/12/11 下午3:28
- * 4
+ * 4 用于更新下单成功后的beshare对象
  */
 @Slf4j
 @Component
-@RocketMQMessageListener(topic="beShared-topic",consumerGroup = "share-group")
+@RocketMQMessageListener(topic="share-request",consumerGroup = "share-group")
 public class BeSharedListener implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
     @Autowired
     private ShareDao shareDao;
@@ -30,7 +30,7 @@ public class BeSharedListener implements RocketMQListener<String>, RocketMQPushC
         ShareDto shareDTO= JacksonUtil.toObj(s,ShareDto.class);
         ShareDto ret=shareDao.getFirstBeShared(shareDTO.getCustomerId(), shareDTO.getSkuId(), shareDTO.getOrderItemId());
         String message=JacksonUtil.toJson(ret);
-        rocketMQTemplate.sendOneWay("orderItem-topic",message);
+        rocketMQTemplate.sendOneWay("share-response",message);
     }
 
     @Override
