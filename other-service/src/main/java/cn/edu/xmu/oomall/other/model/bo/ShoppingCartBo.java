@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.other.model.bo;
 
+import cn.edu.xmu.goods.client.dubbo.CouponActivityDTO;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.other.model.po.ShoppingCartPo;
 import cn.edu.xmu.oomall.other.model.vo.ShoppingCart.ShoppingCartRetVo;

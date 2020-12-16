@@ -1,5 +1,7 @@
 package cn.edu.xmu.oomall.other.service;
 
+import cn.edu.xmu.goods.client.IActivityService;
+import cn.edu.xmu.goods.client.dubbo.CouponActivityDTO;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -33,13 +36,14 @@ public class ShoppingCartService {
     @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
     IGoodsService iGoodsService;
 
+    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
+    IActivityService iActivityService;
+
 //    public Long getPrice(Long skuId){
 //        return skuId*10;
 //    }
 //
-    public List<Object> getCouponActicity(Long goodsSkuId) {
-        return null;
-    }
+
 
 
     public ResponseCode clearCart(Long userId){
@@ -52,8 +56,10 @@ public class ShoppingCartService {
 
     public ReturnObject<PageInfo<VoObject>> getCarts(Long userId, Integer page, Integer pageSize){
         List<ShoppingCartPo> cartPos=shoppingCartDao.getCartByUserId(userId,page,pageSize);
+        List<Long> skuIds=cartPos.stream().map(ShoppingCartPo::getGoodsSkuId).collect(Collectors.toList());
+        Map<Long, List<CouponActivityDTO>> coupon=iActivityService.getSkuCouponActivity(skuIds);
         List<VoObject> ret = cartPos.stream().map(ShoppingCartBo::new)
-                .map(x->{x.setCouponActivity(getCouponActicity(x.getGoodsSkuId()));return x;})
+                .map(x->{x.setCouponActivity(coupon.get(x.getGoodsSkuId()).stream().collect(Collectors.toList()));return x;})
                 .collect(Collectors.toList());
         PageInfo<ShoppingCartPo> cartPoPage = PageInfo.of(cartPos);
         PageInfo<VoObject> cartPage = new PageInfo<>(ret);
@@ -72,7 +78,7 @@ public class ShoppingCartService {
         if(po==null)
             return null;
         ShoppingCartBo bo=new ShoppingCartBo(po);
-        bo.setCouponActivity(getCouponActicity(goodsSkuId));
+        bo.setCouponActivity(iActivityService.getSkuCouponActivity(goodsSkuId).stream().collect(Collectors.toList()));
         return new ReturnObject<>(bo);
     }
 
