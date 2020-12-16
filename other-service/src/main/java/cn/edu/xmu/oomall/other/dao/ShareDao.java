@@ -140,7 +140,8 @@ public class ShareDao implements InitializingBean {
         BeSharePoExample.Criteria criteria=example.createCriteria();
         criteria.andCustomerIdEqualTo(customerId);
         criteria.andGoodsSkuIdEqualTo(skuId);
-        criteria.andOrderIdEqualTo(0L);
+        //criteria.andOrderIdEqualTo(null);
+        criteria.andOrderIdIsNull();
         List<BeSharePo> beSharePos=beSharePoMapper.selectByExample(example);
         if(beSharePos.size()==0)return new ShareDto(orderItemId,customerId,skuId,null);
         BeSharePo po=beSharePos.get(0);
