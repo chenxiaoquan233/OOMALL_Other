@@ -13,12 +13,12 @@ import cn.edu.xmu.oomall.other.model.po.*;
 import cn.edu.xmu.oomall.other.service.factory.CalcPoint;
 import cn.edu.xmu.oomall.other.service.factory.CalcPointFactory;
 import cn.edu.xmu.oomall.other.util.DefaultRedisFinder;
+import cn.edu.xmu.oomall.other.util.ServiceStub.GoodsService;
 import cn.edu.xmu.oomall.other.util.ShareActivityRedisFinder;
 import cn.edu.xmu.oomall.other.util.ShopRedisFinder;
 import cn.edu.xmu.oomall.other.util.SkuRedisFinder;
 import cn.edu.xmu.goods.client.IGoodsService;
 import com.github.pagehelper.PageInfo;
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,8 +60,8 @@ public class ShareDao implements InitializingBean {
     @Autowired
     UpdateRebateMapper updateRebateMapper;
 
-    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
-    IGoodsService goodsService;
+    //@DubboReference(version = "0.0.1-SNAPSHOT", check = false)
+    IGoodsService goodsService=new GoodsService();
 
     @Autowired
     RocketMQTemplate rocketMQTemplate;
@@ -205,8 +205,11 @@ public class ShareDao implements InitializingBean {
         newVal.setState(offline);
         shareActivityPoMapper.updateByPrimaryKeySelective(newVal);
         if(redisEnable){
+            logger.debug("cleaning redis...");
             redisTemplate.delete("ssa_" + newVal.getId());
-            redisFinder.deleteNext(newVal.getGoodsSkuId(),newVal.getShopId());
+            logger.debug("chain deleting newVal:"+JacksonUtil.toJson(newVal));
+            redisFinder.chainDelete(oldVal.getGoodsSkuId(),oldVal.getShopId());
+            logger.debug("deleting success");
         }
         return ResponseCode.OK;
     }
@@ -231,7 +234,7 @@ public class ShareDao implements InitializingBean {
         logger.debug(JacksonUtil.toJson(newVal));
         if(redisEnable){
             redisTemplate.delete("ssa_" + newVal.getId());
-            redisFinder.deleteNext(newVal.getGoodsSkuId(),newVal.getShopId());
+            redisFinder.chainDelete(oldVal.getGoodsSkuId(),oldVal.getShopId());
         }
         return ResponseCode.OK;
     }
@@ -316,6 +319,7 @@ public class ShareDao implements InitializingBean {
     public ShareActivityBo loadShareActivity(Long skuId){
         ShareActivityBo bo = null;
         if(redisEnable){
+            logger.debug("redis searching...");
             bo=redisFinder.getBoFromRedis(skuId,null);
         }
         else{
@@ -362,7 +366,7 @@ public class ShareDao implements InitializingBean {
         nextExample.setOrderByClause("begin_time asc");
         List<ShareActivityPo> nextPos=shareActivityPoMapper.selectByExample(nextExample);
         if(nextPos.size()>0){
-            return new ShareActivityBo(nowPos.get(0));
+            return new ShareActivityBo(nextPos.get(0));
         }
         else return null;
     }
@@ -382,7 +386,7 @@ public class ShareDao implements InitializingBean {
         ShareBo bo=null;
         SharePo po=null;
         if(redisEnable) {
-            bo = (ShareBo) redisTemplate.opsForValue().get("share_" + skuId + "_" + customerId);
+            bo= (ShareBo) redisTemplate.opsForHash().get("ssa_" + shareActivityBo.getId(),String.valueOf(customerId));
         }
         if(bo==null){
             SharePoExample example=new SharePoExample();

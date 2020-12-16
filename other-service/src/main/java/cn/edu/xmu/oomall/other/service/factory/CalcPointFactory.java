@@ -17,11 +17,15 @@ public class CalcPointFactory {
     static public boolean validateStrategy(String strategyStr){
         ShareActivityStrategy strategy;
         try{
+            //System.out.println(strategyStr);
             strategy=JacksonUtil.toObj(strategyStr,ShareActivityStrategy.class);
+            //System.out.println(JacksonUtil.toJson(strategy));
         }
         catch (Exception ex){
+            System.out.println("exception");
             return false;
         }
+        if(strategy==null)return false;
         return strategy.validate();
     }
 }

@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.other.service;
 
 import cn.edu.xmu.ooad.model.VoObject;
+import cn.edu.xmu.ooad.util.JacksonUtil;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.dto.EffectiveShareDto;
@@ -42,14 +43,14 @@ import java.util.stream.Collectors;
 public class ShareService {
     private static final Logger logger = LoggerFactory.getLogger(ShareService.class);
 
-    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
-    IGoodsService goodsService;
+    //@DubboReference(version = "0.0.1-SNAPSHOT", check = false)
+    IGoodsService goodsService=new GoodsService();
     @Autowired
     private ShareDao shareDao;
     @Autowired
     private UserDao userDao;
-    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
-    IDubboOrderService orderService;
+    //@DubboReference(version = "0.0.1-SNAPSHOT", check = false)
+    IDubboOrderService orderService=new OrderService();
 
     public void retPointToCustomer(){
         List<EffectiveShareDto> shareDTOS=orderService.getEffectiveShareRecord();
@@ -67,6 +68,7 @@ public class ShareService {
     public ReturnObject<VoObject> getShareLink(Long skuId,Long customerId){
         //获取有效的shareActivity
         ShareActivityBo shareActivityBo=shareDao.loadShareActivity(skuId);
+        logger.debug(JacksonUtil.toJson(shareActivityBo));
         if(shareActivityBo==null){
             return null;
         }

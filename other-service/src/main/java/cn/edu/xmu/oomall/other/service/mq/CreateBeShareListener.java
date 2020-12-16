@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 /**
  * 2 * @author: LiangJi3229
  * 3 * @date: 2020/12/11 下午3:28
- * 4
+ * 4 点击商品时生成beshare对象
  */
 @Slf4j
 @Component
-@RocketMQMessageListener(topic="beShared-topic",consumerGroup = "beshare-group")
+@RocketMQMessageListener(topic="createBeShare-topic",consumerGroup = "beshare-group")
 public class CreateBeShareListener implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
     @Autowired
     private BeSharePoMapper beSharePoMapper;

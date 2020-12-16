@@ -9,6 +9,7 @@ import cn.edu.xmu.oomall.other.service.ShareService;
 import cn.edu.xmu.oomall.other.service.factory.CalcPointFactory;
 import cn.edu.xmu.goods.client.IGoodsService;
 import cn.edu.xmu.goods.client.dubbo.ShopDTO;
+import cn.edu.xmu.oomall.other.util.ServiceStub.GoodsService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
  */
 @RestController /*Restful的Controller对象*/
 @RequestMapping(value="/share", produces = "application/json;charset=UTF-8")
+//@RequestMapping(produces = "application/json;charset=UTF-8")
 public class ShareController {
     private static final Logger logger = LoggerFactory.getLogger(ShareController.class);
 
@@ -37,8 +39,8 @@ public class ShareController {
     @Autowired
     private ShareService shareService;
 
-    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
-    IGoodsService goodsService;
+    //@DubboReference(version = "0.0.1-SNAPSHOT", check = false)
+    IGoodsService goodsService=new GoodsService();
 
 
     //DONE:生成分享链接
@@ -61,16 +63,19 @@ public class ShareController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @Audit
-    @PostMapping("/shops/{shopId}/goods/{skuId}/shareactivities")
+    @PostMapping("/shops/{shopId}/skus/{skuId}/shareactivities")
     public Object addShareActivity(@LoginUser Long userId, @PathVariable("shopId") Long shopId, @PathVariable("skuId") Long skuId,
                                    @Validated @RequestBody ShareActivityVo shareActivityVo, BindingResult bindingResult){
         //DONE:校验strategy是否正确
         if(!CalcPointFactory.validateStrategy(shareActivityVo.getStrategy())){
+            logger.error("wrong strategy");
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return ResponseUtil.fail(ResponseCode.OK,"分享策略不合法");
         }
+        logger.debug(JacksonUtil.toJson(shareActivityVo)+"1");
         Object object= Common.processFieldErrors(bindingResult,httpServletResponse);
         if(object!=null){
+            logger.debug("something wrong happened!");
             return object;
         }
         //SHOPID为0 skuId为0 代表平台默认
@@ -80,6 +85,7 @@ public class ShareController {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(ResponseCode.OK,"平台活动无法设置skuId");
         }
+        logger.debug("shopId:"+shopId+"skuId"+skuId);
         if(skuId!=0) {
             ShopDTO shopDTO = goodsService.getShopBySKUId(skuId);
             if (shopDTO == null) {
@@ -93,6 +99,7 @@ public class ShareController {
             }
         }
         //logger.info("read this?"+ JacksonUtil.toJson(shareActivityVo));
+        logger.debug(JacksonUtil.toJson(shareActivityVo));
         return Common.getRetObject(shareService.addShareActivity(shopId,skuId,shareActivityVo));
     }
 
@@ -163,6 +170,7 @@ public class ShareController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
+    //"/shops/1/shareactivities/311273/online"
     @Audit
     @PutMapping("/shops/{shopId}/shareactivities/{id}/online")
     public Object shareActivityOnline(@LoginUser Long userId, @PathVariable("shopId") Long shopId, @PathVariable("id") Long shareActivityId){
@@ -170,7 +178,7 @@ public class ShareController {
         if (ret != ResponseCode.SHAREACT_CONFLICT && ret != ResponseCode.OK) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
-        return ret;
+        return ResponseUtil.fail(ret);
     }
 
     /***
@@ -227,7 +235,7 @@ public class ShareController {
      * @return
      */
     @Audit
-    @GetMapping("/shops/{did}/sku/{id}/beshared")
+    @GetMapping("/shops/{did}/skus/{id}/beshared")
     public Object getBeSharedByShopId(@LoginUser Long userId,@PathVariable("did")Long shopId,
                               @PathVariable("id") Long skuId,
                               @RequestParam(required = false)LocalDateTime beginTime,
@@ -274,7 +282,7 @@ public class ShareController {
         if (ret != ResponseCode.INTERNAL_SERVER_ERR && ret != ResponseCode.OK) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
-        return ret;
+        return ResponseUtil.fail(ret);
     }
 
     /**

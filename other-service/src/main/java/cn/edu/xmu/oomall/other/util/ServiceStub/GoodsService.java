@@ -27,7 +27,10 @@ public class GoodsService implements IGoodsService {
 
     @Override
     public SkuDTO getSku(Long skuId) {
-        return null;
+        SkuDTO skuDTO=new SkuDTO();
+        skuDTO.setId(1L);
+        skuDTO.setName("桩商品");
+        return skuDTO;
     }
 
     @Override

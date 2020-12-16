@@ -13,7 +13,7 @@ public class DefaultRedisFinder extends ShareActivityRedisFinder{
     }
 
     @Override
-    public void deleteNext(Long skuId, Long shopId) {
+    public void chainDelete(Long skuId, Long shopId) {
         deleteRedis(0L);
     }
 
