@@ -53,10 +53,9 @@ public class FavoriteDao {
     @Autowired
     private FavouriteGoodsPoMapper favouriteGoodsPoMapper;
 
-    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
-    public IGoodsService iGoodsService;
 
-    public ReturnObject<PageInfo<VoObject>> getFavoritesByUserId(Long userId, Integer page, Integer pageSize){
+
+    public List<FavouriteGoodsPo> getFavoritesByUserId(Long userId, Integer page, Integer pageSize){
         FavouriteGoodsPoExample favouriteGoodsPoExample=new FavouriteGoodsPoExample();
         FavouriteGoodsPoExample.Criteria criteria=favouriteGoodsPoExample.createCriteria();
         criteria.andCustomerIdEqualTo(userId);
@@ -66,20 +65,9 @@ public class FavoriteDao {
             favoritesPos = favouriteGoodsPoMapper.selectByExample(favouriteGoodsPoExample);
         }catch (DataAccessException e){
             logger.error("findFavorites: DataAccessException:" + e.getMessage());
-            return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
+            return null;
         }
-        logger.debug("herehere");
-        List<VoObject> ret = favoritesPos.stream().map(FavoriteBo::new).
-                map((x)->{x.setSkuSimpleVo(new GoodsSkuSimpleVo(iGoodsService.getSku(x.getGoodsSkuId())));return x;}).
-                collect(Collectors.toList());
-        logger.debug("ret:" + ret);
-        PageInfo<FavouriteGoodsPo> favoritesPoPage = PageInfo.of(favoritesPos);
-        PageInfo<VoObject> favoritesPage = new PageInfo<>(ret);
-        favoritesPage.setPages(favoritesPoPage.getPages());
-        favoritesPage.setPageNum(favoritesPoPage.getPageNum());
-        favoritesPage.setPageSize(favoritesPoPage.getPageSize());
-        favoritesPage.setTotal(favoritesPoPage.getTotal());
-        return new ReturnObject<>(favoritesPage);
+        return favoritesPos;
     }
 
     public FavouriteGoodsPo addFavorites(Long userId, Long skuId) {

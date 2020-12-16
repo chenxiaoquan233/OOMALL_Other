@@ -12,10 +12,6 @@ import java.util.Map;
  * 4
  */
 public class GoodsService implements IGoodsService {
-    @Override
-    public Long getPrice(Long skuId) {
-        return null;
-    }
 
     @Override
     public Map<ShopDTO, List<OrderItemDTO>> classifySku(List<OrderItemDTO> orderItemDTOS) {
@@ -64,6 +60,11 @@ public class GoodsService implements IGoodsService {
 
     @Override
     public List<PriceDTO> getPriceAndName(List<OrderItemDTO> orderItemDTOS) {
+        return null;
+    }
+
+    @Override
+    public PriceDTO getPrice(Long skuId) {
         return null;
     }
 }

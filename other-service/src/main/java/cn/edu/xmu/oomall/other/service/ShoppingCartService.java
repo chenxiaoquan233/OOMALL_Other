@@ -2,6 +2,8 @@ package cn.edu.xmu.oomall.other.service;
 
 import cn.edu.xmu.goods.client.IActivityService;
 import cn.edu.xmu.goods.client.dubbo.CouponActivityDTO;
+import cn.edu.xmu.goods.client.dubbo.PriceDTO;
+import cn.edu.xmu.goods.client.dubbo.SkuDTO;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
@@ -59,7 +61,12 @@ public class ShoppingCartService {
         List<Long> skuIds=cartPos.stream().map(ShoppingCartPo::getGoodsSkuId).collect(Collectors.toList());
         Map<Long, List<CouponActivityDTO>> coupon=iActivityService.getSkuCouponActivity(skuIds);
         List<VoObject> ret = cartPos.stream().map(ShoppingCartBo::new)
-                .map(x->{x.setCouponActivity(coupon.get(x.getGoodsSkuId()).stream().collect(Collectors.toList()));return x;})
+                .map(x-> {
+                    PriceDTO priceDTO=iGoodsService.getPrice(x.getGoodsSkuId());
+                    x.setSkuName(priceDTO.getName());
+                    x.setPrice(priceDTO.getPrePrice());
+                    x.setCouponActivity(coupon.get(x.getGoodsSkuId()).stream().collect(Collectors.toList()));
+                    return x;})
                 .collect(Collectors.toList());
         PageInfo<ShoppingCartPo> cartPoPage = PageInfo.of(cartPos);
         PageInfo<VoObject> cartPage = new PageInfo<>(ret);
@@ -71,19 +78,20 @@ public class ShoppingCartService {
     }
 
     public Object addCart(Long userId, Long goodsSkuId, Integer quantity){
-        Long price=iGoodsService.getPrice(goodsSkuId);
-        if(price<=0)
+        PriceDTO priceDTO=iGoodsService.getPrice(goodsSkuId);
+        if(priceDTO.getPrePrice()<=0)
             return null;
-        ShoppingCartPo po=shoppingCartDao.addCart(userId,goodsSkuId,quantity,price);
+        ShoppingCartPo po=shoppingCartDao.addCart(userId,goodsSkuId,quantity,priceDTO.getPrePrice());
         if(po==null)
             return null;
         ShoppingCartBo bo=new ShoppingCartBo(po);
+        bo.setSkuName(priceDTO.getName());
         bo.setCouponActivity(iActivityService.getSkuCouponActivity(goodsSkuId).stream().collect(Collectors.toList()));
         return new ReturnObject<>(bo);
     }
 
     public ResponseCode modifyCart(Long userId, Long cartId,Long goodsSkuId, Integer quantity) {
-        Long price=iGoodsService.getPrice(goodsSkuId);
+        Long price=iGoodsService.getPrice(goodsSkuId).getPrePrice();
         if(price<=0)
             return null;
         return shoppingCartDao.modifyCart(cartId,userId,goodsSkuId,quantity,price);

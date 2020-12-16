@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.other.util.ServiceStub;
 import cn.edu.xmu.goods.client.IGoodsService;
 import cn.edu.xmu.goods.client.dubbo.*;
 
+import java.nio.channels.SelectionKey;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +68,9 @@ public class GoodsService implements IGoodsService {
     }
 
     @Override
-    public Long getPrice(Long skuId) {
+    public PriceDTO getPrice(Long skuId) {
         return null;
     }
+
+
 }
