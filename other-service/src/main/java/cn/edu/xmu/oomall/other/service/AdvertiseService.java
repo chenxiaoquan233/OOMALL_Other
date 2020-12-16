@@ -8,6 +8,9 @@ import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.dao.AdvertiseDao;
 import cn.edu.xmu.oomall.other.dao.AftersaleDao;
 import cn.edu.xmu.oomall.other.model.bo.AdvertiseBo;
+import cn.edu.xmu.oomall.other.model.bo.TimeSegmentBo;
+import cn.edu.xmu.oomall.other.model.po.AdvertisementPo;
+import cn.edu.xmu.oomall.other.model.po.TimeSegmentPo;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseRetVo;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseStatesRetVo;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseVo;
@@ -75,8 +78,15 @@ public class AdvertiseService {
         return advertiseDao.deleteAdvertisementById(id.longValue());
     }
 
-    public List<Object> getCurrentAdvertisements() {
-        return advertiseDao.getCurrentAdvertisements().stream().map(x->x.createVo()).collect(Collectors.toList());
+    public Object getCurrentAdvertisements() {
+        TimeSegmentPo timeSeg=advertiseDao.getNowTimeSegment();
+        if(timeSeg==null){
+            return advertiseDao.getDefaultAd();
+        }
+        List<AdvertisementPo> advertisePo=advertiseDao.getAdvertisements(timeSeg.getId());
+        if(advertisePo==null||advertisePo.size()==0)
+            return advertiseDao.getDefaultAd();
+        return advertisePo.stream().map(AdvertiseBo::new).map(x->x.createVo()).collect(Collectors.toList());
     }
 
     public ResponseCode uploadAdvertiseImgById(Integer id, MultipartFile multipartFile) {

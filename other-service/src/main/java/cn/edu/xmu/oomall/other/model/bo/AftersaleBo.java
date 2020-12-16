@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.dto.AftersaleDto;
+import cn.edu.xmu.oomall.other.model.vo.Aftersale.AftersaleSkuRetVo;
 import cn.edu.xmu.oomall.service.IDubboOrderService;
 import cn.edu.xmu.oomall.other.model.po.AftersalePo;
 import cn.edu.xmu.oomall.other.model.vo.Aftersale.AftersaleRetVo;
@@ -70,7 +71,7 @@ public class AftersaleBo implements VoObject {
         WAIT_SHOP_DELIVER(4,"待店家发货"),
         SHOP_DELIVERED(5,"店家已发货"),
         AUDIT_NOT_PASS(6,"审核不通过"),
-        CANCELED(7,"取消"),
+        CANCELED(7,"已取消"),
         OVER(8,"已结束");
 
         private static final Map<Integer, AftersaleBo.State> stateMap;
@@ -190,8 +191,30 @@ public class AftersaleBo implements VoObject {
 
     public AftersaleRetVo createRetVo() {
         AftersaleRetVo vo = new AftersaleRetVo();
-        vo.setBeDeleted(this.beDeleted);
-        vo.setConclusion(this.conclusion);
+        vo.setConsignee(this.consignee);
+        vo.setCustomerId(this.customerId);
+        vo.setCustomerLogSn(this.customerLogSn);
+        vo.setDetail(this.detail);
+        vo.setId(this.id);
+        vo.setMobile(this.mobile);
+        vo.setOrderItemId(this.orderItemId);
+        vo.setQuantity(this.quantity);
+        vo.setReason(this.reason);
+        vo.setRefund(this.refund);
+        vo.setRegionId(this.regionId);
+        vo.setServiceSn(this.serviceSn);
+        vo.setShopId(this.shopId);
+        vo.setShopLogSn(this.shopLogSn);
+        vo.setState(this.state.getCode().byteValue());
+        vo.setType(this.type.getCode().byteValue());
+
+        return vo;
+    }
+
+    public AftersaleSkuRetVo createSkuRetVo() {
+        AftersaleSkuRetVo vo = new AftersaleSkuRetVo();
+        vo.setSkuId(this.skuId);
+        vo.setSkuName(this.skuName);
         vo.setConsignee(this.consignee);
         vo.setCustomerId(this.customerId);
         vo.setCustomerLogSn(this.customerLogSn);

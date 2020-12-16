@@ -27,6 +27,7 @@ public class BeSharedListener implements RocketMQListener<String>, RocketMQPushC
     private RocketMQTemplate rocketMQTemplate;
     @Override
     public void onMessage(String s) {
+        System.out.println(s);
         ShareDto shareDTO= JacksonUtil.toObj(s,ShareDto.class);
         ShareDto ret=shareDao.getFirstBeShared(shareDTO.getCustomerId(), shareDTO.getSkuId(), shareDTO.getOrderItemId());
         String message=JacksonUtil.toJson(ret);

@@ -68,13 +68,10 @@ public class AftersaleController {
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(null != object) {
             logger.debug("Validate failed");
-
-            return object;
+            return ResponseCode.FIELD_NOTVALID;
         }
 
         Object retObject = aftersaleService.createAftersale(vo, orderItemId, userId);
-
-
 
         if(retObject.equals(ResponseCode.RESOURCE_ID_NOTEXIST))
         {
@@ -82,6 +79,7 @@ public class AftersaleController {
             return ResponseUtil.fail((ResponseCode) retObject);
         }
 
+        httpServletResponse.setStatus(HttpServletResponse.SC_CREATED);
         return ResponseUtil.ok(retObject);
     }
 
@@ -108,7 +106,6 @@ public class AftersaleController {
             @RequestParam(required = false, defaultValue = "10") @Min(1) Integer pageSize,
             @RequestParam(required = false) @Min(0) @Max(2) Integer type,
             @RequestParam(required = false) @Min(0) @Max(9) Integer state) {
-
         return ResponseUtil.ok(PageInfoHelper.process(aftersaleService.getAllAftersales(userId, null, beginTime, endTime, page, pageSize, type, state)));
     }
 
@@ -139,8 +136,8 @@ public class AftersaleController {
             @RequestParam(required = false) @Min(0) @Max(2) Integer state) {
 
         if(!did.equals(0L) && !did.equals(shopId)) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
+            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_OUTSCOPE);
         }
 
         return ResponseUtil.ok(PageInfoHelper.process(aftersaleService.getAllAftersales(userId, shopId, beginTime, endTime, page, pageSize, type, state)));
@@ -167,6 +164,7 @@ public class AftersaleController {
         }
         if(object.equals(ResponseCode.RESOURCE_ID_OUTSCOPE)) {
             logger.debug("outscope");
+            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return ResponseUtil.fail((ResponseCode) object);
         }
         return ResponseUtil.ok(object);
@@ -230,7 +228,7 @@ public class AftersaleController {
             logger.debug("Validate failed");
             logger.debug("UserSignUpVo:" + vo);
 
-            return object;
+            return ResponseCode.FIELD_NOTVALID;
         }
 
         ResponseCode responseCode = aftersaleService.addWayBillNumber(userId, id, vo.getLogsn());
@@ -275,8 +273,8 @@ public class AftersaleController {
     @GetMapping("/shops/{shopId}/aftersales/{id}")
     public Object adminGetAftersaleById(@LoginUser Long userId, @Depart Long did, @PathVariable("shopId") Long shopId, @PathVariable("id") Long id) {
         if(!did.equals(shopId)) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
+            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_OUTSCOPE);
         }
 
         Object object = aftersaleService.adminGetAftersaleById(shopId, id);
@@ -314,9 +312,9 @@ public class AftersaleController {
             return object;
         }
 
-        if(!did.equals(shopId)) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
+        if(!did.equals(0L) && !did.equals(shopId)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_OUTSCOPE);
         }
 
         ResponseCode responseCode = aftersaleService.adminConfirm(id, shopId, vo);
@@ -350,9 +348,7 @@ public class AftersaleController {
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(null != object) {
             logger.debug("Validate failed");
-            logger.debug("UserSignUpVo:" + vo);
-
-            return object;
+            return ResponseCode.FIELD_NOTVALID;
         }
 
         if(!did.equals(shopId)) {
@@ -393,12 +389,12 @@ public class AftersaleController {
             logger.debug("Validate failed");
             logger.debug("UserSignUpVo:" + vo);
 
-            return object;
+            return ResponseCode.FIELD_NOTVALID;
         }
 
         if(!did.equals(shopId)) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
+            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_OUTSCOPE);
         }
 
         ResponseCode responseCode = aftersaleService.adminDeliver(id, shopId, vo.getLogSn());

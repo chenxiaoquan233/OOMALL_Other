@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-@RocketMQMessageListener(topic="cart-topic",consumerGroup = "cart-group")
+@RocketMQMessageListener(topic="cart",consumerGroup = "cart-group")
 public class DeleteCartListener implements RocketMQListener<String>, RocketMQPushConsumerLifecycleListener {
     private static final Logger logger = LoggerFactory.getLogger(DeleteCartListener.class);
     @Autowired
