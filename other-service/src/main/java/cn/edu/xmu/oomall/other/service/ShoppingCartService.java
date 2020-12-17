@@ -53,6 +53,9 @@ public class ShoppingCartService {
     }
 
     public ResponseCode deleteCart(Long userId,Long cartId){
+        ResponseCode judge=shoppingCartDao.judge(userId,cartId);
+        if(judge!=null)
+            return judge;
         return shoppingCartDao.deleteCart(userId,cartId);
     }
 
@@ -91,6 +94,9 @@ public class ShoppingCartService {
     }
 
     public ResponseCode modifyCart(Long userId, Long cartId,Long goodsSkuId, Integer quantity) {
+        ResponseCode judge=shoppingCartDao.judge(userId,cartId);
+        if(judge!=null)
+            return judge;
         Long price=iGoodsService.getPrice(goodsSkuId).getPrePrice();
         if(price<=0)
             return null;

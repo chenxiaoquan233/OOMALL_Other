@@ -93,11 +93,12 @@ public class AdvertiseBo implements VoObject {
         ret.setContent(content);
         ret.setImagePath(imageUrl);
         ret.setState((byte)state.getCode().intValue());
-        ret.setWeight(weight);
+        if(weight!=null)
+            ret.setWeight(weight.toString());
         ret.setBeginDate(beginDate);
         ret.setEndDate(endDate);
         ret.setRepeat(repeats);
-        ret.setDefault_(beDefault);
+        ret.setBeDefault(beDefault);
         ret.setGmtCreate(gmtCreate);
         ret.setGmtModified(gmtModified);
         return ret;
