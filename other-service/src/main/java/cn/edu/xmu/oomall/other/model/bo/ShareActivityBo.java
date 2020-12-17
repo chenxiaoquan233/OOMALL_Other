@@ -43,7 +43,7 @@ public class ShareActivityBo implements VoObject, Serializable {
         shareActivityRetVo.setBeginTime(this.beginTime);
         shareActivityRetVo.setEndTime(this.endTime);
         shareActivityRetVo.setId(this.id);
-        shareActivityRetVo.setGoodSkuId(this.goodSkuId);
+        shareActivityRetVo.setSkuId(this.goodSkuId);
         shareActivityRetVo.setShopId(this.shopId);
         shareActivityRetVo.setState(this.state.intValue());
         return shareActivityRetVo;
