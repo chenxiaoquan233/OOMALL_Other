@@ -43,7 +43,7 @@ spring:
         - id: share
           uri: http://localhost:9999
           predicates:
-            - Path=/skus/{id}/shares,/shares,/shops/{did}/skus/{id}/shares,/breshared,/shops/{did}/skus/{id}/beshared,/shops/{shopId}/skus/{id}/shareactivities,/shareactivities,/shops/{shopId}/shareactivities/{id},/shops/{shopId}/shareactivities/{id},/shops/{shopId}/shareactivities/{id}/online
+            - Path=/skus/{id}/shares,/shares,/shops/{did}/skus/{id}/shares,/beshared,/shops/{did}/skus/{id}/beshared,/shops/{shopId}/skus/{id}/shareactivities,/shareactivities,/shops/{shopId}/shareactivities/{id},/shops/{shopId}/shareactivities/{id},/shops/{shopId}/shareactivities/{id}/online
           filters:
             - PrefixPath=/share
             - Auth=authorization
