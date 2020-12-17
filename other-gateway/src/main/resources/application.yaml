@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8089
 
 spring:
   application:
@@ -19,17 +19,33 @@ spring:
               - OPTIONS
       routes:
         - id: login
-          uri: http://localhost:9999/
+          uri: http://localhost:8081/
           predicates:
-            - Path=/users/login
-            - Method=POST
-
+            - Path=/adminusers,/adminusers/login
+          filters:
+            - PrefixPath=/privilege
         - id: adminusers
-          uri: http://localhost:9999/
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/adminusers/**,/shops/{shopid}/adminusers/**,/proxies/**,/shops/{shopid}/proxies/**,/shops/{shopid}/roles/**,/shops/{shopid}/roleprivileges/**,/privileges/**,/roles/**,/roles,/shops/{shopid}/roles
+          filters:
+            - PrefixPath=/privilege
+            - Auth=authorization
+        - id: userregist
+          uri: http://localhost:9999
           predicates:
             - Path=/users
-            - Method=GET
+            - Method=POST
+        - id: userlogin
+          uri: http://localhost:9999
+          predicates:
+            - Path=/users/login
+        - id: share
+          uri: http://localhost:9999
+          predicates:
+            - Path=/skus/{id}/shares,/shares,/shops/{did}/skus/{id}/shares,/breshared,/shops/{did}/skus/{id}/beshared,/shops/{shopId}/skus/{id}/shareactivities,/shareactivities,/shops/{shopId}/shareactivities/{id},/shops/{shopId}/shareactivities/{id},/shops/{shopId}/shareactivities/{id}/online
           filters:
+            - PrefixPath=/share
             - Auth=authorization
 management:
   endpoint:

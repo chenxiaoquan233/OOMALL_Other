@@ -43,8 +43,9 @@ public class BeSharedBo  implements  VoObject{
     @Override
     public Object createVo() {
         BeSharedRetVo vo=new BeSharedRetVo();
-        vo.setCustomId(customerId);
+        vo.setCustomerId(customerId);
         vo.setGmtCreate(gmtCreate);
+        vo.setSharerId(sharerId);
         vo.setId(id);
         vo.setOrderId(orderItemId);
         vo.setRebate(rebate);

@@ -9,6 +9,7 @@ import lombok.Data;
 import org.apache.tomcat.jni.Address;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author Ji Cao
@@ -47,7 +48,7 @@ public class AddressBo implements VoObject {
         addressInfoVo.setConsignee(this.getConsignee());
         addressInfoVo.setMobile(this.getMobile());
         addressInfoVo.setBeDefault(this.getBeDefault());
-        addressInfoVo.setGmtCreate(this.getGmtCreate());
+        addressInfoVo.setGmtCreate(this.getGmtCreate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         addressInfoVo.setState(this.getState().intValue());
         return addressInfoVo;
     }
@@ -61,8 +62,8 @@ public class AddressBo implements VoObject {
         addressRetVo.setConsignee(this.getConsignee());
         addressRetVo.setMobile(this.getMobile());
         addressRetVo.setBeDefault(this.getBeDefault());
-        addressRetVo.setGmtCreate(this.getGmtCreate());
-        addressRetVo.setGmtModified(this.getGmtModified());
+//        addressRetVo.setGmtCreate(this.getGmtCreate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//        addressRetVo.setGmtModified(this.getGmtModified().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         return addressRetVo;
     }
 
@@ -73,14 +74,15 @@ public class AddressBo implements VoObject {
     public AddressPo getAddressPo()
     {
         AddressPo po = new AddressPo();
-        po.setId(this.getId());
+        //po.setId(this.getId());
+        po.setCustomerId(this.getCustomerId());
         po.setRegionId(this.getRegionId());
         po.setDetail(this.getDetail());
         po.setConsignee(this.getConsignee());
         po.setMobile(this.getMobile());
-        po.setBeDefault((byte)(this.getBeDefault()?1:0));
-        po.setGmtCreate(null);
-        po.setGmtModified(null);
+        //po.setBeDefault((byte)(this.getBeDefault()?1:0));
+        //po.setGmtCreate(null);
+       // po.setGmtModified(null);
         return po;
     }
     public AddressBo(AddressPo po)
@@ -91,6 +93,7 @@ public class AddressBo implements VoObject {
         this.setDetail(po.getDetail());
         this.setConsignee(po.getConsignee());
         this.setMobile(po.getMobile());
+        this.setBeDefault(po.getBeDefault().intValue() == 1);
         this.setGmtCreate(po.getGmtCreate());
         this.setGmtModified(po.getGmtModified());
     }

@@ -17,6 +17,6 @@ public class AddressRetVo {
     private String consignee;
     private String mobile;
     private Boolean beDefault;
-    private LocalDateTime gmtCreate;
-    private LocalDateTime gmtModified;
+    private String gmtCreate;
+    private String gmtModified;
 }

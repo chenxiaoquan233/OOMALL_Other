@@ -14,5 +14,5 @@ import java.time.LocalDateTime;
 public class FootPrintRetVo {
     private Long id;
     private GoodsSkuSimpleVo goodsRetVo;
-    private LocalDateTime gmtCreate;
+    private String gmtCreate;
 }

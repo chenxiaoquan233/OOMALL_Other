@@ -30,9 +30,10 @@ public class AddressService {
 
     public ReturnObject<VoObject> addAddress(Long userId, AddressVo addressVo)
     {
-        AddressBo addressBo = addressVo.createBo();
-        addressBo.setCustomerId(userId);
-        return addressDao.addAddress(addressBo);
+        AddressBo addressBo = new AddressBo();
+        addressBo = addressVo.createBo();addressBo.setCustomerId(userId);
+        try{ReturnObject<VoObject> returnObject = addressDao.addAddress(addressBo);return returnObject;}
+        catch (Exception e){ return new ReturnObject<>(ResponseCode.AUTH_INVALID_ACCOUNT);}
     }
 
     public ReturnObject<PageInfo<VoObject>> getAddresses(Long userId, Integer page, Integer pageSize)
@@ -55,7 +56,7 @@ public class AddressService {
 
     public ReturnObject<VoObject> deleteAddress(Long userId, Long id)
     {
-        return addressDao.deleteAddress(id);
+        return addressDao.deleteAddress(userId,id);
     }
 
 

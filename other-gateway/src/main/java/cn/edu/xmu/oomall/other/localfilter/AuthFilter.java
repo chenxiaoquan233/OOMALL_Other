@@ -51,9 +51,10 @@ public class AuthFilter implements GatewayFilter, Ordered {
         }
         Long userId=userAndDepart.getUserId();
         Long departId=userAndDepart.getDepartId();
-        if(departId!=-2){
-            return getErrorResponse(HttpStatus.UNAUTHORIZED,ResponseCode.AUTH_INVALID_JWT,response,"管理员无法访问普通用户URL");
-        }
+        //TODO:正式网关需要该功能
+//        if(departId!=-2){
+//            return getErrorResponse(HttpStatus.UNAUTHORIZED,ResponseCode.AUTH_INVALID_JWT,response,"管理员无法访问普通用户URL");
+//        }
         Date expireTime=JWT.decode(token).getExpiresAt();
         Date nowTime=new Date();
         Long gapTime=expireTime.getTime()-nowTime.getTime();

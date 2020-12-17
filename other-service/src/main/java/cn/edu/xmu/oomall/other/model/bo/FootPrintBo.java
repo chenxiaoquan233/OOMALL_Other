@@ -33,7 +33,7 @@ public class FootPrintBo implements VoObject {
         FootPrintRetVo footPrintRetVo = new FootPrintRetVo();
         footPrintRetVo.setId(this.getId());
         footPrintRetVo.setGoodsRetVo(this.getSkuSimpleVo());
-        footPrintRetVo.setGmtCreate(LocalDateTime.now());
+        footPrintRetVo.setGmtCreate("2020-12-17 12:13:14");
         return footPrintRetVo;
 
     }

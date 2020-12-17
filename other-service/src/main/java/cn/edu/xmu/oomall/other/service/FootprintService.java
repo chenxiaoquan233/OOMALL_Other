@@ -58,7 +58,7 @@ public class FootprintService {
         return ResponseCode.OK;
     }
 
-    public ReturnObject<PageInfo<VoObject>> getFootprints(Long did,Long userId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
+    public ReturnObject<PageInfo<VoObject>> getFootprints(Long userId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
         PageHelper.startPage(page,pageSize,true,true,null);
         PageInfo<FootPrintPo> footPrintPos = footprintDao.getFootprints(userId, beginTime, endTime, page, pageSize);
         List<VoObject> footprints = footPrintPos.getList().stream().map(FootPrintBo::new).map(x->{

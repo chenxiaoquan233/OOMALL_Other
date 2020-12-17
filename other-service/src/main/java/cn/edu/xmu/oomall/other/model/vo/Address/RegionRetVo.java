@@ -19,7 +19,7 @@ public class RegionRetVo {
 
     private Integer state;
 
-    private LocalDateTime gmtCreate;
+    private String gmtCreate;
 
-    private LocalDateTime gmtModified;
+    private String gmtModified;
 }

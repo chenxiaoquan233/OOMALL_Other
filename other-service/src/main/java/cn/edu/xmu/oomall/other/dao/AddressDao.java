@@ -8,6 +8,7 @@ import cn.edu.xmu.oomall.other.mapper.RegionPoMapper;
 import cn.edu.xmu.oomall.other.model.bo.AddressBo;
 import cn.edu.xmu.oomall.other.model.bo.RegionBo;
 import cn.edu.xmu.oomall.other.model.po.*;
+import cn.edu.xmu.oomall.other.model.vo.Address.AddressVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.tomcat.jni.Address;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import javax.script.ScriptEngine;
 import javax.swing.plaf.synth.Region;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,27 +48,31 @@ public class AddressDao {
      * @return
      */
     public ReturnObject<VoObject>addAddress(AddressBo addressBo){
-        ReturnObject<VoObject> retObj = null;
-        AddressPo addressPo = addressBo.getAddressPo();
-        addressPo.setBeDefault((byte)0);
-        addressPo.setGmtCreate(LocalDateTime.now());
-        addressPo.setGmtModified(null);
-        AddressPoExample addressPoExample = new AddressPoExample();
-        AddressPoExample.Criteria criteria = addressPoExample.createCriteria();
-        criteria.andCustomerIdEqualTo(addressBo.getCustomerId());
         try {
+            ReturnObject<VoObject> retObj = null;
+            AddressPo addressPo = addressBo.getAddressPo();
+            addressPo.setBeDefault((byte)0);
+            addressPo.setGmtCreate(LocalDateTime.now());
+            addressPo.setGmtModified(null);
+            RegionPo regionPo = regionPoMapper.selectByPrimaryKey(addressBo.getRegionId());
+            if(regionPo == null){
+                return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+            }
+            if(regionPo.getState().intValue()==1){
+                return new ReturnObject<>(ResponseCode.REGION_OBSOLETE);
+            }
+            AddressPoExample addressPoExample = new AddressPoExample();
+            AddressPoExample.Criteria criteria = addressPoExample.createCriteria();
+            criteria.andCustomerIdEqualTo(addressBo.getCustomerId());
             List<AddressPo> addressPos = addressPoMapper.selectByExample(addressPoExample);
             if (addressPos.size() >= 20) {
                 return new ReturnObject<>(ResponseCode.ADDRESS_OUTLIMIT);
             }
-            if(regionPoMapper.selectByPrimaryKey(addressBo.getRegionId()).getState().equals((byte)1)){
-                return new ReturnObject<>(ResponseCode.REGION_OBSOLETE);
-            }
-            addressPoMapper.insertSelective(addressPo);
+            addressPoMapper.insert(addressPo);
             AddressBo addressBo1 = new AddressBo(addressPo);
             retObj = new ReturnObject<>(addressBo1);
             return retObj;
-
+//            return new ReturnObject<>(ResponseCode.OK);
         }catch(DataAccessException e){
             logger.error("addAddress: DataAccessException:" + e.getMessage());
             return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
@@ -88,7 +94,6 @@ public class AddressDao {
         PageHelper.startPage(page,pageSize,true,true,null);
         try{
             addressPos =  addressPoMapper.selectByExample(example);
-            if(addressPos.size() == 0)return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
         }
         catch (DataAccessException e){
             StringBuilder message = new StringBuilder().append("getAddresses: ").append(e.getMessage());
@@ -120,13 +125,16 @@ public class AddressDao {
      */
     public ReturnObject<VoObject> updateAddress(AddressBo addressBo)
     {
-        AddressPo addressPo = addressBo.getAddressPo();
-        addressPo.setGmtModified(LocalDateTime.now());
-        AddressPoExample addressPoExample = new AddressPoExample();
-        AddressPoExample.Criteria criteria = addressPoExample.createCriteria();
-        criteria.andIdEqualTo(addressBo.getId());
         try{
-            addressPoMapper.updateByExampleSelective(addressPo,addressPoExample);
+            AddressPo addressPo = addressPoMapper.selectByPrimaryKey(addressBo.getId());
+            if(addressPo.getCustomerId()!=addressBo.getCustomerId()){
+                return new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
+            }
+            addressPo.setRegionId(addressBo.getRegionId());
+            addressPo.setConsignee(addressBo.getConsignee());
+            addressPo.setDetail(addressBo.getDetail());
+            addressPo.setMobile(addressBo.getMobile());
+            addressPoMapper.updateByPrimaryKey(addressPo);
         }catch (DataAccessException e)
         {
             return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR,String.format("addAddress: DataAccessException:%s",e.getMessage()));
@@ -162,6 +170,7 @@ public class AddressDao {
             if(addressPo == null){
                 return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST,"address: Address Not Found");
             }
+            else if(addressPo.getCustomerId()!=userId)return new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
             else{
                 addressPo.setBeDefault((byte)1);
                 addressPoMapper.updateByPrimaryKey(addressPo);
@@ -181,8 +190,11 @@ public class AddressDao {
      * @param id
      * @return
      */
-    public ReturnObject<VoObject> deleteAddress(Long id){
+    public ReturnObject<VoObject> deleteAddress(Long userId,Long id){
         try{
+            AddressPo addressPo = addressPoMapper.selectByPrimaryKey(id);
+            if(addressPo == null)return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+            if(addressPo.getCustomerId()!=userId)return new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
             addressPoMapper.deleteByPrimaryKey(id);
         }catch (DataAccessException e)
         {
@@ -201,22 +213,20 @@ public class AddressDao {
      */
     public ReturnObject<List> getAllParentRegions(Long id)
     {
-        List<RegionPo> regionPos = null;
-        try{
-            RegionPo regionPo = regionPoMapper.selectByPrimaryKey(id);
-            while(regionPo.getPid()!=null && regionPo.getPid()!=0)
-            {
-                regionPo = regionPoMapper.selectByPrimaryKey(regionPo.getPid());
-                regionPos.add(regionPo);
-            }
-        }catch (DataAccessException e){
-            return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR,String.format("addAddress: DataAccessException:%s",e.getMessage()));
-        }catch (Exception e) {
-            // 其他Exception错误
-            return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR, String.format("Errors：%s", e.getMessage()));
+        List<RegionPo> regionPos = new ArrayList<>();
+        List<VoObject> regionBos = new ArrayList<>();
+        RegionPo regionPo = regionPoMapper.selectByPrimaryKey(id);
+        if(regionPo == null)return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        while(regionPo.getPid()!=null&&regionPo.getPid()!=0)
+        {
+            regionPo = regionPoMapper.selectByPrimaryKey(regionPo.getPid());
+            //RegionPo tempPo = regionPoMapper.selectByPrimaryKey(regionPo.getPid());
+            if(regionPo!=null)regionPos.add(regionPo);
+            //regionPo.setPid(tempPo.getPid());
         }
-        List<VoObject> regionBos = regionPos.stream().map(RegionBo::new).collect(Collectors.toList());
-        return new ReturnObject<>(regionBos);
+
+        if(!regionPos.isEmpty()){regionBos = regionPos.stream().map(RegionBo::new).collect(Collectors.toList());}
+        return new ReturnObject<List>(regionBos);
     }
 
     /**
@@ -227,14 +237,11 @@ public class AddressDao {
     public ReturnObject<VoObject> addSubRegion(RegionBo regionBo){
         RegionPo regionPo = regionBo.gotRegionPo();
         /*判断父地区 是否存在 以及 是否被废弃*/
-        RegionPoExample regionPoExample = new RegionPoExample();
-        RegionPoExample.Criteria criteria = regionPoExample.createCriteria();
-        criteria.andIdEqualTo(regionBo.getPid());
-        List<RegionPo> regionPos = regionPoMapper.selectByExample(regionPoExample);
-        if(regionPos.isEmpty()){
+        RegionPo parentPo = regionPoMapper.selectByPrimaryKey(regionBo.getPid());
+        if(parentPo == null){
             return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
         }
-        if(regionPos.get(0).getState().equals((byte)1)){
+        if(parentPo.getState().intValue() == 1){
             return new ReturnObject<>(ResponseCode.REGION_OBSOLETE);
         }
         try{
@@ -288,14 +295,8 @@ public class AddressDao {
      */
     public ReturnObject<VoObject> deleteRegion(Long id)
     {
-        RegionPoExample regionPoExample = new RegionPoExample();
-        RegionPoExample.Criteria criteria = regionPoExample.createCriteria();
-        criteria.andIdEqualTo(id);
-        List<RegionPo>regionPos = regionPoMapper.selectByExample(regionPoExample);
-        if(regionPos.isEmpty()){
-            return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
-        }
-        RegionPo regionPo = regionPos.get(0);
+        RegionPo regionPo = regionPoMapper.selectByPrimaryKey(id);
+        if(regionPo==null)return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
         regionPo.setState((byte)1);
         try{
             regionPoMapper.updateByPrimaryKey(regionPo);

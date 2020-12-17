@@ -16,23 +16,18 @@ import cn.edu.xmu.oomall.other.model.po.ShareActivityPo;
 import cn.edu.xmu.oomall.other.model.po.SharePo;
 import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
 import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityVo;
-import cn.edu.xmu.oomall.other.service.factory.CalcPoint;
 import cn.edu.xmu.oomall.other.util.ServiceStub.GoodsService;
 import cn.edu.xmu.oomall.other.util.ServiceStub.OrderService;
 import cn.edu.xmu.goods.client.IGoodsService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -81,9 +76,9 @@ public class ShareService {
         bo.setGoodSkuId(skuId);
         return shareDao.insertShareActivity(bo);
     }
-    public ReturnObject<PageInfo<VoObject>> findShares(Long skuId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
+    public ReturnObject<PageInfo<VoObject>> findShares(Long userId, Long skuId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
         PageHelper.startPage(page,pageSize,true,true,null);
-        PageInfo<SharePo> sharePos=shareDao.findShares(skuId, beginTime,endTime);
+        PageInfo<SharePo> sharePos=shareDao.findShares(userId,skuId, beginTime,endTime);
         //TODO:考虑存储goods以加快速度
 
         List<VoObject> shares=sharePos.getList().stream().map(ShareBo::new)
