@@ -2,8 +2,10 @@ package cn.edu.xmu.oomall.other.controller;
 
 import cn.edu.xmu.ooad.annotation.Audit;
 import cn.edu.xmu.ooad.annotation.LoginUser;
+import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
+import cn.edu.xmu.oomall.other.model.bo.AdvertiseBo;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseVo;
 import cn.edu.xmu.oomall.other.service.AdvertiseService;
 import io.swagger.annotations.*;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * @author hardworking-qf
@@ -60,7 +63,7 @@ public class AdvertiseController {
     @PutMapping("/shops/{did}/advertisement/{id}/default")
     public Object setAdvertisementDefaultById(@LoginUser Long user, @PathVariable("did") Integer did, @PathVariable("id") Integer id){
         ResponseCode responseCode=advertiseService.setAdvertisementDefaultById(id);
-        if(responseCode.equals(ResponseCode.AUTH_ID_NOTEXIST))
+        if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST))
         {
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseUtil.fail(responseCode);
@@ -111,7 +114,8 @@ public class AdvertiseController {
     })
     @GetMapping("/advertisement/current")
     public Object getCurrentAdvertisements(){
-        return ResponseUtil.ok(advertiseService.getCurrentAdvertisements());
+        List<AdvertiseBo> bo=advertiseService.getCurrentAdvertisements();
+        return ResponseUtil.ok(bo.stream().map(x->x.createVo()));
     }
 
 
@@ -208,8 +212,9 @@ public class AdvertiseController {
     @GetMapping("/shops/{did}/timesegments/{id}/advertisement")
     public Object getAdvertisementsByTimeSegmentId(@LoginUser Long user,@PathVariable("did") Integer did, @PathVariable("id") Integer id,
                                                    @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate beginDate,
-                                                   @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate endDate){
-        return ResponseUtil.ok(advertiseService.getAdvertiseByTimeSegmentId(id, beginDate, endDate));
+                                                   @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate endDate,
+                                                   @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize){
+        return Common.getPageRetObject(advertiseService.getAdvertiseByTimeSegmentId(id, beginDate, endDate,page,pageSize));
     }
 
 

@@ -1,6 +1,7 @@
 package cn.edu.xmu.oomall.other.service;
 
 
+import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ImgHelper;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
@@ -10,6 +11,7 @@ import cn.edu.xmu.oomall.other.dao.AftersaleDao;
 import cn.edu.xmu.oomall.other.model.bo.AdvertiseBo;
 import cn.edu.xmu.oomall.other.model.bo.TimeSegmentBo;
 import cn.edu.xmu.oomall.other.model.po.AdvertisementPo;
+import cn.edu.xmu.oomall.other.model.po.FavouriteGoodsPo;
 import cn.edu.xmu.oomall.other.model.po.TimeSegmentPo;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseRetVo;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseStatesRetVo;
@@ -23,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import com.github.sardine.Sardine;
 import com.github.sardine.SardineFactory;
@@ -78,7 +81,7 @@ public class AdvertiseService {
         return advertiseDao.deleteAdvertisementById(id.longValue());
     }
 
-    public Object getCurrentAdvertisements() {
+    public List<AdvertiseBo> getCurrentAdvertisements() {
         TimeSegmentPo timeSeg=advertiseDao.getNowTimeSegment();
         if(timeSeg==null){
             return advertiseDao.getDefaultAd();
@@ -86,7 +89,7 @@ public class AdvertiseService {
         List<AdvertisementPo> advertisePo=advertiseDao.getAdvertisements(timeSeg.getId());
         if(advertisePo==null||advertisePo.size()==0)
             return advertiseDao.getDefaultAd();
-        return advertisePo.stream().map(AdvertiseBo::new).map(x->x.createVo()).collect(Collectors.toList());
+        return advertisePo.stream().map(AdvertiseBo::new).collect(Collectors.toList());
     }
 
     public ResponseCode uploadAdvertiseImgById(Integer id, MultipartFile multipartFile) {
@@ -113,8 +116,16 @@ public class AdvertiseService {
         return ResponseCode.OK;
     }
 
-    public List<Object> getAdvertiseByTimeSegmentId(Integer id, LocalDate beginDate, LocalDate endDate) {
-        return advertiseDao.getAdvertiseByTimeSegmentId(id.longValue(),beginDate,endDate).stream().map(x->x.createVo()).collect(Collectors.toList());
+    public ReturnObject<PageInfo<VoObject>> getAdvertiseByTimeSegmentId(Integer id, LocalDate beginDate, LocalDate endDate, Integer page, Integer pageSize) {
+        List<AdvertisementPo> pos=advertiseDao.getAdvertiseByTimeSegmentId(id.longValue(),beginDate,endDate,page,pageSize);
+        PageInfo<AdvertisementPo> favoritesPoPage = PageInfo.of(pos);
+        List<VoObject> ret=pos.stream().map(AdvertiseBo::new).collect(Collectors.toList());
+        PageInfo<VoObject> favoritesPage = new PageInfo<>(ret);
+        favoritesPage.setPages(favoritesPoPage.getPages());
+        favoritesPage.setPageNum(favoritesPoPage.getPageNum());
+        favoritesPage.setPageSize(favoritesPoPage.getPageSize());
+        favoritesPage.setTotal(favoritesPoPage.getTotal());
+        return  new ReturnObject<>(favoritesPage);
     }
 
     public ResponseCode createAdvertiseByTimeSegId(Integer id, AdvertiseVo advertiseVo) {

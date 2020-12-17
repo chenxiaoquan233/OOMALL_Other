@@ -51,13 +51,6 @@ public class ShoppingCartDao {
     }
 
     public ResponseCode deleteCart(Long userId,Long cartId){
-        ShoppingCartPo po=shoppingCartPoMapper.selectByPrimaryKey(cartId);
-        /*资源不存在*/
-        if(po==null)
-            return ResponseCode.RESOURCE_ID_NOTEXIST;
-        /*资源id非自己对象*/
-        if(po.getCustomerId()!=userId)
-            return ResponseCode.RESOURCE_ID_OUTSCOPE;
         /*开始删除*/
         if(shoppingCartPoMapper.deleteByPrimaryKey(cartId)==1)
             return ResponseCode.OK;
@@ -107,9 +100,21 @@ public class ShoppingCartDao {
         return po;
     }
 
+    public ResponseCode judge(Long userId, Long cartId){
+        ShoppingCartPo po=shoppingCartPoMapper.selectByPrimaryKey(cartId);
+        /*资源不存在*/
+        if(po==null)
+            return ResponseCode.RESOURCE_ID_NOTEXIST;
+        /*资源id非自己对象*/
+        if(po.getCustomerId()!=userId)
+            return ResponseCode.RESOURCE_ID_OUTSCOPE;
+        return null;
+    }
+
+
     public ResponseCode modifyCart(Long cartId, Long userId, Long goodsSkuId,Integer quantity,Long price){
         ShoppingCartPo po=new ShoppingCartPo();
-        po.setGoodsSkuId(goodsSkuId);
+        po.setId(cartId);
         po.setQuantity(quantity);
         po.setPrice(price);
         po.setGmtModified(LocalDateTime.now());

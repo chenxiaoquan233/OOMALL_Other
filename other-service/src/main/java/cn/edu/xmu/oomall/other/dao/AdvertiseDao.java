@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Array;
 import java.time.LocalDate;
@@ -54,10 +55,16 @@ public class AdvertiseDao {
                 .map(x->new AdvertiseStatesRetVo(x.getCode(),x.getDescription())).collect(Collectors.toList());
     }
 
+    @Transactional
     public ResponseCode setAdvertisementDefaultById(Long id){
         AdvertisementPo po = advertisementPoMapper.selectByPrimaryKey(id);
         if (po ==null)
             return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if(po.getBeDefault().equals((byte)1)){
+            po.setBeDefault((byte)0);
+            advertisementPoMapper.updateByPrimaryKey(po);
+            return ResponseCode.OK;
+        }
         AdvertisementPoExample example = new AdvertisementPoExample();
         AdvertisementPoExample.Criteria criteria=example.createCriteria();
         criteria.andBeDefaultEqualTo((byte)1);
@@ -98,15 +105,13 @@ public class AdvertiseDao {
 
 
     /*查询默认广告*/
-    public AdvertiseBo getDefaultAd(){
+    public List<AdvertiseBo> getDefaultAd(){
         AdvertisementPoExample example = new AdvertisementPoExample();
         AdvertisementPoExample.Criteria  criteria= example.createCriteria();
         criteria.andStateEqualTo(AdvertiseBo.State.NORM.getCode().byteValue()); //上架
         criteria.andBeDefaultEqualTo((byte)1); //默认
         List<AdvertisementPo> advertisementPoList=advertisementPoMapper.selectByExample(example);
-        if(advertisementPoList.size()==0)
-            return null;
-        else return new AdvertiseBo(advertisementPoList.get(0));
+        return advertisementPoList.stream().map(AdvertiseBo::new).collect(Collectors.toList());
     }
 
     /*查询当前时间段*/
@@ -140,7 +145,8 @@ public class AdvertiseDao {
         return new AdvertiseBo(po);
     }
 
-    public List<AdvertiseBo> getAdvertiseByTimeSegmentId(Long id, LocalDate beginDate, LocalDate endDate) {
+    public List<AdvertisementPo> getAdvertiseByTimeSegmentId(Long id, LocalDate beginDate, LocalDate endDate,Integer page, Integer pageSize) {
+        PageHelper.startPage(page,pageSize,true,true,null);
         AdvertisementPoExample example = new AdvertisementPoExample();
         AdvertisementPoExample.Criteria criteria=example.createCriteria();
         criteria.andSegIdEqualTo(id);
@@ -151,23 +157,9 @@ public class AdvertiseDao {
         example.setOrderByClause("weight DESC");
         List<AdvertisementPo> advertisementPoList=advertisementPoMapper.selectByExample(example);
         if(advertisementPoList.size()<=8)
-            return advertisementPoList.stream().map(AdvertiseBo::new).collect(Collectors.toList());
+            return advertisementPoList;
         else
-            return advertisementPoList.subList(0,8).stream().map(AdvertiseBo::new).collect(Collectors.toList());
-//        PageHelper.startPage(page,pageSize,true,true,null);
-//        try{
-//            advertisementPoList=advertisementPoMapper.selectByExample(example);
-//        }catch (Exception e){
-//            return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
-//        }
-//        List<Object> ret = advertisementPoList.stream().map(AdvertiseBo::new).map(AdvertiseBo::createVo).collect(Collectors.toList());
-//        PageInfo<AdvertisementPo> advertisementPoPageInfo = PageInfo.of(advertisementPoList);
-//        PageInfo<Object> pageRet = new PageInfo<>(ret);
-//        pageRet.setPages(advertisementPoPageInfo.getPages());
-//        pageRet.setPageNum(advertisementPoPageInfo.getPageNum());
-//        pageRet.setPageSize(advertisementPoPageInfo.getPageSize());
-//        pageRet.setTotal(advertisementPoPageInfo.getTotal());
-//        return new ReturnObject<>(pageRet);
+            return advertisementPoList.subList(0,8);
     }
 
     public ResponseCode createAdvertiseByTimeSegId(long segId, AdvertiseBo bo) {

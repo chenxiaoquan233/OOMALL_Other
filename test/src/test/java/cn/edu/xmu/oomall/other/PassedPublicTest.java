@@ -164,6 +164,60 @@ public class PassedPublicTest {
 
     }
 
+    /**
+     * 管理员设置默认广告
+     * 上架态的广告从默认变为非默认
+     * @throws Exception
+     */
+    @Test
+    public void advertiseTest6() throws Exception{
+        String token = this.login();
+        byte[] responseString = manageClient.put().uri("/shops/{did}/advertisement/{id}/default",0,122).header("authorization",token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ResponseCode.OK.getCode())
+                .returnResult()
+                .getResponseBodyContent();
+
+        byte[] ret = manageClient.get().uri("/shops/{did}/timesegments/{id}/advertisement",0,2)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ResponseCode.OK.getCode())
+                .jsonPath("$.data.list[?(@.id=='122')].beDefault").isEqualTo(0)
+                .returnResult()
+                .getResponseBodyContent();
+    }
+
+    /**
+     * 管理员设置默认广告
+     * 下架态的广告从非默认变为默认
+     * @throws Exception
+     */
+    @Test
+    public void advertiseTest7() throws Exception{
+        String token = this.login();
+        byte[] responseString = manageClient.put().uri("/shops/0/advertisement/122/default").header("authorization",token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ResponseCode.OK.getCode())
+                .returnResult()
+                .getResponseBodyContent();
+
+        byte[] ret = manageClient.get().uri("/shops/{did}/timesegments/{id}/advertisement",0,2)
+                .header("authorization", token)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ResponseCode.OK.getCode())
+                .jsonPath("$.data.list[?(@.id=='122')].beDefault").isEqualTo(1)
+                .returnResult()
+                .getResponseBodyContent();
+    }
+
 
 
 }

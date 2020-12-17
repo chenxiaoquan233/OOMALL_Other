@@ -17,8 +17,8 @@ public class AdvertiseRetVo {
     private String content;
     private Long segId;
     private Byte state;
-    private Integer weight;
-    private Boolean default_;
+    private String weight;
+    private Boolean beDefault;
     private LocalDate beginDate;
     private LocalDate endDate;
     private Boolean repeat;

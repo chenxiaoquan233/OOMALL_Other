@@ -92,13 +92,15 @@ public class ShoppingCartController {
     @DeleteMapping("/{id}")
     public Object deleteCart(@LoginUser Long UserId,@PathVariable("id") Long id) {
         ResponseCode responseCode = shoppingCartService.deleteCart(UserId,id);
-        if(responseCode.equals(ResponseCode.OK)){
-            return ResponseUtil.ok();
-        }
-        else {
+        if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)){
                 httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
-                return ResponseUtil.fail(ResponseCode.OK,"您没有该购物车项");
+                return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST);
         }
+        else if(responseCode.equals(ResponseCode.RESOURCE_ID_OUTSCOPE)){
+            httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        }
+        return ResponseUtil.ok();
     }
 
     /***
@@ -147,13 +149,17 @@ public class ShoppingCartController {
         ResponseCode ret=shoppingCartService.modifyCart(UserId,id,vo.getGoodsSkuId(),vo.getQuantity());
         if(ret==null){
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
-            return ResponseUtil.fail(ResponseCode.OK,"没有该sku存在");
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST,"没有该sku存在");
         }
-        if(ret.equals(ResponseCode.OK)){
-            return ResponseUtil.ok();
-        } else {
+        if(ret.equals(ResponseCode.RESOURCE_ID_NOTEXIST)){
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
-            return ResponseUtil.fail(ResponseCode.OK,"您没有该购物车项");
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST);
         }
+        else if(ret.equals(ResponseCode.RESOURCE_ID_OUTSCOPE)){
+            httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        }
+        return ResponseUtil.ok();
+
     }
 }
