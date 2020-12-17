@@ -15,14 +15,14 @@ import java.time.LocalDateTime;
 public class ShareActivityRetVo {
     private Long id;
     private Long shopId;
-    private Long goodSkuId;
+    private Long skuId;
     private LocalDateTime beginTime;
     private LocalDateTime endTime;
     private Integer state;
     public ShareActivityRetVo(ShareActivityBo bo){
         id=bo.getId();
         shopId=bo.getShopId();
-        goodSkuId=bo.getGoodSkuId();
+        skuId=bo.getGoodSkuId();
         beginTime=bo.getBeginTime();
         endTime=bo.getEndTime();
         state=Integer.valueOf(bo.getState());

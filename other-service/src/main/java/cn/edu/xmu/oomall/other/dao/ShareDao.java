@@ -10,6 +10,7 @@ import cn.edu.xmu.oomall.other.mapper.*;
 import cn.edu.xmu.oomall.other.model.bo.ShareActivityBo;
 import cn.edu.xmu.oomall.other.model.bo.ShareBo;
 import cn.edu.xmu.oomall.other.model.po.*;
+import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
 import cn.edu.xmu.oomall.other.service.factory.CalcPoint;
 import cn.edu.xmu.oomall.other.service.factory.CalcPointFactory;
 import cn.edu.xmu.oomall.other.util.DefaultRedisFinder;
@@ -418,7 +419,9 @@ public class ShareDao implements InitializingBean {
                         ShareActivityRedisFinder.getExpireTime(shareActivityBo.getEndTime()), TimeUnit.SECONDS);
             }
         }
-        return new ReturnObject<>(bo==null?new ShareBo(po):bo);
+        ShareBo ret=bo==null?new ShareBo(po):bo;
+        ret.setSku(new GoodsSkuSimpleVo(goodsService.getSku(ret.getSkuId())));
+        return new ReturnObject<>(ret);
 
     }
 }

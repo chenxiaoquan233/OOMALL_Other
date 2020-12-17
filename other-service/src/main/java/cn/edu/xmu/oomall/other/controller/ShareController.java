@@ -70,9 +70,16 @@ public class ShareController {
                                    @Validated @RequestBody ShareActivityVo shareActivityVo, BindingResult bindingResult){
         //DONE:校验strategy是否正确
         if(!CalcPointFactory.validateStrategy(shareActivityVo.getStrategy())){
+
             logger.error("wrong strategy");
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return ResponseUtil.fail(ResponseCode.OK,"分享策略不合法");
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID,"分享策略不合法");
+        }
+        if(shareActivityVo.getBeginTime().isAfter(shareActivityVo.getEndTime())){
+            logger.error("wrong strategy time");
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID,"分享策略不合法");
+
         }
         logger.debug(JacksonUtil.toJson(shareActivityVo)+"1");
         Object object= Common.processFieldErrors(bindingResult,httpServletResponse);
@@ -85,19 +92,19 @@ public class ShareController {
         //skuid不为0 shopid不为0 代表商店某个商品
         if(shopId==0&&skuId!=0){
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return ResponseUtil.fail(ResponseCode.OK,"平台活动无法设置skuId");
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST,"平台活动无法设置skuId");
         }
         logger.debug("shopId:"+shopId+"skuId"+skuId);
         if(skuId!=0) {
             ShopDTO shopDTO = goodsService.getShopBySKUId(skuId);
             if (shopDTO == null) {
                 httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return ResponseUtil.fail(ResponseCode.OK, "资源不存在");
+                return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST, "资源不存在");
             }
             Long realShopId=shopDTO.getId();
             if(!realShopId.equals(shopId)) {
                 httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                return ResponseUtil.fail(ResponseCode.OK, "非法资源");
+                return ResponseUtil.fail(ResponseCode.RESOURCE_ID_OUTSCOPE, "非法资源");
             }
         }
         //logger.info("read this?"+ JacksonUtil.toJson(shareActivityVo));
@@ -164,7 +171,8 @@ public class ShareController {
             return ResponseUtil.ok();
         }
         else{
-            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            if(ret==ResponseCode.RESOURCE_ID_NOTEXIST)httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            else httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return ResponseUtil.fail(ret);
         }
     }
@@ -340,6 +348,7 @@ public class ShareController {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST,"没有有效的活动");
         }
+        httpServletResponse.setStatus(HttpServletResponse.SC_CREATED);
         return Common.getRetObject(ret);
     }
 

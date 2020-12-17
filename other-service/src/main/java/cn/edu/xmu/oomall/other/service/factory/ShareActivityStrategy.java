@@ -11,11 +11,12 @@ import java.util.List;
  */
 @Data
 public class ShareActivityStrategy {
-
+    public Integer firstOrAvg;
     public Rule[] rule;
     boolean validate(){
         if(rule==null)return false;
         for(int i=0;i<rule.length;i++){
+            if(rule[i].num==null||rule[i].rate==null)return false;
             if(i!=0){
 
                 if(rule[i].num<=rule[i-1].num)return false;
