@@ -12,23 +12,25 @@ import cn.edu.xmu.goods.client.dubbo.ShopDTO;
 import cn.edu.xmu.oomall.other.util.ServiceStub.GoodsService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
-import org.apache.dubbo.config.annotation.DubboReference;
+import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author Jx
  * @version 创建时间：2020/12/5 下午2:57
  */
 @RestController /*Restful的Controller对象*/
-@RequestMapping(produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "/share",produces = "application/json;charset=UTF-8")
 //@RequestMapping(produces = "application/json;charset=UTF-8")
 public class ShareController {
     private static final Logger logger = LoggerFactory.getLogger(ShareController.class);
@@ -122,15 +124,23 @@ public class ShareController {
     @Audit
     @GetMapping("/shares")
     public Object getShares(@LoginUser Long userId, @RequestParam(required = false) Long skuId,
-                            @RequestParam(required = false) LocalDateTime beginTime, @RequestParam(required = false) LocalDateTime endTime,
+                            @RequestParam(value = "beginTime",required = false)String beginTimeStr, @RequestParam(value = "endTime",required = false)String endTimeStr,
                             @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize){
-        if(beginTime!=null&&endTime!=null&&endTime.isBefore(beginTime)){
-            return ResponseUtil.fail(ResponseCode.Log_Bigger);
+        LocalDateTime beginTime=null,endTime=null;
+        try{
+            logger.debug("beginTime:"+beginTimeStr+"endTime:"+endTimeStr);
+            DateTimeFormatter dateTimeFormatter=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            if(beginTimeStr!=null)beginTime=LocalDateTime.parse(beginTimeStr,dateTimeFormatter);
+            if(endTimeStr!=null)endTime=LocalDateTime.parse(endTimeStr,dateTimeFormatter);
+        }
+        catch (Exception ex){
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
         }
         if(page <= 0 || pageSize <= 0) {
             return Common.getNullRetObj(new ReturnObject<>(ResponseCode.FIELD_NOTVALID), httpServletResponse);
         }
-        ReturnObject<PageInfo<VoObject>> retObj=shareService.findShares(skuId, beginTime,endTime,page,pageSize);
+        ReturnObject<PageInfo<VoObject>> retObj=shareService.findShares(userId,skuId, beginTime,endTime,page,pageSize);
         return Common.getPageRetObject(retObj);
     }
 
@@ -186,7 +196,7 @@ public class ShareController {
      * 商铺管理员查询分享记录
      */
     @Audit
-    @GetMapping("/shop/{did}/skus/{id}/shares")
+    @GetMapping("/shops/{did}/skus/{id}/shares")
     public Object getSharesByShopId(@LoginUser Long userId,@PathVariable("did")Long shopId,
                                     @PathVariable("id") Long skuId,
                                     @RequestParam(defaultValue = "1") Integer page,
@@ -204,7 +214,7 @@ public class ShareController {
                 return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST, "路径资源不匹配");
             }
         }
-        ReturnObject<PageInfo<VoObject>> ret=shareService.findShares(skuId, null,null,page,pageSize);
+        ReturnObject<PageInfo<VoObject>> ret=shareService.findShares(null, skuId, null,null,page,pageSize);
         return Common.getPageRetObject(ret);
     }
     /***
@@ -213,12 +223,20 @@ public class ShareController {
     @Audit
     @GetMapping("/beshared")
     public Object getBeShared(@LoginUser Long userId,@RequestParam(required = false)Long skuId,
-                              @RequestParam(required = false)LocalDateTime beginTime,
-                              @RequestParam(required = false)LocalDateTime endTime,
+                              @RequestParam(value = "beginTime",required = false)String beginTimeStr,
+                              @RequestParam(value = "endTime",required = false)String endTimeStr,
                               @RequestParam(defaultValue = "1") Integer page,
                               @RequestParam(defaultValue = "10") Integer pageSize){
-        if(beginTime!=null&&endTime!=null&&endTime.isBefore(beginTime)){
-            return ResponseUtil.fail(ResponseCode.Log_Bigger);
+        LocalDateTime beginTime=null,endTime=null;
+        try{
+            logger.debug("beginTime:"+beginTimeStr+"endTime:"+endTimeStr);
+            DateTimeFormatter dateTimeFormatter=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            if(beginTimeStr!=null)beginTime=LocalDateTime.parse(beginTimeStr,dateTimeFormatter);
+            if(endTimeStr!=null)endTime=LocalDateTime.parse(endTimeStr,dateTimeFormatter);
+        }
+        catch (Exception ex){
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
         }
         ReturnObject<PageInfo<VoObject>> retObj=shareService.getBeShared(userId, skuId,beginTime,endTime,page,pageSize);
         return Common.getPageRetObject(retObj);
@@ -238,14 +256,23 @@ public class ShareController {
     @Audit
     @GetMapping("/shops/{did}/skus/{id}/beshared")
     public Object getBeSharedByShopId(@LoginUser Long userId,@PathVariable("did")Long shopId,
-                              @PathVariable("id") Long skuId,
-                              @RequestParam(required = false)LocalDateTime beginTime,
-                              @RequestParam(required = false)LocalDateTime endTime,
-                              @RequestParam(defaultValue = "1") Integer page,
-                              @RequestParam(defaultValue = "10") Integer pageSize){
-        if(beginTime!=null&&endTime!=null&&endTime.isBefore(beginTime)){
-            return ResponseUtil.fail(ResponseCode.Log_Bigger);
+                                      @PathVariable("id") Long skuId,
+                                      @RequestParam(value = "beginTime",required = false)String beginTimeStr,
+                                      @RequestParam(value = "endTime",required = false)String endTimeStr,
+                                      @RequestParam(defaultValue = "1") Integer page,
+                                      @RequestParam(defaultValue = "10") Integer pageSize){
+        LocalDateTime beginTime=null,endTime=null;
+        try{
+            logger.debug("beginTime:"+beginTimeStr+"endTime:"+endTimeStr);
+            DateTimeFormatter dateTimeFormatter=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            if(beginTimeStr!=null)beginTime=LocalDateTime.parse(beginTimeStr,dateTimeFormatter);
+            if(endTimeStr!=null)endTime=LocalDateTime.parse(endTimeStr,dateTimeFormatter);
         }
+        catch (Exception ex){
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
+        }
+
         if(shopId!=0) {
             ShopDTO shopDTO = goodsService.getShopBySKUId(skuId);
             if(shopDTO==null){

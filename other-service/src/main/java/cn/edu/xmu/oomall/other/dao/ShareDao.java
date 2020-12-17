@@ -118,9 +118,12 @@ public class ShareDao implements InitializingBean {
         List<BeSharePo> beSharePos=beSharePoMapper.selectByExample(example);
         return new PageInfo<>(beSharePos);
     }
-    public PageInfo<SharePo> findShares(Long skuId, LocalDateTime beginTime, LocalDateTime endTime){
+    public PageInfo<SharePo> findShares(Long userId, Long skuId, LocalDateTime beginTime, LocalDateTime endTime){
         SharePoExample example=new SharePoExample();
         SharePoExample.Criteria criteria=example.createCriteria();
+        if(userId!=null){
+            criteria.andSharerIdEqualTo(userId);
+        }
         if(beginTime!=null){
             criteria.andGmtCreateGreaterThanOrEqualTo(beginTime);
         }

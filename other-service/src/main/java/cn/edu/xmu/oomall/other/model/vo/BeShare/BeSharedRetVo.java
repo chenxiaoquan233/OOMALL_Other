@@ -15,7 +15,7 @@ public class BeSharedRetVo {
     private Long id;
     private GoodsSkuSimpleVo sku;
     private Long sharerId;
-    private Long customId;
+    private Long customerId;
     private Long orderId;
     private Integer rebate;
     private LocalDateTime gmtCreate;
