@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 /**
@@ -16,7 +17,7 @@ import javax.validation.constraints.Pattern;
 @ApiModel(description = "地址传值对象")
 @Data
 public class AddressVo {
-    @NotBlank
+    @NotNull
     @ApiModelProperty(name = "区域ID", value = "t001")
     private Long regionId;
 
@@ -41,5 +42,14 @@ public class AddressVo {
         bo.setConsignee(this.getConsignee());
         bo.setMobile(this.getMobile());
         return bo;
+    }
+    public Boolean isFormated()
+    {
+        if(this.regionId == null || this.regionId<0)return false;
+        if(this.detail.isBlank())return false;
+        if(this.consignee.isBlank())return false;
+        if(this.mobile.isBlank())return false;
+        if(!this.mobile.matches("[+]?[0-9*#]+"))return false;
+        return true;
     }
 }

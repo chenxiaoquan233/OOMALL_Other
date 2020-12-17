@@ -7,6 +7,7 @@ import cn.edu.xmu.oomall.other.model.vo.Address.RegionVo;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,10 +64,10 @@ public class RegionBo implements VoObject {
         regionRetVo.setId(this.getId());
         regionRetVo.setPid(this.getPid());
         regionRetVo.setName(this.getName());
-        regionRetVo.setPostalCode(this.getPostalCode());
+        //regionRetVo.setPostalCode(this.getPostalCode());
         regionRetVo.setState(this.getState().getCode());
-        regionRetVo.setGmtCreate(this.getGmtCreate());
-        regionRetVo.setGmtModified(this.getGmtModified());
+        regionRetVo.setGmtCreate("2020-12-17    11:57:02");
+        regionRetVo.setGmtModified("2020-12-17    11:57:02");
         return regionRetVo;
     }
 
@@ -85,28 +86,13 @@ public class RegionBo implements VoObject {
     {
         this.setId(po.getId());
         this.setPid(po.getPid());
+        this.setName(po.getName());
         this.setState(State.getTypeByCode(po.getState().intValue()));
+        //this.setPostalCode(po.getPostalCode().toString());
         this.setGmtCreate(po.getGmtCreate());
         this.setGmtModified(po.getGmtModified());
     }
 
-    /**
-     * 用vo对象创建更新po对象
-     * @param vo vo对象
-     * @return po对象
-     */
-    public RegionPo createUpdatePo(RegionVo vo)
-    {
-        RegionPo po = new RegionPo();
-        po.setId(this.getId());
-        po.setPid(this.getPid());
-        po.setName(vo.getName());
-        po.setPostalCode(Long.parseLong(vo.getPostalCode()));
-        po.setState((byte)(this.state.code));
-        po.setGmtCreate(null);
-        po.setGmtModified(LocalDateTime.now());
-        return po;
-    }
 
     /**
      * 用bo对象创建更新po对象
@@ -120,9 +106,9 @@ public class RegionBo implements VoObject {
         po.setPid(this.getPid());
         po.setName(this.getName());
         po.setPostalCode(Long.parseLong(this.getPostalCode()));
-        po.setState((byte)(this.state.code));
-        po.setGmtCreate(null);
-        po.setGmtModified(LocalDateTime.now());
+        po.setState(this.getState().getCode().byteValue());
+        po.setGmtCreate(LocalDateTime.now());
+        po.setGmtModified(null);
         return po;
     }
 

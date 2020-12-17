@@ -16,19 +16,21 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Ji Cao
  * @version 创建时间：2020/12/6  下午16:11
  */
 @RestController /*Restful的Controller对象*/
-@RequestMapping(value = "/addresses", produces = "application/json;charset=UTF-8")
+@RequestMapping(value = "", produces = "application/json;charset=UTF-8")
 public class AddressController {
     private static final Logger logger = LoggerFactory.getLogger(AddressController.class);
 
@@ -47,19 +49,40 @@ public class AddressController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @Audit
-    @PostMapping
+    @PostMapping("/addresses")
     public Object addAddress(@LoginUser Long userId, @RequestBody AddressVo addressVo, BindingResult result)
     {
-        if(result.hasErrors())
+        Object object = Common.processFieldErrors(result,httpServletResponse);
+        if(null != object)
         {
-            return Common.processFieldErrors(result,httpServletResponse);
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return object;
         }
-        ReturnObject<VoObject> returnObj = addressService.addAddress(userId,addressVo);
-        if(returnObj.getCode() == ResponseCode.OK){
-            Object returnVo = returnObj.getData().createSimpleVo();
-            return Common.decorateReturnObject(new ReturnObject(returnVo));
+        if(!addressVo.isFormated()) {
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return new ResponseUtil().fail(ResponseCode.FIELD_NOTVALID);
         }
-        else return ResponseUtil.fail(returnObj.getCode());
+        try{
+            ReturnObject<VoObject> returnObj = addressService.addAddress(userId,addressVo);
+           if(returnObj.getCode().equals(ResponseCode.OK)) {
+               Object returnVo = returnObj.getData().createSimpleVo();
+               httpServletResponse.setStatus(HttpStatus.CREATED.value());
+               return Common.decorateReturnObject(new ReturnObject(returnVo));
+           }
+           else if(returnObj.getCode().equals(ResponseCode.RESOURCE_ID_NOTEXIST))
+            {
+               httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+               return ResponseUtil.fail(returnObj.getCode());
+           }
+           else{
+               return ResponseUtil.fail(returnObj.getCode(),returnObj.getErrmsg());
+           }
+        }catch (Exception e)
+        {
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtil.fail(ResponseCode.INTERNAL_SERVER_ERR);
+        }
+
     }
 
     /**
@@ -72,7 +95,6 @@ public class AddressController {
     @ApiOperation(value = "买家查看所有已有的地址信息", produces = "application/json")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true),
-            @ApiImplicitParam(paramType = "query", dataType = "Integer", name = "userId", value = "用户id"),
             @ApiImplicitParam(paramType = "query", dataType = "Integer", name = "page", value = "页码"),
             @ApiImplicitParam(paramType = "query", dataType = "Integer", name = "pageSize", value = "每页数目")
     })
@@ -80,8 +102,13 @@ public class AddressController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @Audit
-    @GetMapping
+    @GetMapping("/addresses")
     public  Object getAddresses(@LoginUser Long userId,@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize){
+        if(page<=0||pageSize<=0)
+        {
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtil.fail(ResponseCode.OK,"page或pageSize格式不符");
+        }
         ReturnObject<PageInfo<VoObject>> returnObject = addressService.getAddresses(userId, page, pageSize);
         return Common.getPageRetObject(returnObject);
     }
@@ -107,7 +134,13 @@ public class AddressController {
         ResponseCode responseCode = addressService.updateDefaultAddress(userId,id).getCode();
         if(responseCode.equals(ResponseCode.OK)){
             return ResponseUtil.ok();
-        } else {
+        }
+        else if(responseCode.equals(ResponseCode.RESOURCE_ID_OUTSCOPE)){
+            httpServletResponse.setStatus(HttpStatus.NON_AUTHORITATIVE_INFORMATION.value());
+            return ResponseUtil.fail(responseCode);
+        }
+        else {
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseUtil.fail(responseCode);
         }
     }
@@ -135,10 +168,15 @@ public class AddressController {
         if(result.hasErrors()){
             return Common.processFieldErrors(result,httpServletResponse);
         }
+        if(!addressVo.isFormated()) {
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return new ResponseUtil().fail(ResponseCode.FIELD_NOTVALID);
+        }
         ResponseCode responseCode = addressService.updateAddress(userId,id,addressVo).getCode();
-        if(responseCode.equals(ResponseCode.OK)){
-            return ResponseUtil.ok();
+        if(responseCode.equals(ResponseCode.OK) || responseCode.equals(ResponseCode.RESOURCE_ID_OUTSCOPE)){
+            return ResponseUtil.ok(responseCode);
         } else {
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseUtil.fail(responseCode);
         }
     }
@@ -163,7 +201,9 @@ public class AddressController {
         ResponseCode responseCode = addressService.deleteAddress(userId,id).getCode();
         if(responseCode.equals(ResponseCode.OK)){
             return ResponseUtil.ok();
-        } else {
+        }
+        else {
+            if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST))httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseUtil.fail(responseCode);
         }
     }
@@ -176,7 +216,7 @@ public class AddressController {
     @ApiOperation(value = "询某个地区的所有上级地区")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true),
-            @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "id", value = "地址id"),
+            @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "id", value = "地区id"),
     })
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
@@ -186,7 +226,13 @@ public class AddressController {
     public Object getAllParentRegions(@PathVariable("id")Long id)
     {
         ReturnObject<List> returnObject = addressService.getAllParentRegions(id);
-        return Common.getListRetObject(returnObject);
+        if(returnObject.getCode().equals(ResponseCode.OK)){
+            return Common.getListRetObject(returnObject);
+        } else {
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(returnObject.getCode());
+        }
+
     }
 
     /**
@@ -199,6 +245,7 @@ public class AddressController {
     @ApiOperation(value = "管理员在地区下新增子地区")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path", dataType = "Integer",name = "did",value = "店铺id"),
             @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "id", value = "地址id"),
             @ApiImplicitParam(paramType = "body", dataType = "RegionVo", name = "regionVo", value = "地区信息")
     })
@@ -206,8 +253,8 @@ public class AddressController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @Audit
-    @PostMapping("/regions/{id}/subregions")
-    public Object addSubRegion(@PathVariable("id")Long id, @RequestBody(required = true) RegionVo regionVo,BindingResult bindingResult)
+    @PostMapping("/shops/{did}/regions/{id}/subregions")
+    public Object addSubRegion(@PathVariable("did")Long did,@PathVariable("id")Long id, @RequestBody(required = true) RegionVo regionVo,BindingResult bindingResult)
     {
         Object returnObject = Common.processFieldErrors(bindingResult,httpServletResponse);
         if (null != returnObject) {
@@ -215,8 +262,16 @@ public class AddressController {
         }
         ResponseCode responseCode = addressService.addSubRegion(id,regionVo).getCode();
         if(responseCode.equals(ResponseCode.OK)){
+            httpServletResponse.setStatus(HttpStatus.CREATED.value());
             return ResponseUtil.ok();
-        } else {
+        }
+        else if(responseCode.equals(ResponseCode.REGION_OBSOLETE))
+        {
+            return  ResponseUtil.fail(responseCode,"地区已废弃");
+        }
+        else
+            {
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseUtil.fail(responseCode);
         }
     }
@@ -230,6 +285,7 @@ public class AddressController {
     @ApiOperation(value = "管理员修改某个地区")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path", dataType = "Integer",name = "did",value = "店铺id"),
             @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "id", value = "地址id"),
             @ApiImplicitParam(paramType = "body", dataType = "RegionVo", name = "regionVo", value = "地区信息")
     })
@@ -237,8 +293,8 @@ public class AddressController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @Audit
-    @PutMapping("/regions/{id}")
-    public Object updateRegion(@PathVariable("id") Long id, @RequestBody(required = true) RegionVo regionVo,BindingResult bindingResult)
+    @PutMapping("/shops/{did}/regions/{id}")
+    public Object updateRegion(@PathVariable("did")Long did,@PathVariable("id") Long id, @RequestBody(required = true) RegionVo regionVo,BindingResult bindingResult)
     {
         Object returnObject = Common.processFieldErrors(bindingResult,httpServletResponse);
         if (null != returnObject) {
@@ -248,6 +304,7 @@ public class AddressController {
         if(responseCode.equals(ResponseCode.OK)){
             return ResponseUtil.ok();
         } else {
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseUtil.fail(responseCode);
         }
     }
@@ -260,19 +317,21 @@ public class AddressController {
     @ApiOperation(value = "管理员让某个地区无效")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true),
+            @ApiImplicitParam(paramType = "path", dataType = "Integer",name = "did",value = "店铺id"),
             @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "id", value = "地址id"),
     })
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
     @Audit
-    @DeleteMapping("/regions/{id}")
-    public Object deleteRegion(@PathVariable("id")Long id)
+    @DeleteMapping("/shops/{did}/regions/{id}")
+    public Object deleteRegion(@PathVariable("did")Long did,@PathVariable("id")Long id)
     {
         ResponseCode responseCode = addressService.deleteRegion(id).getCode();
         if(responseCode.equals(ResponseCode.OK)){
             return ResponseUtil.ok();
         } else {
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseUtil.fail(responseCode);
         }
     }
