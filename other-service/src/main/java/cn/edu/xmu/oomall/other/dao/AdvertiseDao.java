@@ -79,8 +79,11 @@ public class AdvertiseDao {
     }
 
     public ResponseCode updateAdvertisementById(AdvertiseBo advertiseBo){
+        if(advertiseBo.getBeginDate().isAfter(advertiseBo.getEndDate()))
+            return ResponseCode.Log_Bigger;
         AdvertisementPo advertisementPo = advertiseBo.getAdvertisePo();
         advertisementPo.setGmtModified(LocalDateTime.now());
+        advertisementPo.setState(AdvertiseBo.State.BACK.getCode().byteValue());
         try{
             advertisementPoMapper.updateByPrimaryKeySelective(advertisementPo);
         }catch (Exception e){
