@@ -73,8 +73,10 @@ public class AdvertiseService {
         return advertiseDao.setAdvertisementDefaultById(id);
     }
 
-    public ResponseCode updateAdvertisementById(AdvertiseVo advertiseVo){
-        return advertiseDao.updateAdvertisementById(advertiseVo.createBo());
+    public ResponseCode updateAdvertisementById(Long id,AdvertiseVo advertiseVo){
+        AdvertiseBo bo=advertiseVo.createBo();
+        bo.setId(id);
+        return advertiseDao.updateAdvertisementById(bo);
     }
 
     public ResponseCode deleteAdvertisementById(Long id){

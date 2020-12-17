@@ -3,6 +3,7 @@ package cn.edu.xmu.oomall.other;
 import cn.edu.xmu.ooad.util.JacksonUtil;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.oomall.other.LoginVo;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -214,6 +215,28 @@ public class PassedPublicTest {
                 .expectBody()
                 .jsonPath("$.errno").isEqualTo(ResponseCode.OK.getCode())
                 .jsonPath("$.data.list[?(@.id=='122')].beDefault").isEqualTo(1)
+                .returnResult()
+                .getResponseBodyContent();
+    }
+
+    /**
+     * 管理员修改广告内容
+     * 传入的开始日期格式错误
+     * @throws Exception
+     */
+    @Test
+    public void advertiseTest16() throws Exception{
+        String token = this.login();
+        JSONObject body = new JSONObject();
+        body.put("beginDate","2020/12/17");
+        String requireJson = body.toJSONString();
+        byte[] responseString = manageClient.put().uri("/shops/{did}/advertisement/{id}", 0, 122)
+                .header("authorization", token)
+                .bodyValue(requireJson)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ResponseCode.FIELD_NOTVALID.getCode())
                 .returnResult()
                 .getResponseBodyContent();
     }

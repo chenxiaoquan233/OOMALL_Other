@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -82,8 +83,16 @@ public class AdvertiseController {
     })
     @Audit
     @PutMapping("/shops/{did}/advertisement/{id}")
-    public Object updateAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id, @RequestBody AdvertiseVo advertiseVo){
-        ResponseCode responseCode=advertiseService.updateAdvertisementById(advertiseVo);
+    public Object updateAdvertisementById(@LoginUser Long user, @PathVariable("id") Long id, @RequestBody AdvertiseVo advertiseVo, BindingResult bindingResult){
+        Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if(null != object) {
+            logger.debug("Validate failed");
+            logger.debug("UserSignUpVo:" + advertiseVo);
+            return object;
+        }
+        System.out.println("0");
+        System.out.println(advertiseVo);
+        ResponseCode responseCode=advertiseService.updateAdvertisementById(id,advertiseVo);
         if(responseCode.equals(ResponseCode.OK))
             return ResponseUtil.ok();
         else return ResponseUtil.fail(responseCode);
@@ -250,7 +259,6 @@ public class AdvertiseController {
     })
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功"),
-            @ApiResponse(code=603, message="达到时段广告上限")
     })
     @Audit
     @PostMapping("/shops/{did}/timesegments/{tid}/advertisement/{id}")

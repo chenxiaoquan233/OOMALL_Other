@@ -79,13 +79,13 @@ public class AdvertiseDao {
     }
 
     public ResponseCode updateAdvertisementById(AdvertiseBo advertiseBo){
+        System.out.println("111");
         AdvertisementPo advertisementPo = advertiseBo.getAdvertisePo();
+        System.out.println("222");
+        System.out.println(advertisementPo.getBeginDate());
         advertisementPo.setGmtModified(LocalDateTime.now());
-        AdvertisementPoExample example = new AdvertisementPoExample();
-        AdvertisementPoExample.Criteria criteria = example.createCriteria();
-        criteria.andIdEqualTo(advertiseBo.getId());
         try{
-            advertisementPoMapper.updateByExampleSelective(advertisementPo,example);
+            advertisementPoMapper.updateByPrimaryKeySelective(advertisementPo);
         }catch (Exception e){
             return ResponseCode.INTERNAL_SERVER_ERR;
         }

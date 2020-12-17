@@ -116,13 +116,16 @@ public class AdvertiseBo implements VoObject {
         ret.setLink(link);
         ret.setContent(content);
         ret.setImageUrl(imageUrl);
-        ret.setState((byte)state.getCode().intValue());
+        if(state!=null)
+            ret.setState((byte)state.getCode().intValue());
         ret.setWeight(weight);
         ret.setBeginDate(beginDate);
         ret.setEndDate(endDate);
-        ret.setRepeats((byte)(repeats?1:0));
+        if(repeats!=null)
+            ret.setRepeats((byte)(repeats?1:0));
         ret.setMessage(message);
-        ret.setBeDefault((byte)(beDefault?1:0));
+        if(beDefault!=null)
+            ret.setBeDefault((byte)(beDefault?1:0));
         ret.setGmtCreate(gmtCreate);
         ret.setGmtModified(gmtModified);
         return ret;
