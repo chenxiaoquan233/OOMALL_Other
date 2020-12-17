@@ -375,7 +375,7 @@ public class UserController {
     @GetMapping("/test")
     public Object test() {
         ShopDTO shop = shopService.getShopById(0L);
-        goodsService.getPrice(1L);
+        System.out.println(goodsService.getPrice(1L).getPrePrice());
         return new ReturnObject<>(shop);
     }
 }

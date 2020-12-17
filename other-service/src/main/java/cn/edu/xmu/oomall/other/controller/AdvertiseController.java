@@ -11,9 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -24,6 +26,9 @@ import java.time.format.DateTimeFormatter;
 @RestController
 @RequestMapping(produces = "application/json;charset=UTF-8")
 public class AdvertiseController {
+    @Autowired
+    private HttpServletResponse httpServletResponse;
+
     private static final Logger logger = LoggerFactory.getLogger(AdvertiseController.class);
 
     @Autowired
@@ -55,9 +60,12 @@ public class AdvertiseController {
     @PutMapping("/shops/{did}/advertisement/{id}/default")
     public Object setAdvertisementDefaultById(@LoginUser Long user, @PathVariable("did") Integer did, @PathVariable("id") Integer id){
         ResponseCode responseCode=advertiseService.setAdvertisementDefaultById(id);
-        if(responseCode.equals(ResponseCode.OK))
-            return ResponseUtil.ok();
-        else return ResponseUtil.fail(responseCode);
+        if(responseCode.equals(ResponseCode.AUTH_ID_NOTEXIST))
+        {
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(responseCode);
+        }
+        return ResponseUtil.ok();
     }
 
     @ApiOperation(value = "管理员修改广告内容", produces = "application/json")

@@ -36,7 +36,7 @@ public class FavoriteBo implements VoObject {
     public Object createVo() {
         FavoritesRetVo favoritesRetVo=new FavoritesRetVo();
         favoritesRetVo.setId(this.id);
-        favoritesRetVo.setGoodsSku(skuSimpleVo);
+        favoritesRetVo.setGoodsSku(this.skuSimpleVo);
         favoritesRetVo.setGmtCreate(this.gmtCreate);
         return favoritesRetVo;
     }

@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.other.model.bo;
 
+import cn.edu.xmu.goods.client.dubbo.CouponActivityDTO;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.other.model.po.ShoppingCartPo;
 import cn.edu.xmu.oomall.other.model.vo.ShoppingCart.ShoppingCartRetVo;
@@ -20,6 +21,7 @@ public class ShoppingCartBo implements VoObject {
     private Long goodsSkuId;
     private Integer quantity;
     private Long price;
+    private String skuName;
     private List<Object> couponActivity;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
@@ -41,6 +43,7 @@ public class ShoppingCartBo implements VoObject {
         shoppingCartRetVo.setGoodsSkuId(this.goodsSkuId);
         shoppingCartRetVo.setQuantity(this.quantity);
         shoppingCartRetVo.setPrice(this.price);
+        shoppingCartRetVo.setSkuName(this.skuName);
         shoppingCartRetVo.setAddTime(this.gmtCreate);
         shoppingCartRetVo.setCouponActivity(this.couponActivity);
         return shoppingCartRetVo;

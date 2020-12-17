@@ -1,11 +1,9 @@
 package cn.edu.xmu.oomall.other.util.ServiceStub;
 
 import cn.edu.xmu.goods.client.IGoodsService;
-import cn.edu.xmu.goods.client.dubbo.OrderItemDTO;
-import cn.edu.xmu.goods.client.dubbo.ShopDTO;
-import cn.edu.xmu.goods.client.dubbo.SkuDTO;
-import cn.edu.xmu.goods.client.dubbo.SpuDTO;
+import cn.edu.xmu.goods.client.dubbo.*;
 
+import java.nio.channels.SelectionKey;
 import java.util.List;
 import java.util.Map;
 
@@ -15,10 +13,6 @@ import java.util.Map;
  * 4
  */
 public class GoodsService implements IGoodsService {
-    @Override
-    public Long getPrice(Long skuId) {
-        return null;
-    }
 
     @Override
     public Map<ShopDTO, List<OrderItemDTO>> classifySku(List<OrderItemDTO> orderItemDTOS) {
@@ -34,6 +28,11 @@ public class GoodsService implements IGoodsService {
     }
 
     @Override
+    public List<SkuDTO> getSkus(List<Long> skuIds) {
+        return null;
+    }
+
+    @Override
     public SpuDTO getSimpleSpuById(Long spuId) {
         return null;
     }
@@ -42,4 +41,36 @@ public class GoodsService implements IGoodsService {
     public ShopDTO getShopBySKUId(Long skuId) {
         return new ShopDTO(1L);
     }
+
+    @Override
+    public Long getShopIdBySKUId(Long skuId) {
+        return null;
+    }
+
+    @Override
+    public Long getGoodWeightBySku(Long skuId) {
+        return null;
+    }
+
+    @Override
+    public Long getFreightModelIdBySku(Long skuID) {
+        return null;
+    }
+
+    @Override
+    public Boolean deleteFreightModelIdBySku(Long modelId, Long shopId) {
+        return null;
+    }
+
+    @Override
+    public List<PriceDTO> getPriceAndName(List<OrderItemDTO> orderItemDTOS) {
+        return null;
+    }
+
+    @Override
+    public PriceDTO getPrice(Long skuId) {
+        return null;
+    }
+
+
 }

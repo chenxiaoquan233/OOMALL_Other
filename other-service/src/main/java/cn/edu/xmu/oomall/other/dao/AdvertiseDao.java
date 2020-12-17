@@ -53,17 +53,19 @@ public class AdvertiseDao {
         return Arrays.asList(AdvertiseBo.State.values()).stream()
                 .map(x->new AdvertiseStatesRetVo(x.getCode(),x.getDescription())).collect(Collectors.toList());
     }
+
     public ResponseCode setAdvertisementDefaultById(Long id){
+        AdvertisementPo po = advertisementPoMapper.selectByPrimaryKey(id);
+        if (po ==null)
+            return ResponseCode.RESOURCE_ID_NOTEXIST;
         AdvertisementPoExample example = new AdvertisementPoExample();
         AdvertisementPoExample.Criteria criteria=example.createCriteria();
         criteria.andBeDefaultEqualTo((byte)1);
         List<AdvertisementPo> poList = advertisementPoMapper.selectByExample(example);
-        for(AdvertisementPo po:poList){
+        for(AdvertisementPo oldDefaultPo:poList){
             po.setBeDefault((byte) 0);
-            advertisementPoMapper.updateByPrimaryKey(po);
+            advertisementPoMapper.updateByPrimaryKeySelective(oldDefaultPo);
         }
-        AdvertisementPo po = advertisementPoMapper.selectByPrimaryKey(id);
-        if (po ==null)return ResponseCode.INTERNAL_SERVER_ERR;
         po.setBeDefault((byte) 1);
         advertisementPoMapper.updateByPrimaryKey(po);
         return ResponseCode.OK;
