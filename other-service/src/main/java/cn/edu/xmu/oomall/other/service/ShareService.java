@@ -113,12 +113,13 @@ public class ShareService {
         PageInfo<ShareActivityPo> shareActivityPos=shareDao.findShareActivity(shopId,skuId);
 
         List<VoObject> shareActivities=shareActivityPos.getList().stream().map(ShareActivityBo::new).collect(Collectors.toList());
-
+        logger.debug("Successfully get shareActivities");
         PageInfo<VoObject> retObj=new PageInfo<>(shareActivities);
         retObj.setPageNum(shareActivityPos.getPageNum());
         retObj.setPageSize(shareActivityPos.getPageSize());
         retObj.setTotal(shareActivityPos.getTotal());
         retObj.setPages(shareActivityPos.getPages());
+        logger.debug("Successfully get retObj");
         return new ReturnObject<>(retObj);
     }
 

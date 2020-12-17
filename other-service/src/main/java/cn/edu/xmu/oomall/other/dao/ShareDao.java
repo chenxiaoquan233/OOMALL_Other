@@ -105,7 +105,7 @@ public class ShareDao implements InitializingBean {
         BeSharePoExample example=new BeSharePoExample();
         BeSharePoExample.Criteria criteria= example.createCriteria();
         if(userId!=null){
-            criteria.andCustomerIdEqualTo(userId);
+            criteria.andSharerIdEqualTo(userId);
         }
         if(skuId!=null){
             criteria.andGoodsSkuIdEqualTo(skuId);

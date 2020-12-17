@@ -141,8 +141,7 @@ public class ShareController {
             if(endTimeStr!=null)endTime=LocalDateTime.parse(endTimeStr,dateTimeFormatter);
         }
         catch (Exception ex){
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
+            logger.debug("时间格式错误");
         }
         if(page <= 0 || pageSize <= 0) {
             return Common.getNullRetObj(new ReturnObject<>(ResponseCode.FIELD_NOTVALID), httpServletResponse);
@@ -243,8 +242,7 @@ public class ShareController {
             if(endTimeStr!=null)endTime=LocalDateTime.parse(endTimeStr,dateTimeFormatter);
         }
         catch (Exception ex){
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
+            logger.debug("时间格式错误");
         }
         ReturnObject<PageInfo<VoObject>> retObj=shareService.getBeShared(userId, skuId,beginTime,endTime,page,pageSize);
         return Common.getPageRetObject(retObj);
@@ -277,8 +275,7 @@ public class ShareController {
             if(endTimeStr!=null)endTime=LocalDateTime.parse(endTimeStr,dateTimeFormatter);
         }
         catch (Exception ex){
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
+            logger.debug("时间格式错误");
         }
 
         if(shopId!=0) {
