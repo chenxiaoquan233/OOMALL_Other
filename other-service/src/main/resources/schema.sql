@@ -90,6 +90,7 @@ CREATE TABLE `aftersale_service` (
                                      `be_deleted` tinyint DEFAULT NULL,
                                      `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                      `gmt_modified` datetime DEFAULT NULL,
+                                     `order_id` bigint DEFAULT NULL,
                                      PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -113,7 +114,7 @@ CREATE TABLE `be_share` (
                             `gmt_modified` datetime DEFAULT NULL,
                             `share_activity_id` bigint DEFAULT NULL,
                             PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=450533 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=443406 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,7 +156,7 @@ CREATE TABLE `favourite_goods` (
                                    `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                    `gmt_modified` datetime DEFAULT NULL,
                                    PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3833740 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3818204 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -172,7 +173,7 @@ CREATE TABLE `foot_print` (
                               `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                               `gmt_modified` datetime DEFAULT NULL,
                               PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1245147 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1229611 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -210,7 +211,7 @@ CREATE TABLE `share` (
                          `gmt_modified` datetime DEFAULT NULL,
                          `share_activity_id` bigint DEFAULT NULL,
                          PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=458697 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=455134 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -231,7 +232,7 @@ CREATE TABLE `share_activity` (
                                   `gmt_modified` datetime DEFAULT NULL,
                                   `state` tinyint DEFAULT NULL,
                                   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=311259 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=307696 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -280,4 +281,4 @@ CREATE TABLE `time_segment` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-12-07 21:49:07
+-- Dump completed on 2020-12-15 12:21:56

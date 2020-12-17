@@ -64,11 +64,12 @@ public class AftersaleController {
     })
     @Audit
     @PostMapping("/orderItems/{id}/aftersales")
-    public Object createAftersale(@LoginUser Long userId, @Validated @RequestBody AftersaleVo vo, @PathVariable("id") Long orderItemId, BindingResult bindingResult) {
+    public Object createAftersale(@LoginUser Long userId, @Validated @RequestBody AftersaleVo vo, BindingResult bindingResult, @PathVariable("id") Long orderItemId) {
+        logger.debug("hereherheere");
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(null != object) {
             logger.debug("Validate failed");
-            return ResponseCode.FIELD_NOTVALID;
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
         }
 
         Object retObject = aftersaleService.createAftersale(vo, orderItemId, userId);
@@ -404,5 +405,10 @@ public class AftersaleController {
             return ResponseUtil.fail(responseCode);
         }
         return ResponseUtil.ok(responseCode);
+    }
+
+    @GetMapping("/test")
+    public void test() {
+        aftersaleService.test();
     }
 }

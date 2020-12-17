@@ -154,8 +154,12 @@ public class AftersaleBo implements VoObject {
         this.id = po.getId();
 
         //TODO dubbo
-        AftersaleDto aftersaleDTO = new AftersaleDto(1L, "tset", 2L, "ttt", 10L, 20);
-        //AftersaleDto aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(this.orderItemId);
+        //AftersaleDto aftersaleDTO = new AftersaleDto(1L, "tset", 2L, "ttt", 10L, 20);
+        System.out.println("before dubbo 123123");
+        AftersaleDto aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(this.orderItemId);
+        if(aftersaleDTO == null) System.out.println("Null here!!!!!!!!!!");
+        System.out.println("DTO: " + aftersaleDTO.toString());
+        System.out.println("after dubbo");
 
         this.orderId = aftersaleDTO.getOrderId();
         this.orderSn = aftersaleDTO.getOrderSn();

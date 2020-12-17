@@ -142,6 +142,7 @@ public class AftersaleService {
     }
 
     public void test() {
+        logger.debug("before dubbo");
         iDubboOrderService.createExchangeOrder(
                 new ExchangeOrderDto(
                         112L,
@@ -152,6 +153,7 @@ public class AftersaleService {
                         "testuser",
                         0L,
                         "this is addr"));
+        logger.debug("after dubbo");
     }
 
     public ResponseCode adminReceive(Long aftersaleId, Long shopId, AftersaleReceiveVo vo) {

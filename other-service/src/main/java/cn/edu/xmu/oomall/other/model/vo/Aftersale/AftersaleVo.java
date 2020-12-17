@@ -14,9 +14,9 @@ import javax.validation.constraints.*;
 @ApiModel(description = "售后传值对象")
 @Data
 public class AftersaleVo {
-    @Max(2)
-    @Min(0)
-    @NotNull
+    @Max(value = 2, message = "asdasd")
+    @Min(value = 0, message = "12213")
+    @NotNull(message = "testtest")
     @ApiModelProperty(name = "售后类别", value = "0")
     private Integer type;
 
