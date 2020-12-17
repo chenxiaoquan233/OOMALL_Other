@@ -92,7 +92,6 @@ public class AdvertiseDao {
         return ResponseCode.OK;
     }
 
-
     public ResponseCode deleteAdvertisementById(Long id) {
         try {
             advertisementPoMapper.deleteByPrimaryKey(id);
@@ -127,6 +126,7 @@ public class AdvertiseDao {
         else return timePoList.get(0);
     }
 
+    /*根据segId获得广告 List*/
     public List<AdvertisementPo> getAdvertisements(Long segId) {
         AdvertisementPoExample example = new AdvertisementPoExample();
         AdvertisementPoExample.Criteria criteria=example.createCriteria();
@@ -139,12 +139,14 @@ public class AdvertiseDao {
             return advertisementPoList.subList(0,8);
     }
 
+    /*根据Id查广告*/
     public AdvertiseBo getAdvertiseById(Long id){
         AdvertisementPo po = advertisementPoMapper.selectByPrimaryKey(id);
         if(po == null)return null;
         return new AdvertiseBo(po);
     }
 
+    /*根据segId获得广告 page*/
     public List<AdvertisementPo> getAdvertiseByTimeSegmentId(Long id, LocalDate beginDate, LocalDate endDate,Integer page, Integer pageSize) {
         PageHelper.startPage(page,pageSize,true,true,null);
         AdvertisementPoExample example = new AdvertisementPoExample();
@@ -162,58 +164,26 @@ public class AdvertiseDao {
             return advertisementPoList.subList(0,8);
     }
 
-    public ResponseCode createAdvertiseByTimeSegId(long segId, AdvertiseBo bo) {
-//        AdvertisementPoExample example=new AdvertisementPoExample();
-//        AdvertisementPoExample.Criteria criteria=example.createCriteria();
-//        criteria.andSegIdEqualTo(segId);
-//        List<AdvertisementPo> advertisementPoList=advertisementPoMapper.selectByExample(example);
-//        if(advertisementPoList.size()>=8)return ResponseCode.ADVERTISEMENT_OUTLIMIT;
-//        AdvertisementPo po;
-//        try{po = bo.getAdvertisePo();
-//        po.setSegId(segId);
-//        advertisementPoMapper.insert(po);}
-//        catch(Exception e){return ResponseCode.INTERNAL_SERVER_ERR;}
-//        return ResponseCode.OK;
-        try {
-            advertisementPoMapper.insert(bo.getAdvertisePo());
-        }catch (Exception e){
-            return  ResponseCode.INTERNAL_SERVER_ERR;
-        }return ResponseCode.OK;
+    /*根据id查seg*/
+    public TimeSegmentPo getTimeSeg(Long segId){
+        TimeSegmentPo po = timeSegmentPoMapper.selectByPrimaryKey(segId);
+        if(po == null)return null;
+        return po;
     }
 
-    public ResponseCode createAdvertiseByTimeSegIdAndId(long id, long tid) {
-//        AdvertisementPoExample example = new AdvertisementPoExample();
-//        AdvertisementPoExample.Criteria criteria=example.createCriteria();
-//        criteria.andSegIdEqualTo(id);
-//        List<AdvertisementPo> advertisementPoList=advertisementPoMapper.selectByExample(example);
-//        AdvertisementPo po=advertisementPoMapper.selectByPrimaryKey(id);
-//        if(po!=null && po.getSegId()==tid)return ResponseCode.OK;
-//        if(advertisementPoList.size()>=8)return ResponseCode.ADVERTISEMENT_OUTLIMIT;
-//        try {
-//            if (po == null) {
-//                po = new AdvertisementPo();
-//                po.setSegId(tid);
-//                advertisementPoMapper.insert(po);
-//            } else {
-//                po.setSegId(tid);
-//                advertisementPoMapper.updateByPrimaryKey(po);
-//            }
-//            return ResponseCode.OK;
-//        }catch (Exception e){
-//            return ResponseCode.INTERNAL_SERVER_ERR;
-//        }
-        AdvertisementPo po = advertisementPoMapper.selectByPrimaryKey(id);
-        try{
-            if(po==null){
-                po = new AdvertisementPo();
-                po.setId(id);
-                po.setSegId(tid);
-                advertisementPoMapper.insert(po);
-            }else{
-                po.setSegId(id);
-                advertisementPoMapper.updateByPrimaryKey(po);
-            }
-            return ResponseCode.OK;
-        }catch (Exception e){return ResponseCode.INTERNAL_SERVER_ERR;}
+
+    public AdvertiseBo createAdvertiseInTimeSegId(Long segId, AdvertiseBo bo) {
+        AdvertisementPo advertisementPo=bo.getAdvertisePo();
+        advertisementPo.setSegId(segId);
+        advertisementPoMapper.insertSelective(advertisementPo);
+        return new AdvertiseBo(advertisementPo);
+    }
+
+    public AdvertiseBo addAdvertiseToSeg(Long segId, Long adId) {
+        AdvertisementPo advertisementPo=new AdvertisementPo();
+        advertisementPo.setId(adId);
+        advertisementPo.setSegId(segId);
+        advertisementPoMapper.updateByPrimaryKeySelective(advertisementPo);
+        return new AdvertiseBo(advertisementPo);
     }
 }

@@ -61,7 +61,7 @@ public class AdvertiseController {
     })
     @Audit
     @PutMapping("/shops/{did}/advertisement/{id}/default")
-    public Object setAdvertisementDefaultById(@LoginUser Long user, @PathVariable("did") Integer did, @PathVariable("id") Integer id){
+    public Object setAdvertisementDefaultById(@LoginUser Long user, @PathVariable("did") Long did, @PathVariable("id") Long id){
         ResponseCode responseCode=advertiseService.setAdvertisementDefaultById(id);
         if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST))
         {
@@ -99,7 +99,7 @@ public class AdvertiseController {
     })
     @Audit
     @DeleteMapping("/shops/{did}/advertisement/{id}")
-    public Object deleteAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id){
+    public Object deleteAdvertisementById(@LoginUser Long user, @PathVariable("id") Long id){
         ResponseCode responseCode=advertiseService.deleteAdvertisementById(id);
         if(responseCode.equals(ResponseCode.OK))
             return ResponseUtil.ok();
@@ -131,7 +131,7 @@ public class AdvertiseController {
     })
     @Audit
     @PostMapping("/shops/{did}/advertisement/{id}/uploadImg")
-    public Object uploadAdvertisementImgById(@LoginUser Long user, @PathVariable("id") Integer id, @RequestParam("img")MultipartFile multipartFile){
+    public Object uploadAdvertisementImgById(@LoginUser Long user, @PathVariable("id") Long id, @RequestParam("img")MultipartFile multipartFile){
         ResponseCode responseCode=advertiseService.uploadAdvertiseImgById(id,multipartFile);
         if(responseCode.equals(ResponseCode.OK))
             return ResponseUtil.ok();
@@ -151,7 +151,7 @@ public class AdvertiseController {
     })
     @Audit
     @PutMapping("/shops/{did}/advertisement/{id}/onshelves")
-    public Object onshelvesAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id){
+    public Object onshelvesAdvertisementById(@LoginUser Long user, @PathVariable("id") Long id){
         ResponseCode responseCode=advertiseService.onshelvesAdvertisementById(id);
         if(responseCode.equals(ResponseCode.OK))
             return ResponseUtil.ok();
@@ -170,7 +170,7 @@ public class AdvertiseController {
     })
     @Audit
     @PutMapping("/shops/{did}/advertisement/{id}/offshelves")
-    public Object offshelvesAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id){
+    public Object offshelvesAdvertisementById(@LoginUser Long user, @PathVariable("id") Long id){
         ResponseCode responseCode=advertiseService.offshelvesAdvertisementById(id);
         if(responseCode.equals(ResponseCode.OK))
             return ResponseUtil.ok();
@@ -189,7 +189,7 @@ public class AdvertiseController {
     })
     @Audit
     @PutMapping("/shops/{did}/advertisement/{id}/audit")
-    public Object auditAdvertisementById(@LoginUser Long user, @PathVariable("id") Integer id){
+    public Object auditAdvertisementById(@LoginUser Long user, @PathVariable("id") Long id){
         ResponseCode responseCode=advertiseService.auditAdvertisementById(id);
         if(responseCode.equals(ResponseCode.OK))
             return ResponseUtil.ok();
@@ -210,7 +210,7 @@ public class AdvertiseController {
     })
     @Audit
     @GetMapping("/shops/{did}/timesegments/{id}/advertisement")
-    public Object getAdvertisementsByTimeSegmentId(@LoginUser Long user,@PathVariable("did") Integer did, @PathVariable("id") Integer id,
+    public Object getAdvertisementsByTimeSegmentId(@LoginUser Long user,@PathVariable("did") Long did, @PathVariable("id") Long id,
                                                    @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate beginDate,
                                                    @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate endDate,
                                                    @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize){
@@ -232,11 +232,11 @@ public class AdvertiseController {
     })
     @Audit
     @PostMapping("/shops/{did}/timesegments/{id}/advertisement")
-    public Object createAdvertisementsByTimeSegmentId(@LoginUser Long user,  @PathVariable("did") Integer did, @PathVariable("id") Integer id, @RequestBody AdvertiseVo advertiseVo){
-        ResponseCode responseCode=advertiseService.createAdvertiseByTimeSegId(id,advertiseVo);
-        if(responseCode.equals(ResponseCode.OK))
-            return ResponseUtil.ok();
-        else return ResponseUtil.fail(responseCode);
+    public Object createAdvertisementsByTimeSegmentId(@LoginUser Long user,  @PathVariable("did") Long did, @PathVariable("id") Long id, @RequestBody AdvertiseVo advertiseVo){
+        Object ret=advertiseService.createAdvertiseByTimeSegId(id,advertiseVo);
+        if(ret.equals(ResponseCode.RESOURCE_ID_NOTEXIST))
+            return ret;
+        return ResponseUtil.ok(ret);
     }
 
 
@@ -254,10 +254,10 @@ public class AdvertiseController {
     })
     @Audit
     @PostMapping("/shops/{did}/timesegments/{tid}/advertisement/{id}")
-    public Object createAdvertisementsByTimeSegmentIdAndId(@LoginUser Long user, @PathVariable("did") Integer did, @PathVariable("tid") Integer tid, @PathVariable("id") Integer id){
-        ResponseCode responseCode=advertiseService.createAdvertiseByTimeSegIdAndId(id,tid);
-        if(responseCode.equals(ResponseCode.OK))
-            return ResponseUtil.ok();
-        else return ResponseUtil.fail(responseCode);
+    public Object createAdvertisementsByTimeSegmentIdAndId(@LoginUser Long user, @PathVariable("did") Long did, @PathVariable("tid") Long tid, @PathVariable("id") Long id){
+        Object ret=advertiseService.addAdvertiseToSeg(tid,id);
+        if(ret.equals(ResponseCode.RESOURCE_ID_NOTEXIST))
+            return ret;
+        return ResponseUtil.ok(ret);
     }
 }
