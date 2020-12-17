@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -90,8 +91,6 @@ public class AdvertiseController {
             logger.debug("UserSignUpVo:" + advertiseVo);
             return object;
         }
-        System.out.println("0");
-        System.out.println(advertiseVo);
         ResponseCode responseCode=advertiseService.updateAdvertisementById(id,advertiseVo);
         if(responseCode.equals(ResponseCode.OK))
             return ResponseUtil.ok();
@@ -109,10 +108,7 @@ public class AdvertiseController {
     @Audit
     @DeleteMapping("/shops/{did}/advertisement/{id}")
     public Object deleteAdvertisementById(@LoginUser Long user, @PathVariable("id") Long id){
-        ResponseCode responseCode=advertiseService.deleteAdvertisementById(id);
-        if(responseCode.equals(ResponseCode.OK))
-            return ResponseUtil.ok();
-        else return ResponseUtil.fail(responseCode);
+        return advertiseService.deleteAdvertisementById(id);
     }
 
 
@@ -237,11 +233,16 @@ public class AdvertiseController {
     })
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功"),
-            @ApiResponse(code=603, message="达到时段广告上限")
     })
     @Audit
     @PostMapping("/shops/{did}/timesegments/{id}/advertisement")
-    public Object createAdvertisementsByTimeSegmentId(@LoginUser Long user,  @PathVariable("did") Long did, @PathVariable("id") Long id, @RequestBody AdvertiseVo advertiseVo){
+    public Object createAdvertisementsByTimeSegmentId(@LoginUser Long user,  @PathVariable("did") Long did, @PathVariable("id") Long id, @Validated @RequestBody AdvertiseVo advertiseVo,BindingResult bindingResult){
+        Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if(null != object) {
+            logger.debug("Validate failed");
+            logger.debug("UserSignUpVo:" + advertiseVo);
+            return object;
+        }
         Object ret=advertiseService.createAdvertiseByTimeSegId(id,advertiseVo);
         if(ret.equals(ResponseCode.RESOURCE_ID_NOTEXIST))
             return ret;
@@ -265,7 +266,7 @@ public class AdvertiseController {
     public Object createAdvertisementsByTimeSegmentIdAndId(@LoginUser Long user, @PathVariable("did") Long did, @PathVariable("tid") Long tid, @PathVariable("id") Long id){
         Object ret=advertiseService.addAdvertiseToSeg(tid,id);
         if(ret.equals(ResponseCode.RESOURCE_ID_NOTEXIST))
-            return ret;
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST);
         return ResponseUtil.ok(ret);
     }
 }

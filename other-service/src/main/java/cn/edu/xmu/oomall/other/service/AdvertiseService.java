@@ -74,8 +74,15 @@ public class AdvertiseService {
     }
 
     public ResponseCode updateAdvertisementById(Long id,AdvertiseVo advertiseVo){
+        AdvertiseBo oldBo = advertiseDao.getAdvertiseById(id);
+        if(oldBo==null)
+            return ResponseCode.RESOURCE_ID_NOTEXIST;
         AdvertiseBo bo=advertiseVo.createBo();
         bo.setId(id);
+        if(bo.getBeginDate()==null)
+            bo.setBeginDate(oldBo.getBeginDate());
+        if(bo.getEndDate()==null)
+            bo.setEndDate(oldBo.getEndDate());
         return advertiseDao.updateAdvertisementById(bo);
     }
 
@@ -141,7 +148,10 @@ public class AdvertiseService {
         TimeSegmentPo segPo=advertiseDao.getTimeSeg(segId);
         if(segPo==null)
             return ResponseCode.RESOURCE_ID_NOTEXIST;
-        return advertiseDao.addAdvertiseToSeg(segId,adId).createVo();
+        AdvertiseBo advertiseBo= advertiseDao.addAdvertiseToSeg(segId,adId);
+        if(advertiseBo==null)
+            return ResponseCode.RESOURCE_ID_NOTEXIST;
+        return advertiseBo.createVo();
     }
 
     public ResponseCode onshelvesAdvertisementById(Long id) {

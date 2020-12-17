@@ -72,11 +72,13 @@ public class AdvertiseBo implements VoObject {
         this.link= advertisementPo.getLink();
         this.content= advertisementPo.getContent();
         this.imageUrl= advertisementPo.getImageUrl();
-        this.state= State.getTypeByCode((int)advertisementPo.getState());
+        if(advertisementPo.getState()!=null)
+            this.state= State.getTypeByCode(advertisementPo.getState().intValue());
         this.weight= advertisementPo.getWeight();
         this.beginDate=advertisementPo.getBeginDate();
         this.endDate=advertisementPo.getEndDate();
-        this.repeats=advertisementPo.getRepeats()==(byte)1;
+        if(advertisementPo.getRepeats()!=null)
+            this.repeats=advertisementPo.getRepeats()==(byte)1;
         this.message= advertisementPo.getMessage();
         if(advertisementPo.getBeDefault()!=null)
             this.beDefault= advertisementPo.getBeDefault()==(byte)1;
@@ -92,7 +94,7 @@ public class AdvertiseBo implements VoObject {
         ret.setLink(link);
         ret.setContent(content);
         ret.setImagePath(imageUrl);
-        ret.setState((byte)state.getCode().intValue());
+        ret.setState(state.getCode().byteValue());
         if(weight!=null)
             ret.setWeight(weight.toString());
         ret.setBeginDate(beginDate);
@@ -117,7 +119,7 @@ public class AdvertiseBo implements VoObject {
         ret.setContent(content);
         ret.setImageUrl(imageUrl);
         if(state!=null)
-            ret.setState((byte)state.getCode().intValue());
+            ret.setState(state.getCode().byteValue());
         ret.setWeight(weight);
         ret.setBeginDate(beginDate);
         ret.setEndDate(endDate);
