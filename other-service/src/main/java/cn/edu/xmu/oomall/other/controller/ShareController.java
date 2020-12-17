@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
  * @version 创建时间：2020/12/5 下午2:57
  */
 @RestController /*Restful的Controller对象*/
-@RequestMapping(value="/share", produces = "application/json;charset=UTF-8")
+@RequestMapping(produces = "application/json;charset=UTF-8")
 //@RequestMapping(produces = "application/json;charset=UTF-8")
 public class ShareController {
     private static final Logger logger = LoggerFactory.getLogger(ShareController.class);
@@ -47,7 +47,7 @@ public class ShareController {
     //Done:接受点击分享连接信息
     //以完成：下单后更改分享成功
     //Done:七天后返回返点
-    //TODO:分享活动加入redis中 ps:在下线或上限活动时，记得清空对应商品的缓存
+    //Done:分享活动加入redis中 ps:在下线或上限活动时，记得清空对应商品的缓存
     //DONE:支付时扣除返点
     //Topic
     /***
@@ -100,6 +100,7 @@ public class ShareController {
         }
         //logger.info("read this?"+ JacksonUtil.toJson(shareActivityVo));
         logger.debug(JacksonUtil.toJson(shareActivityVo));
+        httpServletResponse.setStatus(HttpServletResponse.SC_CREATED);
         return Common.getRetObject(shareService.addShareActivity(shopId,skuId,shareActivityVo));
     }
 
@@ -195,12 +196,12 @@ public class ShareController {
             ShopDTO shopDTO = goodsService.getShopBySKUId(skuId);
             if(shopDTO==null){
                 httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return ResponseUtil.fail(ResponseCode.OK, "资源不存在");
+                return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST, "资源不存在");
             }
             Long realShopId = shopDTO.getId();
             if (!realShopId.equals(shopId)) {
                 httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return ResponseUtil.fail(ResponseCode.OK, "路径资源不匹配");
+                return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST, "路径资源不匹配");
             }
         }
         ReturnObject<PageInfo<VoObject>> ret=shareService.findShares(skuId, null,null,page,pageSize);
@@ -249,12 +250,12 @@ public class ShareController {
             ShopDTO shopDTO = goodsService.getShopBySKUId(skuId);
             if(shopDTO==null){
                 httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return ResponseUtil.fail(ResponseCode.OK, "资源不存在");
+                return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST, "资源不存在");
             }
             Long realShopId = shopDTO.getId();
             if (!realShopId.equals(shopId)) {
                 httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return ResponseUtil.fail(ResponseCode.OK, "路径资源不匹配");
+                return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST, "路径资源不匹配");
             }
         }
         ReturnObject<PageInfo<VoObject>> retObj=shareService.getBeShared(null, skuId,beginTime,endTime,page,pageSize);
@@ -276,7 +277,7 @@ public class ShareController {
                                          @RequestBody ShareActivityVo vo){
         if(!CalcPointFactory.validateStrategy(vo.getStrategy())){
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return ResponseUtil.fail(ResponseCode.OK,"分享策略不合法");
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID,"分享策略不合法");
         }
         ResponseCode ret=shareService.updateShareActivity(shopId,shareActivityId,vo);
         if (ret != ResponseCode.INTERNAL_SERVER_ERR && ret != ResponseCode.OK) {
@@ -310,7 +311,7 @@ public class ShareController {
         ReturnObject ret=shareService.getShareLink(skuId,userId);
         if(ret==null){
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return ResponseUtil.fail(ResponseCode.OK,"没有有效的活动");
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST,"没有有效的活动");
         }
         return Common.getRetObject(ret);
     }
