@@ -79,10 +79,7 @@ public class AdvertiseDao {
     }
 
     public ResponseCode updateAdvertisementById(AdvertiseBo advertiseBo){
-        System.out.println("111");
         AdvertisementPo advertisementPo = advertiseBo.getAdvertisePo();
-        System.out.println("222");
-        System.out.println(advertisementPo.getBeginDate());
         advertisementPo.setGmtModified(LocalDateTime.now());
         try{
             advertisementPoMapper.updateByPrimaryKeySelective(advertisementPo);
@@ -93,13 +90,14 @@ public class AdvertiseDao {
     }
 
     public ResponseCode deleteAdvertisementById(Long id) {
+        int deleteNum=0;
         try {
-            advertisementPoMapper.deleteByPrimaryKey(id);
+            deleteNum=advertisementPoMapper.deleteByPrimaryKey(id);
         }
         catch (Exception e){
             return ResponseCode.INTERNAL_SERVER_ERR;
         }
-        return ResponseCode.OK;
+        return deleteNum==1?ResponseCode.OK:ResponseCode.RESOURCE_ID_NOTEXIST;
     }
 
 
@@ -167,21 +165,24 @@ public class AdvertiseDao {
     /*根据id查seg*/
     public TimeSegmentPo getTimeSeg(Long segId){
         TimeSegmentPo po = timeSegmentPoMapper.selectByPrimaryKey(segId);
-        if(po == null)return null;
+        if(po == null||po.getType().equals((byte)1))return null;
         return po;
     }
 
 
     public AdvertiseBo createAdvertiseInTimeSegId(Long segId, AdvertiseBo bo) {
         AdvertisementPo advertisementPo=bo.getAdvertisePo();
+        advertisementPo.setGmtCreate(LocalDateTime.now());
         advertisementPo.setSegId(segId);
+        advertisementPo.setState(AdvertiseBo.State.BACK.getCode().byteValue());
         advertisementPoMapper.insertSelective(advertisementPo);
         return new AdvertiseBo(advertisementPo);
     }
 
     public AdvertiseBo addAdvertiseToSeg(Long segId, Long adId) {
-        AdvertisementPo advertisementPo=new AdvertisementPo();
-        advertisementPo.setId(adId);
+        AdvertisementPo advertisementPo=advertisementPoMapper.selectByPrimaryKey(adId);
+        if(advertisementPo==null)
+            return null;
         advertisementPo.setSegId(segId);
         advertisementPoMapper.updateByPrimaryKeySelective(advertisementPo);
         return new AdvertiseBo(advertisementPo);

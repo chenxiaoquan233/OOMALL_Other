@@ -141,7 +141,10 @@ public class AdvertiseService {
         TimeSegmentPo segPo=advertiseDao.getTimeSeg(segId);
         if(segPo==null)
             return ResponseCode.RESOURCE_ID_NOTEXIST;
-        return advertiseDao.addAdvertiseToSeg(segId,adId).createVo();
+        AdvertiseBo advertiseBo= advertiseDao.addAdvertiseToSeg(segId,adId);
+        if(advertiseBo==null)
+            return ResponseCode.RESOURCE_ID_NOTEXIST;
+        return advertiseBo.createVo();
     }
 
     public ResponseCode onshelvesAdvertisementById(Long id) {

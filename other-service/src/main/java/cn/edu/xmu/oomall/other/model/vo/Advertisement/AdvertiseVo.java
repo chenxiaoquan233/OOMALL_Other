@@ -41,7 +41,6 @@ public class AdvertiseVo {
     @ApiModelProperty(name = "repeat", value = "0")
     private Boolean repeat;
 
-    @NotNull(message = "链接不能为空")
     @ApiModelProperty(name = "link", value = "https://www.baidu.com")
     private String link;
 
