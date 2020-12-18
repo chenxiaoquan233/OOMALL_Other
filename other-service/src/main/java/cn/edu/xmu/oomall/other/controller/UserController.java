@@ -52,7 +52,6 @@ public class UserController {
      * 获得买家的所有状态
      * @return Object
      */
-    @Audit
     @GetMapping("/states")
     public Object getAllUserState (){
         List<UserStateRetVo> states = Arrays.stream(UserBo.State.values()).map(UserBo.State::getCode).map(UserStateRetVo::new).collect(Collectors.toList());

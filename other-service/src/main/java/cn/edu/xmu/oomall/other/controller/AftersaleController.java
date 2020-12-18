@@ -9,6 +9,7 @@ import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.oomall.other.model.vo.Aftersale.*;
 import cn.edu.xmu.oomall.other.service.AftersaleService;
 import cn.edu.xmu.oomall.other.util.PageInfoHelper;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 /**
  * @author XQChen
@@ -45,7 +49,6 @@ public class AftersaleController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @Audit
     @GetMapping("/aftersales/states")
     public Object getAftersaleAllStates() {
         logger.debug("getAfterSaleAllStates");
@@ -85,7 +88,7 @@ public class AftersaleController {
             return ResponseUtil.ok();
         }
         else {
-            return ResponseUtil.ok((ResponseCode) retObject);
+            return ResponseUtil.ok(retObject);
         }
     }
 
@@ -106,12 +109,27 @@ public class AftersaleController {
     @GetMapping("/aftersales")
     public Object getAllAftersale(
             @LoginUser Long userId,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime beginTime,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime,
+            @RequestParam(required = false) String beginTimeStr,
+            @RequestParam(required = false) String endTimeStr,
             @RequestParam(required = false, defaultValue = "1") @Min(1) Integer page,
             @RequestParam(required = false, defaultValue = "10") @Min(1) Integer pageSize,
             @RequestParam(required = false) @Min(0) @Max(2) Integer type,
             @RequestParam(required = false) @Min(0) @Max(9) Integer state) {
+        LocalDateTime beginTime = null, endTime = null;
+        try{
+            logger.debug("beginTime:"+beginTimeStr+"endTime:"+endTimeStr);
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-ddTHH:mm:ss");
+            if(beginTimeStr != null) beginTime = LocalDateTime.parse(beginTimeStr, dateTimeFormatter);
+            if(endTimeStr != null) endTime = LocalDateTime.parse(endTimeStr,dateTimeFormatter);
+        }
+        catch (Exception ex){
+            logger.debug("时间格式错误");
+            PageInfo pg=new PageInfo(new ArrayList());
+            pg.setPageSize(pageSize);
+            pg.setPageNum(page);
+            return ResponseUtil.ok(PageInfoHelper.process(pg));
+        }
+
         return ResponseUtil.ok(PageInfoHelper.process(aftersaleService.getAllAftersales(userId, null, beginTime, endTime, page, pageSize, type, state)));
     }
 
@@ -134,16 +152,25 @@ public class AftersaleController {
             @LoginUser Long userId,
             @Depart Long did,
             @PathVariable("id") Long shopId,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime beginTime,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime,
-            @RequestParam(required = false, defaultValue = "1") @Min(1) Integer page,
-            @RequestParam(required = false, defaultValue = "10") @Min(1) Integer pageSize,
-            @RequestParam(required = false) @Min(0) @Max(2) Integer type,
-            @RequestParam(required = false) @Min(0) @Max(2) Integer state) {
-
-        if(!did.equals(0L) && !did.equals(shopId)) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_OUTSCOPE);
+            @RequestParam(required = false) String beginTimeStr,
+            @RequestParam(required = false) String endTimeStr,
+            @RequestParam(required = false, defaultValue = "1") @Min(1) @NotNull Integer page,
+            @RequestParam(required = false, defaultValue = "10") @Min(1) @NotNull Integer pageSize,
+            @RequestParam(required = false) @Min(0) @Max(2) @NotNull Integer type,
+            @RequestParam(required = false) @Min(0) @Max(2) @NotNull Integer state) {
+        LocalDateTime beginTime=null,endTime=null;
+        try{
+            logger.debug("beginTime:"+beginTimeStr+"endTime:"+endTimeStr);
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+            if(beginTimeStr!=null) beginTime = LocalDateTime.parse(beginTimeStr, dateTimeFormatter);
+            if(endTimeStr!=null) endTime = LocalDateTime.parse(endTimeStr,dateTimeFormatter);
+        }
+        catch (Exception ex){
+            logger.debug("时间格式错误");
+            PageInfo pg=new PageInfo(new ArrayList());
+            pg.setPageSize(pageSize);
+            pg.setPageNum(page);
+            return ResponseUtil.ok(PageInfoHelper.process(pg));
         }
 
         return ResponseUtil.ok(PageInfoHelper.process(aftersaleService.getAllAftersales(userId, shopId, beginTime, endTime, page, pageSize, type, state)));
@@ -192,7 +219,15 @@ public class AftersaleController {
     })
     @Audit
     @PutMapping("/aftersales/{id}")
-    public Object modifyAftersaleById(@LoginUser Long userId, @PathVariable("id") Long aftersaleId, @Validated AftersaleModifyVo vo) {
+    public Object modifyAftersaleById(@LoginUser Long userId, @PathVariable("id") Long aftersaleId, @Validated @RequestBody AftersaleModifyVo vo, BindingResult bindingResult) {
+        Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if(null != object) {
+            logger.debug("Validate failed");
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
+        }
+
+        logger.debug(vo.toString());
+
         ResponseCode responseCode = aftersaleService.modifyAftersaleById(userId, aftersaleId, vo);
 
         logger.debug(responseCode.getMessage());
@@ -251,7 +286,7 @@ public class AftersaleController {
             logger.debug("Validate failed");
             logger.debug("UserSignUpVo:" + vo);
 
-            return ResponseCode.FIELD_NOTVALID;
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
         }
 
         ResponseCode responseCode = aftersaleService.addWayBillNumber(userId, id, vo.getLogSn());
@@ -305,21 +340,24 @@ public class AftersaleController {
     @Audit
     @GetMapping("/shops/{shopId}/aftersales/{id}")
     public Object adminGetAftersaleById(@LoginUser Long userId, @Depart Long did, @PathVariable("shopId") Long shopId, @PathVariable("id") Long id) {
-        if(!did.equals(shopId)) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_OUTSCOPE);
-        }
-
         Object object = aftersaleService.adminGetAftersaleById(shopId, id);
+
+        logger.debug("object: " + object);
+
         if(object.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail((ResponseCode) object);
+        }
+        if(object.equals(ResponseCode.RESOURCE_ID_OUTSCOPE)) {
+            logger.debug("outscope");
+            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return ResponseUtil.fail((ResponseCode) object);
         }
         if(object.equals(ResponseCode.OK)) {
             return ResponseUtil.ok();
         }
         else {
-            return ResponseUtil.fail((ResponseCode) object);
+            return ResponseUtil.ok(object);
         }
     }
 
@@ -347,12 +385,7 @@ public class AftersaleController {
             logger.debug("Validate failed");
             logger.debug("UserSignUpVo:" + vo);
 
-            return object;
-        }
-
-        if(!did.equals(0L) && !did.equals(shopId)) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_OUTSCOPE);
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
         }
 
         ResponseCode responseCode = aftersaleService.adminConfirm(id, shopId, vo);
@@ -386,17 +419,12 @@ public class AftersaleController {
             @Depart Long did,
             @PathVariable("shopId") Long shopId,
             @PathVariable("id") Long id,
-            @RequestBody AftersaleReceiveVo vo,
+            @Validated @RequestBody AftersaleReceiveVo vo,
             BindingResult bindingResult) {
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(null != object) {
             logger.debug("Validate failed");
-            return ResponseCode.FIELD_NOTVALID;
-        }
-
-        if(!did.equals(shopId)) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return ResponseUtil.fail(ResponseCode.AUTH_NOT_ALLOW);
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
         }
 
         ResponseCode responseCode = aftersaleService.adminReceive(id, shopId, vo);
@@ -437,15 +465,10 @@ public class AftersaleController {
             logger.debug("Validate failed");
             logger.debug("UserSignUpVo:" + vo);
 
-            return ResponseCode.FIELD_NOTVALID;
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
         }
 
-        if(!did.equals(shopId)) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_OUTSCOPE);
-        }
-
-        ResponseCode responseCode = aftersaleService.adminDeliver(id, shopId, vo.getLogSn());
+        ResponseCode responseCode = aftersaleService.adminDeliver(id, shopId, vo.getShopLogSn());
 
         if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);

@@ -93,7 +93,7 @@ public class AftersaleService {
             Integer state) {
 
         PageInfo<AftersalePo> aftersalePos = aftersaleDao.getAllAftersales(userId, shopId, beginTime, endTime, page, pageSize, type, state);
-        PageInfo<AftersaleRetVo> aftersaleVos = new PageInfo<>(aftersalePos.getList().stream().map(AftersaleBo::new).map(x -> x.setDTO(iDubboOrderService.getAfterSaleByOrderItemId(x.getOrderItemId()))).map(AftersaleBo::createRetVo).collect(Collectors.toList()));
+        PageInfo<AftersaleRetVo> aftersaleVos = new PageInfo<>(aftersalePos.getList().stream().map(AftersaleBo::new).peek(x -> x.setDTO(iDubboOrderService.getAfterSaleByOrderItemId(x.getOrderItemId()))).map(AftersaleBo::createRetVo).collect(Collectors.toList()));
 
         aftersaleVos.setTotal(aftersalePos.getTotal());
         aftersaleVos.setPageSize(aftersalePos.getPageSize());
@@ -108,7 +108,13 @@ public class AftersaleService {
 
         if(aftersalePo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
         if(!aftersalePo.getCustomerId().equals(userId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
-        return new AftersaleBo(aftersalePo).setDTO(iDubboOrderService.getAfterSaleByOrderItemId(aftersalePo.getOrderItemId())).createSkuRetVo();
+
+        AftersaleBo bo = new AftersaleBo(aftersalePo);
+        AftersaleDto dto = iDubboOrderService.getAfterSaleByOrderItemId(aftersalePo.getOrderItemId());
+        bo.setDTO(dto);
+        logger.debug("bo:" + bo);
+        AftersaleSkuRetVo vo = bo.createSkuRetVo();
+        return vo;
     }
 
     public ResponseCode modifyAftersaleById(Long userId, Long aftersaleId, AftersaleModifyVo vo) {
@@ -118,8 +124,6 @@ public class AftersaleService {
         if(!aftersalePo.getCustomerId().equals(userId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
         if(!aftersalePo.getState().equals((byte) 0)) return ResponseCode.AFTERSALE_STATENOTALLOW;
 
-        logger.debug("herehiwuhreuiue");
-
         if(!(vo.getConsignee() == null) && !vo.getConsignee().isBlank()) aftersalePo.setConsignee(vo.getConsignee());
         if(!(vo.getDetail() == null) && !vo.getDetail().isBlank()) aftersalePo.setDetail(vo.getDetail());
         if(!(vo.getMobile() == null) && !vo.getMobile().isBlank()) aftersalePo.setMobile(vo.getMobile());
@@ -127,10 +131,7 @@ public class AftersaleService {
         if(!(vo.getReason() == null) && !vo.getReason().isBlank()) aftersalePo.setQuantity(vo.getQuantity());
         if(vo.getRegionId() != null) aftersalePo.setRegionId(vo.getRegionId());
 
-        logger.debug("asfbviubkj");
-
         aftersaleDao.updateAftersale(aftersalePo);
-        logger.debug("bsuidvbdiwuvb");
         return ResponseCode.OK;
     }
 
@@ -155,17 +156,23 @@ public class AftersaleService {
 
     public ResponseCode adminReceive(Long aftersaleId, Long shopId, AftersaleReceiveVo vo) {
         AftersalePo aftersalePo = aftersaleDao.getAftersaleById(aftersaleId);
-
         if(aftersalePo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
         if(!aftersalePo.getShopId().equals(shopId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
         if(!aftersalePo.getState().equals((byte) 2)) return ResponseCode.AFTERSALE_STATENOTALLOW;
+        logger.info("asocnasiucbasi");
+        logger.info("po:" + vo.getConfirm().equals(true));
 
         aftersalePo.setConclusion(vo.getConclusion());
-        if(vo.isConfirm()) {
+        if(vo.getConfirm().equals(true)) {
             if(aftersalePo.getType().equals(AftersaleBo.Type.RETURN.getCode().byteValue())) {
+                logger.info("sjikbiausbcoasivuyabi");
+                logger.info(aftersaleId.toString());
+                logger.info(aftersalePo.getOrderItemId().toString());
+                logger.info(aftersalePo.getQuantity().toString());
                 //TODO dubbo
                 iDubboPaymentService.createRefund(aftersaleId, aftersalePo.getOrderItemId(), aftersalePo.getQuantity());
                 aftersalePo.setState((byte) 3);
+                logger.debug("po here:" + aftersalePo);
             } else if(aftersalePo.getType().equals(AftersaleBo.Type.EXCHANGE.getCode().byteValue())) {
                 //TODO dubbo
                 iDubboOrderService.createExchangeOrder(
@@ -180,6 +187,9 @@ public class AftersaleService {
                                 aftersalePo.getDetail()));
                 aftersalePo.setState((byte) 4);
             }
+        }
+        else {
+            aftersalePo.setState((byte) 1);
         }
 
         aftersaleDao.updateAftersale(aftersalePo);
@@ -211,13 +221,17 @@ public class AftersaleService {
         if(aftersalePo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
         if(!aftersalePo.getShopId().equals(shopId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
 
-        return new AftersaleBo(aftersalePo).setDTO(iDubboOrderService.getAfterSaleByOrderItemId(aftersalePo.getOrderItemId())).createRetVo();
+        AftersaleBo bo = new AftersaleBo(aftersalePo);
+        AftersaleDto dto = iDubboOrderService.getAfterSaleByOrderItemId(aftersalePo.getOrderItemId());
+        bo.setDTO(dto);
+        logger.debug("bo:" + bo);
+        AftersaleSkuRetVo vo = bo.createSkuRetVo();
+        logger.debug("sduoivbdivbid" + vo);
+        return vo;
     }
 
     public ResponseCode confirmAftersaleEnd(Long userId, Long id) {
         AftersalePo aftersalePo = aftersaleDao.getAftersaleById(id);
-
-        System.out.println(aftersalePo.toString());
 
         if(aftersalePo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
         if(!aftersalePo.getCustomerId().equals(userId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
@@ -244,6 +258,7 @@ public class AftersaleService {
         AftersalePo aftersalePo = aftersaleDao.getAftersaleById(id);
 
         if(aftersalePo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if(aftersalePo.getBeDeleted().equals((byte) 1)) return ResponseCode.RESOURCE_ID_NOTEXIST;
         if(!aftersalePo.getCustomerId().equals(userId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
         if(aftersalePo.getState().equals((byte) 0) || aftersalePo.getState().equals((byte) 1)) {
             aftersalePo.setState((byte) 7);

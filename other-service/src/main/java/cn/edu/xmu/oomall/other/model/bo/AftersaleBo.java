@@ -3,14 +3,12 @@ package cn.edu.xmu.oomall.other.model.bo;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.dto.AftersaleDto;
 import cn.edu.xmu.oomall.other.model.vo.Aftersale.AftersaleSkuRetVo;
-import cn.edu.xmu.oomall.service.IDubboOrderService;
 import cn.edu.xmu.oomall.other.model.po.AftersalePo;
 import cn.edu.xmu.oomall.other.model.vo.Aftersale.AftersaleRetVo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.apache.dubbo.config.annotation.DubboReference;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -31,8 +29,8 @@ public class AftersaleBo implements VoObject {
      */
     public enum Type {
         EXCHANGE(0, "换货"),
-        MAINTAIN(1,"维修"),
-        RETURN(2, "退货");
+        MAINTAIN(2,"维修"),
+        RETURN(1, "退货");
 
         private static final Map<Integer, AftersaleBo.Type> typeMap;
 
@@ -150,7 +148,7 @@ public class AftersaleBo implements VoObject {
         this.id = po.getId();
     }
 
-    public AftersaleBo setDTO(AftersaleDto aftersaleDTO) {
+    public void setDTO(AftersaleDto aftersaleDTO) {
         System.out.println("DTO:" + aftersaleDTO);
 
         this.orderId = aftersaleDTO.getOrderId();
@@ -158,7 +156,7 @@ public class AftersaleBo implements VoObject {
         this.skuId = aftersaleDTO.getSkuId();
         this.skuName = aftersaleDTO.getSkuName();
 
-        return this;
+        System.out.println("this:" + this);
     }
 
     public AftersalePo createPo() {
@@ -211,6 +209,7 @@ public class AftersaleBo implements VoObject {
 
     public AftersaleSkuRetVo createSkuRetVo() {
         AftersaleSkuRetVo vo = new AftersaleSkuRetVo();
+
         vo.setSkuId(this.skuId);
         vo.setSkuName(this.skuName);
         vo.setConsignee(this.consignee);
@@ -229,6 +228,8 @@ public class AftersaleBo implements VoObject {
         vo.setShopLogSn(this.shopLogSn);
         vo.setState(this.state.getCode().byteValue());
         vo.setType(this.type.getCode().byteValue());
+
+        System.out.println("this is the end of create vo,get vo:" + vo);
 
         return vo;
     }

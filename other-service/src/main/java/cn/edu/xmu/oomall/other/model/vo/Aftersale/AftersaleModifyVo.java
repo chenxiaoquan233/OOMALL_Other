@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 /**
@@ -28,6 +30,6 @@ public class AftersaleModifyVo {
 
     private String consignee;
 
-    @Pattern(regexp = "[+]?[0-9*#]*")
+    @Pattern(regexp = "^[0-9]{11}$")
     private String mobile;
 }

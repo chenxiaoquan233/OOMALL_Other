@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class AftersaleReceiveVo {
     @NotNull
-    private boolean confirm;
+    private Boolean confirm;
 
     @NotBlank
     private String conclusion;

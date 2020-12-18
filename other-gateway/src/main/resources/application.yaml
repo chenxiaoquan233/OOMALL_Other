@@ -18,7 +18,7 @@ spring:
               - HEAD
               - OPTIONS
       routes:
-        - id: login
+        - id: adminlogin
           uri: http://localhost:8081/
           predicates:
             - Path=/adminusers,/adminusers/login
@@ -47,6 +47,26 @@ spring:
           filters:
             - PrefixPath=/share
             - Auth=authorization
+        - id: userWithToken
+          uri: http://localhost:9999
+          predicates:
+            - Path=/users,/users/password,/usr/all,/user/logout,/users/{id},/shops/{did}/users/{id}/ban,/shops/{did}/users/{id}/release
+          filters:
+            - Auth=authorization
+        - id: userWithToken
+          uri: http://localhost:9999
+          predicates:
+            - Path=/users/states,/users/password/reset
+        - id: aftersaleWithToken
+          uri: http://localhost:9999
+          predicates:
+            - Path=/orderItems/{id}/aftersales,/aftersales,/shops/{id}/aftersales,/aftersales/{id},/aftersales/{id}/sendback,/aftersale/{id}/confirm,/shops/{shopId}/aftersales/{id},/shops/{shopId}/aftersales/{id}/confirm,/shops/{shopId}/aftersales/{id}/receive,/shops/{shopId}/aftersales/{id}/deliver
+          filters:
+            - Auth=authorization
+        - id: aftersaleWithoutToken
+          uri: http://localhost:9999
+          predicates:
+            - Path=/aftersales/states
 management:
   endpoint:
     gateway:

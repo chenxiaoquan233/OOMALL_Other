@@ -19,7 +19,7 @@ import java.time.LocalTime;
 @Data
 public class UserSignUpVo {
     @NotBlank
-    @Pattern(regexp = "[+]?[0-9*#]*")
+    @Pattern(regexp = "[0-9]{11}")
     @ApiModelProperty(name = "手机号", value = "12300000000")
     private String mobile;
 

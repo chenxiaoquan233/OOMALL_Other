@@ -12,13 +12,12 @@ server:
 
 dubbo:
   registry:
-    address: nacos://47.115.162.144:8848
+    #address: nacos://47.115.162.144:8848
+    address: nacos://domi.xqchen.site:8848
   # 配置服务信息
   application:
     name: other
-    # 禁用QOS同一台机器可能会有端口冲突现象
-    qos-enable: false
-    qos-accept-foreign-ip: false
+    logger: log4j2
   # 配置注册中心
   # 设置协议-协议由提供方指定消费方被动接受
   protocol:
@@ -30,6 +29,10 @@ dubbo:
     check: false
 
 spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: domi.xqchen.site:8848
   main:
     # 解决Bean重复定义问题
     allow-bean-definition-overriding: true
