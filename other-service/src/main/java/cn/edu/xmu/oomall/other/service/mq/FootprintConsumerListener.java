@@ -37,9 +37,20 @@ public class FootprintConsumerListener implements RocketMQListener<String>, Rock
      */
     @Override
     public void onMessage(String message) {
-        FootPrintVo footPrintVo = JacksonUtil.toObj(message, FootPrintVo.class);
-        logger.debug("onMessage: got message footprint =" + footPrintVo);
-        footprintDao.addFootprint(footPrintVo);
+        try {
+            String[] ids = message.split("/");
+            if(ids.length!=2)return;
+            FootPrintVo footPrintVo = new FootPrintVo();
+            footPrintVo.setCustomerId(Long.parseLong(ids[0]));
+            footPrintVo.setGoodsSkuId(Long.parseLong(ids[1]));
+            logger.debug("onMessage: got message footprint =" + footPrintVo);
+            footprintDao.addFootprint(footPrintVo);
+        }
+        catch (Exception e)
+        {
+            logger.error("footprint message errors.");
+        }
+
     }
 
     @Override

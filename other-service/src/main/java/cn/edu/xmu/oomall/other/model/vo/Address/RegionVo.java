@@ -26,4 +26,12 @@ public class RegionVo {
         bo.setPostalCode(this.getPostalCode());
         return bo;
     }
+
+    public Boolean isFormated()
+    {
+        if(this.name.isBlank())return false;
+        if(this.postalCode.isBlank()||this.postalCode.length()!=6)return false;
+        return true;
+    }
+
 }

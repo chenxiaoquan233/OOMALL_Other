@@ -66,8 +66,8 @@ public class RegionBo implements VoObject {
         regionRetVo.setName(this.getName());
         //regionRetVo.setPostalCode(this.getPostalCode());
         regionRetVo.setState(this.getState().getCode());
-        regionRetVo.setGmtCreate("2020-12-17    11:57:02");
-        regionRetVo.setGmtModified("2020-12-17    11:57:02");
+        regionRetVo.setGmtCreate(this.getGmtCreate());
+        //regionRetVo.setGmtModified("2020-12-17    11:57:02");
         return regionRetVo;
     }
 

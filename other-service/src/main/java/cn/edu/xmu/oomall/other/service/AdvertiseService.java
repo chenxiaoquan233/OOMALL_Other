@@ -28,19 +28,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import com.github.sardine.Sardine;
-import com.github.sardine.SardineFactory;
 
-import javax.imageio.ImageIO;
 import javax.swing.text.DateFormatter;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -50,16 +43,15 @@ import java.util.stream.Collectors;
  */
 @Service
 public class AdvertiseService {
-
     private static final Logger logger = LoggerFactory.getLogger(AdvertiseService.class);
 
-    @Value("${advertisement-service.dav.username}")
+    //@Value("${privilegeservice.dav.username}")
     private String davUsername;
 
-    @Value("${advertisement-service.dav.password}")
+    //@Value("${privilegeservice.dav.password}")
     private String davPassword;
 
-    @Value("${advertisement-service.dav.baseUrl}")
+    //@Value("${privilegeservice.dav.baseUrl}")
     private String baseUrl;
 
 
@@ -107,25 +99,26 @@ public class AdvertiseService {
         AdvertiseBo bo = advertiseDao.getAdvertiseById(id);
         if(bo==null)return ResponseCode.RESOURCE_ID_NOTEXIST;
         try{
-            System.out.println(davUsername+davPassword+baseUrl);
             ReturnObject returnObject = ImgHelper.remoteSaveImg(multipartFile,2,davUsername,davPassword,baseUrl);
-            if(!returnObject.getCode().equals(ResponseCode.OK))
-                return returnObject.getCode();
+
+            if(!returnObject.getCode().equals(ResponseCode.OK))return returnObject.getCode();
+
             String oldFilename = bo.getImageUrl();
-            bo.setImageUrl(baseUrl+returnObject.getData().toString());
+            bo.setImageUrl(returnObject.getData().toString());
             bo.setState(AdvertiseBo.State.BACK);
             ResponseCode updateRetCode=advertiseDao.updateAdvertisementById(bo);
+
             if(!updateRetCode.equals(ResponseCode.OK)){
-                ImgHelper.deleteRemoteImg(returnObject.getData().toString(),davUsername,davPassword,"");
+                ImgHelper.deleteRemoteImg(returnObject.getData().toString(),davUsername,davPassword,baseUrl);
                 return updateRetCode;
             }
             if(oldFilename!=null){
-                ImgHelper.deleteRemoteImg(oldFilename,davUsername,davPassword,"");
+                ImgHelper.deleteRemoteImg(oldFilename,davUsername,davPassword,baseUrl);
             }
         }catch (Exception e){
             return ResponseCode.FILE_NO_WRITE_PERMISSION;
         }
-        return ResponseCode.OK;
+        return ResponseCode.INTERNAL_SERVER_ERR;
     }
 
     public ReturnObject<PageInfo<VoObject>> getAdvertiseByTimeSegmentId(Long segId, LocalDate beginDate, LocalDate endDate, Integer page, Integer pageSize) {

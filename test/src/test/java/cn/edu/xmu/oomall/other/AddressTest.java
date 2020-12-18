@@ -636,13 +636,59 @@ public class AddressTest {
         JSONAssert.assertEquals(expectedResponse, new String(responseString, StandardCharsets.UTF_8), false);
     }
 
+    @Test
+    public void selectAncestorRegion4() throws Exception {
+        token = userLogin("36040122840", "123456");
+
+        byte[] responseString = mallClient.get().uri("/region/1599/ancestor").header("authorization",token).exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.errno").isEqualTo(ResponseCode.OK.getCode())
+                .returnResult()
+                .getResponseBodyContent();
+
+        String expectedResponse = "{\n" +
+                "  \"errno\": 0,\n" +
+                "  \"data\": [\n" +
+                "    {\n" +
+                "      \"id\": 151,\n" +
+                "      \"pid\": 14,\n" +
+                "      \"name\": \"厦门市\",\n" +
+                "      \"postalCode\": null,\n" +
+                "      \"state\": 0,\n" +
+                "      \"gmtCreate\": \"2020-12-15T13:29:49\",\n" +
+                "      \"gmtModified\": null\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"id\": 14,\n" +
+                "      \"pid\": 1,\n" +
+                "      \"name\": \"福建省\",\n" +
+                "      \"postalCode\": null,\n" +
+                "      \"state\": 0,\n" +
+                "      \"gmtCreate\": \"2020-12-15T13:29:49\",\n" +
+                "      \"gmtModified\": null\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"id\": 1,\n" +
+                "      \"pid\": 0,\n" +
+                "      \"name\": \"中国\",\n" +
+                "      \"postalCode\": null,\n" +
+                "      \"state\": 0,\n" +
+                "      \"gmtCreate\": \"2020-12-15T13:29:49\",\n" +
+                "      \"gmtModified\": null\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"errmsg\": \"成功\"\n" +
+                "}";
+        JSONAssert.assertEquals(expectedResponse, new String(responseString, StandardCharsets.UTF_8), false);
+    }
 
 
     /**
      * 查询某个地区的所有上级地区，该地区不存在
      */
     @Test
-    public void selectAncestorRegion4() throws Exception {
+    public void selectAncestorRegion5() throws Exception {
         token = userLogin("36040122840", "123456");
 
         byte[] responseString = mallClient.get().uri("/region/140700/ancestor").header("authorization",token).exchange()

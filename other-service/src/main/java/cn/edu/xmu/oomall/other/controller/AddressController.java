@@ -74,6 +74,11 @@ public class AddressController {
                httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
                return ResponseUtil.fail(returnObj.getCode());
            }
+           else if(returnObj.getCode().equals(ResponseCode.REGION_OBSOLETE))
+           {
+               httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+               return new ResponseUtil().fail(ResponseCode.REGION_OBSOLETE);
+           }
            else{
                return ResponseUtil.fail(returnObj.getCode(),returnObj.getErrmsg());
            }
@@ -136,7 +141,7 @@ public class AddressController {
             return ResponseUtil.ok();
         }
         else if(responseCode.equals(ResponseCode.RESOURCE_ID_OUTSCOPE)){
-            httpServletResponse.setStatus(HttpStatus.NON_AUTHORITATIVE_INFORMATION.value());
+            httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
             return ResponseUtil.fail(responseCode);
         }
         else {
@@ -173,9 +178,15 @@ public class AddressController {
             return new ResponseUtil().fail(ResponseCode.FIELD_NOTVALID);
         }
         ResponseCode responseCode = addressService.updateAddress(userId,id,addressVo).getCode();
-        if(responseCode.equals(ResponseCode.OK) || responseCode.equals(ResponseCode.RESOURCE_ID_OUTSCOPE)){
+        if(responseCode.equals(ResponseCode.OK)||responseCode.equals(ResponseCode.REGION_OBSOLETE)){
             return ResponseUtil.ok(responseCode);
-        } else {
+        }
+        else if(responseCode.equals(ResponseCode.RESOURCE_ID_OUTSCOPE))
+        {
+            httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
+            return ResponseUtil.fail(responseCode);
+        }
+        else {
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseUtil.fail(responseCode);
         }
@@ -267,6 +278,7 @@ public class AddressController {
         }
         else if(responseCode.equals(ResponseCode.REGION_OBSOLETE))
         {
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
             return  ResponseUtil.fail(responseCode,"地区已废弃");
         }
         else
@@ -303,7 +315,13 @@ public class AddressController {
         ResponseCode responseCode = addressService.updateRegion(id, regionVo).getCode();
         if(responseCode.equals(ResponseCode.OK)){
             return ResponseUtil.ok();
-        } else {
+        }
+        else if(responseCode.equals(ResponseCode.REGION_OBSOLETE))
+        {
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return  ResponseUtil.fail(responseCode,"地区已废弃");
+        }
+        else {
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseUtil.fail(responseCode);
         }

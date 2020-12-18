@@ -45,10 +45,11 @@ public class AddressVo {
     }
     public Boolean isFormated()
     {
-        if(this.regionId == null || this.regionId<0)return false;
+        if(this.regionId == null)return false;
         if(this.detail.isBlank())return false;
         if(this.consignee.isBlank())return false;
         if(this.mobile.isBlank())return false;
+        if(this.mobile.length()!=11)return false;
         if(!this.mobile.matches("[+]?[0-9*#]+"))return false;
         return true;
     }
