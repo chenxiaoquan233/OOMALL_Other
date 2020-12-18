@@ -81,7 +81,12 @@ public class AftersaleController {
         }
 
         httpServletResponse.setStatus(HttpServletResponse.SC_CREATED);
-        return ResponseUtil.ok(retObject);
+        if(retObject.equals(ResponseCode.OK)) {
+            return ResponseUtil.ok();
+        }
+        else {
+            return ResponseUtil.ok((ResponseCode) retObject);
+        }
     }
 
     @ApiOperation(value = "买家查询所有的售后单", produces = "application/json")
@@ -168,7 +173,12 @@ public class AftersaleController {
             httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return ResponseUtil.fail((ResponseCode) object);
         }
-        return ResponseUtil.ok(object);
+        if(object.equals(ResponseCode.OK)) {
+            return ResponseUtil.ok();
+        }
+        else {
+            return ResponseUtil.ok(object);
+        }
     }
 
     @ApiOperation(value = "买家修改售后单信息", produces = "application/json")
@@ -185,11 +195,18 @@ public class AftersaleController {
     public Object modifyAftersaleById(@LoginUser Long userId, @PathVariable("id") Long aftersaleId, @Validated AftersaleModifyVo vo) {
         ResponseCode responseCode = aftersaleService.modifyAftersaleById(userId, aftersaleId, vo);
 
+        logger.debug(responseCode.getMessage());
+
         if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(responseCode);
         }
-        return ResponseUtil.ok(responseCode);
+        if(responseCode.equals(ResponseCode.OK)) {
+            return ResponseUtil.ok();
+        }
+        else {
+            return ResponseUtil.ok(responseCode);
+        }
     }
 
     @ApiOperation(value = "买家填写售后的运单信息", produces = "application/json")
@@ -209,7 +226,12 @@ public class AftersaleController {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(responseCode);
         }
-        return ResponseUtil.ok(responseCode);
+        if(responseCode.equals(ResponseCode.OK)) {
+            return ResponseUtil.ok();
+        }
+        else {
+            return ResponseUtil.ok(responseCode);
+        }
     }
 
     @ApiOperation(value = "买家填写售后的运单信息", produces = "application/json")
@@ -232,13 +254,18 @@ public class AftersaleController {
             return ResponseCode.FIELD_NOTVALID;
         }
 
-        ResponseCode responseCode = aftersaleService.addWayBillNumber(userId, id, vo.getLogsn());
+        ResponseCode responseCode = aftersaleService.addWayBillNumber(userId, id, vo.getLogSn());
 
         if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(responseCode);
         }
-        return ResponseUtil.ok(responseCode);
+        if(responseCode.equals(ResponseCode.OK)) {
+            return ResponseUtil.ok();
+        }
+        else {
+            return ResponseUtil.ok(responseCode);
+        }
     }
 
     @ApiOperation(value = "买家确认售后单结束", produces = "application/json")
@@ -258,7 +285,12 @@ public class AftersaleController {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(responseCode);
         }
-        return ResponseUtil.ok(responseCode);
+        if(responseCode.equals(ResponseCode.OK)) {
+            return ResponseUtil.ok();
+        }
+        else {
+            return ResponseUtil.fail(responseCode);
+        }
     }
 
     @ApiOperation(value = "管理员根据售后单id查询售后单信息", produces = "application/json")
@@ -283,7 +315,12 @@ public class AftersaleController {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail((ResponseCode) object);
         }
-        return ResponseUtil.ok(object);
+        if(object.equals(ResponseCode.OK)) {
+            return ResponseUtil.ok();
+        }
+        else {
+            return ResponseUtil.fail((ResponseCode) object);
+        }
     }
 
     @ApiOperation(value = "管理员同意/不同意（退款，换货，维修）", produces = "application/json")
@@ -324,7 +361,12 @@ public class AftersaleController {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(responseCode);
         }
-        return ResponseUtil.ok(responseCode);
+        if(responseCode.equals(ResponseCode.OK)) {
+            return ResponseUtil.ok();
+        }
+        else {
+            return ResponseUtil.ok(responseCode);
+        }
     }
 
     @ApiOperation(value = "店家确认收到买家的退（换）货", produces = "application/json")
@@ -363,7 +405,12 @@ public class AftersaleController {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(responseCode);
         }
-        return ResponseUtil.ok(responseCode);
+        if(responseCode.equals(ResponseCode.OK)) {
+            return ResponseUtil.ok();
+        }
+        else {
+            return ResponseUtil.ok(responseCode);
+        }
     }
 
     @ApiOperation(value = "店家寄出维修好的货物", produces = "application/json")
@@ -404,7 +451,12 @@ public class AftersaleController {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(responseCode);
         }
-        return ResponseUtil.ok(responseCode);
+        if(responseCode.equals(ResponseCode.OK)) {
+            return ResponseUtil.ok();
+        }
+        else {
+            return ResponseUtil.fail(responseCode);
+        }
     }
 
     @GetMapping("/test")
