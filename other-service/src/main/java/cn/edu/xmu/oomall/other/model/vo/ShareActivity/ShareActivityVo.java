@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
@@ -27,7 +28,7 @@ public class ShareActivityVo {
     @ApiModelProperty( name = "endTime")
     private LocalDateTime endTime;
 
-    @NotNull(message = "优惠方案不能为空")
+    @NotBlank(message = "优惠方案不能为空")
     @ApiModelProperty( name = "strategy")
     private String strategy;
 

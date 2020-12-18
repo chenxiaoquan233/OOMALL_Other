@@ -20,6 +20,7 @@ import cn.edu.xmu.oomall.other.util.ShopRedisFinder;
 import cn.edu.xmu.oomall.other.util.SkuRedisFinder;
 import cn.edu.xmu.goods.client.IGoodsService;
 import com.github.pagehelper.PageInfo;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,8 +62,8 @@ public class ShareDao implements InitializingBean {
     @Autowired
     UpdateRebateMapper updateRebateMapper;
 
-    //@DubboReference(version = "0.0.1-SNAPSHOT", check = false)
-    IGoodsService goodsService=new GoodsService();
+    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
+    IGoodsService goodsService;
 
     @Autowired
     RocketMQTemplate rocketMQTemplate;
@@ -296,7 +297,9 @@ public class ShareDao implements InitializingBean {
         if(skuId!=null){
             criteria.andGoodsSkuIdEqualTo(skuId);
         }
+
         List<ShareActivityPo> shareActivityPos=shareActivityPoMapper.selectByExample(example);
+        logger.debug("find share activity total:"+shareActivityPos.size());
         return new PageInfo<>(shareActivityPos);
 
     }
