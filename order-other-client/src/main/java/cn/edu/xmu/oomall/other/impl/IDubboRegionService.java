@@ -1,4 +1,4 @@
-package cn.edu.xmu.oomall.service;
+package cn.edu.xmu.oomall.other.impl;
 
 
 public interface IDubboRegionService {

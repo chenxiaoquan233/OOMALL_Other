@@ -147,13 +147,13 @@ public class ShoppingCartController {
     @PutMapping("/{id}")
     public Object changeCartInfo(@LoginUser Long UserId, @PathVariable("id") Long id, @RequestBody ShoppingCartVo vo) {
         ResponseCode ret=shoppingCartService.modifyCart(UserId,id,vo.getGoodsSkuId(),vo.getQuantity());
-        if(ret==null){
-            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
-            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST,"没有该sku存在");
-        }
         if(ret.equals(ResponseCode.RESOURCE_ID_NOTEXIST)){
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST);
+        }
+        else if(ret.equals(ResponseCode.FIELD_NOTVALID)){
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
         }
         else if(ret.equals(ResponseCode.RESOURCE_ID_OUTSCOPE)){
             httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());

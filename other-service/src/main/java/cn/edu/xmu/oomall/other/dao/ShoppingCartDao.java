@@ -100,19 +100,19 @@ public class ShoppingCartDao {
         return po;
     }
 
-    public ResponseCode judge(Long userId, Long cartId){
+    public Long judge(Long userId, Long cartId){
         ShoppingCartPo po=shoppingCartPoMapper.selectByPrimaryKey(cartId);
         /*资源不存在*/
         if(po==null)
-            return ResponseCode.RESOURCE_ID_NOTEXIST;
+            return -1L;
+            //return ResponseCode.RESOURCE_ID_NOTEXIST;
         /*资源id非自己对象*/
         if(!po.getCustomerId().equals(userId))
         {
-            logger.debug(userId+" tried to use "+po.getCustomerId());
-            return ResponseCode.RESOURCE_ID_OUTSCOPE;
+            return -2L;
+            //return ResponseCode.RESOURCE_ID_OUTSCOPE;
         }
-
-        return null;
+        return po.getGoodsSkuId();
     }
 
 

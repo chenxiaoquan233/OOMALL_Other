@@ -72,5 +72,10 @@ public class GoodsService implements IGoodsService {
         return null;
     }
 
+    @Override
+    public Boolean isSkuEqualSpu(Long skuId, Long skuId2) {
+        return null;
+    }
+
 
 }

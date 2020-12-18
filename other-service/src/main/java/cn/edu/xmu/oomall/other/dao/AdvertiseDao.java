@@ -153,9 +153,9 @@ public class AdvertiseDao {
         AdvertisementPoExample.Criteria criteria=example.createCriteria();
         criteria.andSegIdEqualTo(id);
         if(beginDate!=null)
-            criteria.andBeginDateEqualTo(beginDate);
+            criteria.andBeginDateGreaterThan(beginDate);
         if(endDate!=null)
-            criteria.andEndDateEqualTo(endDate);
+            criteria.andEndDateLessThan(endDate);
         //example.setOrderByClause("weight DESC");
         List<AdvertisementPo> advertisementPoList=advertisementPoMapper.selectByExample(example);
         return advertisementPoList;

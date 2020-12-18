@@ -49,9 +49,11 @@ public class ShoppingCartService {
     }
 
     public ResponseCode deleteCart(Long userId,Long cartId){
-        ResponseCode judge=shoppingCartDao.judge(userId,cartId);
-        if(judge!=null)
-            return judge;
+        Long judge=shoppingCartDao.judge(userId,cartId);
+        if(judge.equals(-1L))
+            return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if(judge.equals(-2L))
+            return ResponseCode.RESOURCE_ID_OUTSCOPE;
         return shoppingCartDao.deleteCart(userId,cartId);
     }
 
@@ -91,12 +93,22 @@ public class ShoppingCartService {
     }
 
     public ResponseCode modifyCart(Long userId, Long cartId,Long goodsSkuId, Integer quantity) {
-        ResponseCode judge=shoppingCartDao.judge(userId,cartId);
-        if(judge!=null)
-            return judge;
-        PriceDTO priceDTO=iGoodsService.getPrice(goodsSkuId);
-        if(priceDTO==null||priceDTO.getPrePrice()<=0)
-            return null;
-        return shoppingCartDao.modifyCart(cartId,userId,goodsSkuId,quantity,priceDTO.getPrePrice());
+        System.out.println("1");
+        Long judge=shoppingCartDao.judge(userId,cartId);
+        if(judge.equals(-1L))
+            return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if(judge.equals(-2L))
+            return ResponseCode.RESOURCE_ID_OUTSCOPE;
+        System.out.println("2");
+
+        SkuDTO oldSku=iGoodsService.getSku(judge);
+        SkuDTO newSku=iGoodsService.getSku(goodsSkuId);
+        if(newSku==null)
+            return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if(!oldSku.getGoodsSpuId().equals(newSku.getGoodsSpuId()))
+            return ResponseCode.FIELD_NOTVALID;
+        System.out.println("3");
+        System.out.println("4");
+        return shoppingCartDao.modifyCart(cartId,userId,goodsSkuId,quantity,newSku.getPrice());
     }
 }

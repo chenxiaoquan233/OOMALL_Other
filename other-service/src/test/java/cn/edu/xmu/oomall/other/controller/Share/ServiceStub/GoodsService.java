@@ -67,4 +67,9 @@ public class GoodsService implements IGoodsService {
     public PriceDTO getPrice(Long skuId) {
         return null;
     }
+
+    @Override
+    public Boolean isSkuEqualSpu(Long skuId, Long skuId2) {
+        return null;
+    }
 }
