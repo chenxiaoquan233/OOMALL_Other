@@ -169,8 +169,6 @@ public class AdvertiseService {
             bo.setState(AdvertiseBo.State.NORM);
             return  advertiseDao.updateAdvertisementById(bo);
         }
-        else if (bo.getState()==AdvertiseBo.State.NORM)
-            return ResponseCode.OK;
         else return ResponseCode.ADVERTISEMENT_STATENOTALLOW;
     }
 
@@ -181,8 +179,6 @@ public class AdvertiseService {
             bo.setState(AdvertiseBo.State.FORBID);
             return  advertiseDao.updateAdvertisementById(bo);
         }
-        else if (bo.getState()==AdvertiseBo.State.FORBID)
-            return ResponseCode.OK;
         else return ResponseCode.ADVERTISEMENT_STATENOTALLOW;
     }
 

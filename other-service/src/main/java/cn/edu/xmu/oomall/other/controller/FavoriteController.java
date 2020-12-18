@@ -82,13 +82,14 @@ public class FavoriteController {
         if(skuId<=0)
         {
             httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtil.fail(ResponseCode.OK,"skuId格式不符");
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID,"skuId格式不符");
         }
         Object ret=favoriteService.addFavorites(UserId,skuId);
         if(ret==null){
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
-            return ResponseUtil.fail(ResponseCode.OK,"sku不存在");
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST,"sku不存在");
         }
+        httpServletResponse.setStatus(HttpStatus.CREATED.value());
         return ret;
     }
 

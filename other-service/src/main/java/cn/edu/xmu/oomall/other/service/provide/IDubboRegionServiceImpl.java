@@ -13,8 +13,8 @@ public class IDubboRegionServiceImpl implements IDubboRegionService {
     private AddressDao addressDao;
 
 
-    @Transactional
-    public Long getSuperiorRegionId(Long regionId) {
-        return null;
+    public Long getSuperiorRegionId(Long regionId){
+        Long ret=addressDao.getParent(regionId);
+        return ret;
     }
 }

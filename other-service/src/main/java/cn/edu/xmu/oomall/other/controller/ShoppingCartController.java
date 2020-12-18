@@ -125,6 +125,7 @@ public class ShoppingCartController {
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseUtil.fail(ResponseCode.OK,"没有该sku存在");
         }
+        httpServletResponse.setStatus(HttpStatus.CREATED.value());
         return ResponseUtil.ok(ret);
     }
 

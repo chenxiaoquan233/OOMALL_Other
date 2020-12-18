@@ -23,7 +23,7 @@ public class GoodsSkuSimpleVo  {
     private Integer inventory;
     private Long originalPrice;
     private Long price;
-    private Byte disable;
+    private Boolean disable;
 
     public GoodsSkuSimpleVo(SkuDTO sku){
         if(sku==null)
@@ -35,6 +35,6 @@ public class GoodsSkuSimpleVo  {
         inventory=sku.getInventory();
         originalPrice=sku.getOriginalPrice();
         price=sku.getPrice();
-        disable=sku.getDisable();
+        disable=sku.getDisable()==(byte)1;
     }
 }

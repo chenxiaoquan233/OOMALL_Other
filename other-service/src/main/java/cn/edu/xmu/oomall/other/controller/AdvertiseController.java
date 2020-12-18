@@ -100,11 +100,6 @@ public class AdvertiseController {
                 return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
             }
         }
-        if(advertiseVo.getLink()!=null)
-            if(!advertiseVo.getLink().matches("(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]")){
-                httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
-            }
         ResponseCode responseCode=advertiseService.updateAdvertisementById(id,advertiseVo);
         if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)){
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
@@ -166,8 +161,11 @@ public class AdvertiseController {
     @PostMapping("/shops/{did}/advertisement/{id}/uploadImg")
     public Object uploadAdvertisementImgById(@LoginUser Long user, @PathVariable("id") Long id, @RequestParam("img")MultipartFile multipartFile){
         ResponseCode responseCode=advertiseService.uploadAdvertiseImgById(id,multipartFile);
-        if(responseCode.equals(ResponseCode.OK))
+        if(responseCode.equals(ResponseCode.OK)){
+            httpServletResponse.setStatus(HttpStatus.CREATED.value());
             return ResponseUtil.ok();
+        }
+
         else {
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseUtil.fail(responseCode);
@@ -306,6 +304,7 @@ public class AdvertiseController {
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST);
         }
+        httpServletResponse.setStatus(HttpStatus.CREATED.value());
         return ResponseUtil.ok(ret);
     }
 
@@ -329,6 +328,7 @@ public class AdvertiseController {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST);
         }
+        httpServletResponse.setStatus(HttpStatus.CREATED.value());
         return ResponseUtil.ok(ret);
     }
 }

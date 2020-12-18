@@ -217,12 +217,14 @@ public class AddressDao {
      * @return
      */
     public Long getParent(Long id){
+        logger.debug("before dubbo region:"+id);
         RegionPo regionPo=regionPoMapper.selectByPrimaryKey(id);
         if(regionPo==null||regionPo.getState()==(RegionBo.State.ABOLISH.getCode().byteValue()))
             return -1L;
         RegionPo parentPo=regionPoMapper.selectByPrimaryKey(regionPo.getPid());
         if(parentPo==null||parentPo.getState()==(RegionBo.State.ABOLISH.getCode().byteValue()))
             return -1L;
+        logger.debug("after dubbo region:"+parentPo.getId());
         return parentPo.getId();
     }
 
