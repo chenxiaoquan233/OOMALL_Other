@@ -21,6 +21,7 @@ import cn.edu.xmu.oomall.other.util.ServiceStub.OrderService;
 import cn.edu.xmu.goods.client.IGoodsService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +39,13 @@ import java.util.stream.Collectors;
 public class ShareService {
     private static final Logger logger = LoggerFactory.getLogger(ShareService.class);
 
-    //@DubboReference(version = "0.0.1-SNAPSHOT", check = false)
-    IGoodsService goodsService=new GoodsService();
+    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
+    IGoodsService goodsService;
     @Autowired
     private ShareDao shareDao;
     @Autowired
     private UserDao userDao;
-    //@DubboReference(version = "0.0.1-SNAPSHOT", check = false)
+    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
     IDubboOrderService orderService=new OrderService();
 
     public void retPointToCustomer(){
