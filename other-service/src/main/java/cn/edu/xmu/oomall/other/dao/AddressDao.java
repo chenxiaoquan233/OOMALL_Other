@@ -175,6 +175,8 @@ public class AddressDao {
             }
             else if(addressPo.getCustomerId()!=userId)return new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
             else{
+                RegionPo regionPo = regionPoMapper.selectByPrimaryKey(addressPo.getRegionId());
+                if(regionPo.getState().intValue()==1)return new ReturnObject<>(ResponseCode.ADDRESS_OUTLIMIT);
                 addressPo.setBeDefault((byte)1);
                 addressPoMapper.updateByPrimaryKey(addressPo);
             }
