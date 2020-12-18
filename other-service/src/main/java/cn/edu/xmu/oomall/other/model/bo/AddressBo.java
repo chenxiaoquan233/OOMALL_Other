@@ -48,7 +48,7 @@ public class AddressBo implements VoObject {
         addressInfoVo.setConsignee(this.getConsignee());
         addressInfoVo.setMobile(this.getMobile());
         addressInfoVo.setBeDefault(this.getBeDefault());
-        addressInfoVo.setGmtCreate(this.getGmtCreate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        addressInfoVo.setGmtCreate(this.getGmtCreate());
         addressInfoVo.setState(this.getState().intValue());
         return addressInfoVo;
     }
