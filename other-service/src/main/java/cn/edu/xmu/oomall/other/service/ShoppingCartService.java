@@ -87,7 +87,7 @@ public class ShoppingCartService {
         ShoppingCartBo bo=new ShoppingCartBo(po);
         bo.setSkuName(priceDTO.getName());
         bo.setCouponActivity(iActivityService.getSkuCouponActivity(goodsSkuId).stream().collect(Collectors.toList()));
-        return new ReturnObject<>(bo);
+        return bo.createVo();
     }
 
     public ResponseCode modifyCart(Long userId, Long cartId,Long goodsSkuId, Integer quantity) {

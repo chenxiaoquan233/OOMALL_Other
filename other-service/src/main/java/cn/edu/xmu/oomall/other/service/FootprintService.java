@@ -8,6 +8,7 @@ import cn.edu.xmu.oomall.other.dao.FootprintDao;
 import cn.edu.xmu.oomall.other.model.bo.BeSharedBo;
 import cn.edu.xmu.oomall.other.model.bo.FootPrintBo;
 import cn.edu.xmu.oomall.other.model.po.BeSharePo;
+import cn.edu.xmu.oomall.other.model.po.FavouriteGoodsPo;
 import cn.edu.xmu.oomall.other.model.po.FootPrintPo;
 import cn.edu.xmu.oomall.other.model.vo.FootPrint.FootPrintVo;
 import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
@@ -41,7 +42,7 @@ public class FootprintService {
     private FootprintDao footprintDao;
 
     @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
-    IGoodsService goodsService;
+    IGoodsService iGoodsService;
 
     @Resource
     RocketMQTemplate rocketMQTemplate;
@@ -59,18 +60,22 @@ public class FootprintService {
     }
 
     public ReturnObject<PageInfo<VoObject>> getFootprints(Long userId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
-        PageHelper.startPage(page,pageSize,true,true,null);
-        PageInfo<FootPrintPo> footPrintPos = footprintDao.getFootprints(userId, beginTime, endTime, page, pageSize);
-        List<VoObject> footprints = footPrintPos.getList().stream().map(FootPrintBo::new).map(x->{
-                x.setSkuSimpleVo(new GoodsSkuSimpleVo(goodsService.getSku(x.getSkuId())));
-                return x;
+        List<FootPrintPo> footPrintPos = footprintDao.getFootprints(userId, beginTime, endTime, page, pageSize);
+        List<VoObject> footprints = footPrintPos.stream().map(FootPrintBo::new).map(x->{
+                //x.setSkuSimpleVo(new GoodsSkuSimpleVo(goodsService.getSku(x.getSkuId())));
+            System.out.println("1");
+            System.out.println(x.getSkuSimpleVo());
+            x.setSkuSimpleVo(new GoodsSkuSimpleVo(iGoodsService.getSku(x.getSkuId())));
+            System.out.println("2");
+            System.out.println(x.getSkuSimpleVo());
+            return x;
         }).collect(Collectors.toList());
-
-        PageInfo<VoObject> retObj=new PageInfo<>(footprints);
-        retObj.setPageNum(footPrintPos.getPageNum());
-        retObj.setPageSize(footPrintPos.getPageSize());
-        retObj.setTotal(footPrintPos.getTotal());
-        retObj.setPages(footPrintPos.getPages());
+        PageInfo<FootPrintPo> footPoPage = PageInfo.of(footPrintPos);
+        PageInfo<VoObject> retObj = new PageInfo<>(footprints);
+        retObj.setPageNum(footPoPage.getPageNum());
+        retObj.setPageSize(footPoPage.getPageSize());
+        retObj.setTotal(footPoPage.getTotal());
+        retObj.setPages(footPoPage.getPages());
         return new ReturnObject<>(retObj);
     }
 

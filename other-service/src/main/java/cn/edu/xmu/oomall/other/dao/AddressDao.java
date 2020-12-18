@@ -212,6 +212,22 @@ public class AddressDao {
     }
 
     /**
+     * 查询地区的父地区的ID
+     * @param id
+     * @return
+     */
+    public Long getParent(Long id){
+        RegionPo regionPo=regionPoMapper.selectByPrimaryKey(id);
+        if(regionPo==null||regionPo.getState()==(RegionBo.State.ABOLISH.getCode().byteValue()))
+            return -1L;
+        RegionPo parentPo=regionPoMapper.selectByPrimaryKey(regionPo.getPid());
+        if(parentPo==null||parentPo.getState()==(RegionBo.State.ABOLISH.getCode().byteValue()))
+            return -1L;
+        return parentPo.getId();
+    }
+
+
+    /**
      * 查询地区的所有父地区
      * @param id
      * @return

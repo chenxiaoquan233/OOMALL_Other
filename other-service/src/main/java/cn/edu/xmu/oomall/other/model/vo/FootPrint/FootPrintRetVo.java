@@ -13,6 +13,6 @@ import java.time.LocalDateTime;
 @Data
 public class FootPrintRetVo {
     private Long id;
-    private GoodsSkuSimpleVo goodsRetVo;
-    private String gmtCreate;
+    private GoodsSkuSimpleVo goodsSku;
+    private LocalDateTime gmtCreate;
 }

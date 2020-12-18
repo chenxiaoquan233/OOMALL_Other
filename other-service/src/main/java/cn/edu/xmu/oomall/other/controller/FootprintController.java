@@ -16,6 +16,7 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,16 +68,17 @@ public class FootprintController {
     })
     @Audit
     @GetMapping("/shops/{did}/footprints")
-    public Object getFootprints(@PathVariable("did")Long did,@RequestParam(required = false)Long userId, @RequestParam(required = false) String beginTime,@RequestParam(required = false) String endTime, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
-        LocalDateTime start = null, end = null;
-        try{
-            DateTimeFormatter dateTimeFormatter  = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
-            if(!beginTime.isBlank())start = LocalDateTime.parse(beginTime,dateTimeFormatter);
-            if(!endTime.isBlank())end = LocalDateTime.parse(endTime,dateTimeFormatter);
-        }catch (Exception e){}
-
-        if(end.isBefore(start))return Common.getRetObject(new ReturnObject<>(ResponseCode.Log_Bigger));
-        ReturnObject<PageInfo<VoObject>> returnObject = footprintService.getFootprints(userId,start,end,page, pageSize);
+    public Object getFootprints(@PathVariable("did")Long did, @RequestParam(required = false)Long userId,
+                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam(required = false) LocalDateTime beginTime,
+                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam(required = false) LocalDateTime endTime,
+                                @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
+        if(beginTime!=null&&endTime!=null)
+        if(beginTime.isAfter(endTime)){
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.Log_Bigger);
+        }
+        System.out.println("entry controller");
+        ReturnObject<PageInfo<VoObject>> returnObject = footprintService.getFootprints(userId,beginTime,endTime,page, pageSize);
         return Common.getPageRetObject(returnObject);
     }
 
