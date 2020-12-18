@@ -90,7 +90,7 @@ public class AddressDao {
         AddressPoExample example = new AddressPoExample();
         AddressPoExample.Criteria criteria = example.createCriteria();
         criteria.andCustomerIdEqualTo(userId);
-        List<AddressPo> addressPos = null;
+        List<AddressPo> addressPos;
         PageHelper.startPage(page,pageSize,true,true,null);
         try{
             addressPos =  addressPoMapper.selectByExample(example);
@@ -100,6 +100,8 @@ public class AddressDao {
             logger.error(message.toString());
             return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
         }
+        PageInfo<AddressPo> addressesPoPage = new PageInfo<>(addressPos);
+        System.out.println("total:"+addressesPoPage.getTotal());
         List<VoObject> ret =addressPos.stream().map(AddressBo::new).map(x->{
             RegionPo region=regionPoMapper.selectByPrimaryKey(x.getRegionId());
             if(region==null)
@@ -109,12 +111,12 @@ public class AddressDao {
             //x.setState(regionPoMapper.selectByPrimaryKey(x.getRegionId()).getState());
             return x;
         }).collect(Collectors.toList());
-        PageInfo<AddressPo> addressesPoPage = PageInfo.of(addressPos);
+
         PageInfo<VoObject> addressesPage = new PageInfo<>(ret);
         addressesPage.setPages(addressesPoPage.getPages());
         addressesPage.setPageNum(addressesPoPage.getPageNum());
         addressesPage.setPageSize(addressesPoPage.getPageSize());
-        addressesPoPage.setTotal(addressesPoPage.getTotal());
+        addressesPage.setTotal(addressesPoPage.getTotal());
         return new ReturnObject<>(addressesPage);
     }
 
@@ -127,6 +129,7 @@ public class AddressDao {
     {
         try{
             AddressPo addressPo = addressPoMapper.selectByPrimaryKey(addressBo.getId());
+            if(addressPo == null) return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
             if(addressPo.getCustomerId()!=addressBo.getCustomerId()){
                 return new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
             }
@@ -217,12 +220,14 @@ public class AddressDao {
      * @return
      */
     public Long getParent(Long id){
+        logger.debug("before dubbo region:"+id);
         RegionPo regionPo=regionPoMapper.selectByPrimaryKey(id);
         if(regionPo==null||regionPo.getState()==(RegionBo.State.ABOLISH.getCode().byteValue()))
             return -1L;
         RegionPo parentPo=regionPoMapper.selectByPrimaryKey(regionPo.getPid());
         if(parentPo==null||parentPo.getState()==(RegionBo.State.ABOLISH.getCode().byteValue()))
             return -1L;
+        logger.debug("after dubbo region:"+parentPo.getId());
         return parentPo.getId();
     }
 

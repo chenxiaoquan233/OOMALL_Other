@@ -50,7 +50,6 @@ public class FootprintConsumerListener implements RocketMQListener<String>, Rock
         {
             logger.error("footprint message errors.");
         }
-
     }
 
     @Override

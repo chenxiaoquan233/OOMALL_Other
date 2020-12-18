@@ -88,7 +88,7 @@ public class RegionBo implements VoObject {
         this.setPid(po.getPid());
         this.setName(po.getName());
         this.setState(State.getTypeByCode(po.getState().intValue()));
-        //this.setPostalCode(po.getPostalCode().toString());
+        this.setPostalCode(po.getPostalCode()==null?null:po.getPostalCode().toString());
         this.setGmtCreate(po.getGmtCreate());
         this.setGmtModified(po.getGmtModified());
     }

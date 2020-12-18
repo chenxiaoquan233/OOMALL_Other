@@ -4,15 +4,18 @@ import cn.edu.xmu.ooad.annotation.Audit;
 import cn.edu.xmu.ooad.annotation.LoginUser;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.*;
+import cn.edu.xmu.oomall.other.model.vo.Share.ShareRetVo;
 import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityVo;
 import cn.edu.xmu.oomall.other.service.ShareService;
 import cn.edu.xmu.oomall.other.service.factory.CalcPointFactory;
 import cn.edu.xmu.goods.client.IGoodsService;
 import cn.edu.xmu.goods.client.dubbo.ShopDTO;
+import cn.edu.xmu.oomall.other.util.PageInfoHelper;
 import cn.edu.xmu.oomall.other.util.ServiceStub.GoodsService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Jx
@@ -41,8 +46,8 @@ public class ShareController {
     @Autowired
     private ShareService shareService;
 
-    //@DubboReference(version = "0.0.1-SNAPSHOT", check = false)
-    IGoodsService goodsService=new GoodsService();
+    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
+    IGoodsService goodsService;
 
 
     //DONE:生成分享链接
@@ -68,6 +73,15 @@ public class ShareController {
     @PostMapping("/shops/{shopId}/skus/{skuId}/shareactivities")
     public Object addShareActivity(@LoginUser Long userId, @PathVariable("shopId") Long shopId, @PathVariable("skuId") Long skuId,
                                    @Validated @RequestBody ShareActivityVo shareActivityVo, BindingResult bindingResult){
+        Object object= Common.processFieldErrors(bindingResult,httpServletResponse);
+        if(object!=null){
+            logger.debug("something wrong happened!");
+            return object;
+        }
+        if(shareActivityVo.getBeginTime()==null||shareActivityVo.getEndTime()==null){
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID,"时间不能为空");
+        }
         //DONE:校验strategy是否正确
         if(!CalcPointFactory.validateStrategy(shareActivityVo.getStrategy())){
 
@@ -82,11 +96,7 @@ public class ShareController {
 
         }
         logger.debug(JacksonUtil.toJson(shareActivityVo)+"1");
-        Object object= Common.processFieldErrors(bindingResult,httpServletResponse);
-        if(object!=null){
-            logger.debug("something wrong happened!");
-            return object;
-        }
+
         //SHOPID为0 skuId为0 代表平台默认
         //shopId不为0 skuId为0 代表店铺默认
         //skuid不为0 shopid不为0 代表商店某个商品
@@ -142,6 +152,11 @@ public class ShareController {
         }
         catch (Exception ex){
             logger.debug("时间格式错误");
+            PageInfo pg=new PageInfo(new ArrayList());
+            pg.setPageSize(pageSize);
+            pg.setPageNum(page);
+            return ResponseUtil.ok(PageInfoHelper.process(pg));
+
         }
         if(page <= 0 || pageSize <= 0) {
             return Common.getNullRetObj(new ReturnObject<>(ResponseCode.FIELD_NOTVALID), httpServletResponse);
@@ -243,6 +258,10 @@ public class ShareController {
         }
         catch (Exception ex){
             logger.debug("时间格式错误");
+            PageInfo pg=new PageInfo(new ArrayList());
+            pg.setPageSize(pageSize);
+            pg.setPageNum(page);
+            return ResponseUtil.ok(PageInfoHelper.process(pg));
         }
         ReturnObject<PageInfo<VoObject>> retObj=shareService.getBeShared(userId, skuId,beginTime,endTime,page,pageSize);
         return Common.getPageRetObject(retObj);
@@ -253,8 +272,6 @@ public class ShareController {
      * @param userId
      * @param shopId
      * @param skuId
-     * @param beginTime
-     * @param endTime
      * @param page
      * @param pageSize
      * @return
@@ -276,6 +293,10 @@ public class ShareController {
         }
         catch (Exception ex){
             logger.debug("时间格式错误");
+            PageInfo pg=new PageInfo(new ArrayList());
+            pg.setPageSize(pageSize);
+            pg.setPageNum(page);
+            return ResponseUtil.ok(PageInfoHelper.process(pg));
         }
 
         if(shopId!=0) {
@@ -306,10 +327,31 @@ public class ShareController {
     @PutMapping("/shops/{shopId}/shareactivities/{id}")
     public Object modifyShareActivity(@LoginUser Long userId,@PathVariable("shopId")Long shopId,
                                          @PathVariable("id")Long shareActivityId,
-                                         @RequestBody ShareActivityVo vo){
+                                         @RequestBody ShareActivityVo vo,BindingResult bindingResult){
+        logger.debug("Into modify Share Activity");
+        Object object= Common.processFieldErrors(bindingResult,httpServletResponse);
+        if(vo.getBeginTime()==null||vo.getEndTime()==null){
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID,"时间不能为空");
+        }
+        logger.debug("Out processFieldError");
+        if(object!=null){
+            logger.debug("something wrong happened!");
+            return object;
+        }
+        logger.debug("is null:"+String.valueOf(vo.getBeginTime()==null));
+        //DONE:校验strategy是否正确
         if(!CalcPointFactory.validateStrategy(vo.getStrategy())){
+
+            logger.error("wrong strategy");
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID,"分享策略不合法");
+        }
+        if(vo.getBeginTime().isAfter(vo.getEndTime())){
+            logger.error("wrong strategy time");
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID,"分享策略不合法");
+
         }
         ResponseCode ret=shareService.updateShareActivity(shopId,shareActivityId,vo);
         if (ret != ResponseCode.INTERNAL_SERVER_ERR && ret != ResponseCode.OK) {
@@ -340,6 +382,10 @@ public class ShareController {
     @Audit
     @PostMapping("/skus/{id}/shares")
     public Object getLink(@LoginUser Long userId,@PathVariable("id")Long skuId){
+        if(goodsService.getSku(skuId)==null){
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST,"商品不存在");
+        }
         ReturnObject ret=shareService.getShareLink(skuId,userId);
         if(ret==null){
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);

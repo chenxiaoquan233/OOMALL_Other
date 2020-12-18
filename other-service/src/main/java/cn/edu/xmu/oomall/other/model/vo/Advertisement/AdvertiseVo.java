@@ -7,6 +7,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -20,12 +21,13 @@ import java.time.LocalDate;
 @Data
 @ApiModel
 public class AdvertiseVo {
-    @NotNull(message = "广告内容不能为空")
+    @NotBlank(message = "广告内容不能为空")
     @ApiModelProperty(name = "content", value = "message")
     private String content;
 
 
     @NotNull(message = "权重不能为空")
+    @Min(0)
     @ApiModelProperty(name = "weight", value = "0")
     private Integer weight;
 
@@ -44,8 +46,6 @@ public class AdvertiseVo {
     private Boolean repeat;
 
     @NotBlank
-    @Pattern(regexp = "(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]")
-    @URL
     @ApiModelProperty(name = "link", value = "https://www.baidu.com")
     private String link;
 

@@ -11,18 +11,19 @@ import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.model.vo.FootPrint.FootPrintVo;
 import cn.edu.xmu.oomall.other.service.FootprintService;
 import cn.edu.xmu.oomall.other.service.mq.FootprintConsumerListener;
+import cn.edu.xmu.oomall.other.util.PageInfoHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 /**
  * @author Ji Cao
@@ -68,51 +69,28 @@ public class FootprintController {
     })
     @Audit
     @GetMapping("/shops/{did}/footprints")
-    public Object getFootprints(@PathVariable("did")Long did, @RequestParam(required = false)Long userId,
-                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam(required = false) LocalDateTime beginTime,
-                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam(required = false) LocalDateTime endTime,
-                                @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
-        if(beginTime!=null&&endTime!=null)
-        if(beginTime.isAfter(endTime)){
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return ResponseUtil.fail(ResponseCode.Log_Bigger);
+    public Object getFootprints(@PathVariable("did")Long did,
+                                @RequestParam(required = false)Long userId,
+                                @RequestParam(required = false) String beginTime,
+                                @RequestParam(required = false) String endTime,
+                                @RequestParam(defaultValue = "1") Integer page,
+                                @RequestParam(defaultValue = "10") Integer pageSize) {
+        LocalDateTime start = null, end = null;
+        try{
+            DateTimeFormatter dateTimeFormatter  = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
+            if(!beginTime.isBlank())start = LocalDateTime.parse(beginTime,dateTimeFormatter);
+            if(!endTime.isBlank())end = LocalDateTime.parse(endTime,dateTimeFormatter);
+        }catch (Exception e){
+            logger.debug("时间格式错误");
+            PageInfo pg=new PageInfo(new ArrayList());
+            pg.setPageSize(pageSize);
+            pg.setPageNum(page);
+            return ResponseUtil.ok(PageInfoHelper.process(pg));
         }
-        System.out.println("entry controller");
-        ReturnObject<PageInfo<VoObject>> returnObject = footprintService.getFootprints(userId,beginTime,endTime,page, pageSize);
+
+        if(end.isBefore(start))return Common.getRetObject(new ReturnObject<>(ResponseCode.Log_Bigger));
+        ReturnObject<PageInfo<VoObject>> returnObject = footprintService.getFootprints(userId,start,end,page, pageSize);
         return Common.getPageRetObject(returnObject);
     }
 
-
-    /**
-     * 增加足迹
-     * @param UserId
-     * @param id
-     * @return
-     */
-    @ApiOperation(value = "增加足迹", produces = "application/json")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "用户token", required = true),
-            @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "id", value = "sku_id"),
-    })
-    @ApiResponses({
-            @ApiResponse(code = 0,   message = "成功")
-    })
-    @Audit
-    @PostMapping("/skus/{id}/footprints")
-    public Object addFootprint(@LoginUser Long UserId, @PathVariable("id") Long id)
-    {
-        ResponseCode responseCode = footprintService.addFootprint(UserId,id);
-        if(responseCode.equals(ResponseCode.OK)){
-            return ResponseUtil.ok();
-        } else {
-            return ResponseUtil.fail(responseCode);
-        }
-    }
-
 }
-
-/**
- * 修改的点：
- * 取消了二元运算赋page 和 pageSize默认值 改用了defaultvalue
- * @PathVariable 注解后面加上路径里的名字
- */
