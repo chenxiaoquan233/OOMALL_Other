@@ -178,13 +178,18 @@ public class AddressController {
             return new ResponseUtil().fail(ResponseCode.FIELD_NOTVALID);
         }
         ResponseCode responseCode = addressService.updateAddress(userId,id,addressVo).getCode();
-        if(responseCode.equals(ResponseCode.OK)||responseCode.equals(ResponseCode.REGION_OBSOLETE)){
-            return ResponseUtil.ok(responseCode);
+        if(responseCode.equals(responseCode.equals(ResponseCode.OK)))
+        {
+            return ResponseUtil.ok();
+        }
+        else if(responseCode.equals(ResponseCode.REGION_OBSOLETE)){
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtil.ok(ResponseCode.REGION_OBSOLETE);
         }
         else if(responseCode.equals(ResponseCode.RESOURCE_ID_OUTSCOPE))
         {
             httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
-            return ResponseUtil.fail(responseCode);
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_OUTSCOPE);
         }
         else {
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
@@ -239,7 +244,13 @@ public class AddressController {
         ReturnObject<List> returnObject = addressService.getAllParentRegions(id);
         if(returnObject.getCode().equals(ResponseCode.OK)){
             return Common.getListRetObject(returnObject);
-        } else {
+        }
+        else if(returnObject.getCode().equals(ResponseCode.REGION_OBSOLETE))
+        {
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtil.fail(ResponseCode.REGION_OBSOLETE);
+        }
+        else {
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseUtil.fail(returnObject.getCode());
         }
@@ -272,6 +283,10 @@ public class AddressController {
             return returnObject;
         }
         ResponseCode responseCode = addressService.addSubRegion(id,regionVo).getCode();
+        if(!regionVo.isFormated()){
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
+        }
         if(responseCode.equals(ResponseCode.OK)){
             httpServletResponse.setStatus(HttpStatus.CREATED.value());
             return ResponseUtil.ok();

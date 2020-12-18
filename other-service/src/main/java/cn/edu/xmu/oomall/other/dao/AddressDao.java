@@ -130,6 +130,9 @@ public class AddressDao {
             if(addressPo.getCustomerId()!=addressBo.getCustomerId()){
                 return new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
             }
+            RegionPo regionPo = regionPoMapper.selectByPrimaryKey(addressBo.getRegionId());
+            if(regionPo==null)return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+            if(regionPo.getState().intValue()==1)return new ReturnObject<>(ResponseCode.REGION_OBSOLETE);
             addressPo.setRegionId(addressBo.getRegionId());
             addressPo.setConsignee(addressBo.getConsignee());
             addressPo.setDetail(addressBo.getDetail());
@@ -217,6 +220,7 @@ public class AddressDao {
         List<VoObject> regionBos = new ArrayList<>();
         RegionPo regionPo = regionPoMapper.selectByPrimaryKey(id);
         if(regionPo == null)return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        if(regionPo.getState().intValue()==1)return new ReturnObject<>(ResponseCode.REGION_OBSOLETE);
         while(regionPo.getPid()!=null&&regionPo.getPid()!=0)
         {
             regionPo = regionPoMapper.selectByPrimaryKey(regionPo.getPid());
@@ -265,14 +269,12 @@ public class AddressDao {
      */
     public ReturnObject<VoObject> updateRegion(RegionBo regionBo)
     {
-        RegionPoExample regionPoExample = new RegionPoExample();
-        RegionPoExample.Criteria criteria = regionPoExample.createCriteria();
-        criteria.andIdEqualTo(regionBo.getId());
-        List<RegionPo> regionPos = regionPoMapper.selectByExample(regionPoExample);
-        if(regionPos.isEmpty()){
-            return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
-        }
         try{
+            RegionPo po = regionPoMapper.selectByPrimaryKey(regionBo.getId());
+            if(po==null){
+                return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+            }
+            if(po.getState().intValue()==1)return new ReturnObject<>(ResponseCode.REGION_OBSOLETE);
             RegionPo regionPo = regionPoMapper.selectByPrimaryKey(regionBo.getId());
             regionPo.setName(regionBo.getName());
             regionPo.setPostalCode(Long.parseLong(regionBo.getPostalCode()));
