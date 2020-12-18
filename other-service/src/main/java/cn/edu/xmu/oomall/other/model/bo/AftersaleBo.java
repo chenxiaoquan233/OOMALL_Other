@@ -26,10 +26,6 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AftersaleBo implements VoObject {
-
-    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
-    private IDubboOrderService iDubboOrderService;
-
     /**
      * 售后类型
      */
@@ -152,19 +148,17 @@ public class AftersaleBo implements VoObject {
         this.serviceSn = po.getServiceSn();
         this.shopLogSn = po.getShopLogSn();
         this.id = po.getId();
+    }
 
-        //TODO dubbo
-        //AftersaleDto aftersaleDTO = new AftersaleDto(1L, "tset", 2L, "ttt", 10L, 20);
-        System.out.println("before dubbo 123123");
-        AftersaleDto aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(this.orderItemId);
-        if(aftersaleDTO == null) System.out.println("Null here!!!!!!!!!!");
-        System.out.println("DTO: " + aftersaleDTO.toString());
-        System.out.println("after dubbo");
+    public AftersaleBo setDTO(AftersaleDto aftersaleDTO) {
+        System.out.println("DTO:" + aftersaleDTO);
 
         this.orderId = aftersaleDTO.getOrderId();
         this.orderSn = aftersaleDTO.getOrderSn();
         this.skuId = aftersaleDTO.getSkuId();
         this.skuName = aftersaleDTO.getSkuName();
+
+        return this;
     }
 
     public AftersalePo createPo() {

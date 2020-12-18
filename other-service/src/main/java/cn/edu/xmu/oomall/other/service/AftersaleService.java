@@ -93,7 +93,7 @@ public class AftersaleService {
             Integer state) {
 
         PageInfo<AftersalePo> aftersalePos = aftersaleDao.getAllAftersales(userId, shopId, beginTime, endTime, page, pageSize, type, state);
-        PageInfo<AftersaleRetVo> aftersaleVos = new PageInfo<>(aftersalePos.getList().stream().map(AftersaleBo::new).map(AftersaleBo::createRetVo).collect(Collectors.toList()));
+        PageInfo<AftersaleRetVo> aftersaleVos = new PageInfo<>(aftersalePos.getList().stream().map(AftersaleBo::new).map(x -> x.setDTO(iDubboOrderService.getAfterSaleByOrderItemId(x.getOrderItemId()))).map(AftersaleBo::createRetVo).collect(Collectors.toList()));
 
         aftersaleVos.setTotal(aftersalePos.getTotal());
         aftersaleVos.setPageSize(aftersalePos.getPageSize());
@@ -108,7 +108,7 @@ public class AftersaleService {
 
         if(aftersalePo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
         if(!aftersalePo.getCustomerId().equals(userId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
-        return new AftersaleBo(aftersalePo).createSkuRetVo();
+        return new AftersaleBo(aftersalePo).setDTO(iDubboOrderService.getAfterSaleByOrderItemId(aftersalePo.getOrderItemId())).createSkuRetVo();
     }
 
     public ResponseCode modifyAftersaleById(Long userId, Long aftersaleId, AftersaleModifyVo vo) {
@@ -118,14 +118,19 @@ public class AftersaleService {
         if(!aftersalePo.getCustomerId().equals(userId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
         if(!aftersalePo.getState().equals((byte) 0)) return ResponseCode.AFTERSALE_STATENOTALLOW;
 
-        if(!vo.getConsignee().isBlank()) aftersalePo.setConsignee(vo.getConsignee());
-        if(!vo.getDetail().isBlank()) aftersalePo.setDetail(vo.getDetail());
-        if(!vo.getMobile().isBlank()) aftersalePo.setMobile(vo.getMobile());
+        logger.debug("herehiwuhreuiue");
+
+        if(!(vo.getConsignee() == null) && !vo.getConsignee().isBlank()) aftersalePo.setConsignee(vo.getConsignee());
+        if(!(vo.getDetail() == null) && !vo.getDetail().isBlank()) aftersalePo.setDetail(vo.getDetail());
+        if(!(vo.getMobile() == null) && !vo.getMobile().isBlank()) aftersalePo.setMobile(vo.getMobile());
         if(vo.getQuantity() != null) aftersalePo.setQuantity(vo.getQuantity());
-        if(!vo.getReason().isBlank()) aftersalePo.setQuantity(vo.getQuantity());
+        if(!(vo.getReason() == null) && !vo.getReason().isBlank()) aftersalePo.setQuantity(vo.getQuantity());
         if(vo.getRegionId() != null) aftersalePo.setRegionId(vo.getRegionId());
 
+        logger.debug("asfbviubkj");
+
         aftersaleDao.updateAftersale(aftersalePo);
+        logger.debug("bsuidvbdiwuvb");
         return ResponseCode.OK;
     }
 
@@ -143,16 +148,8 @@ public class AftersaleService {
 
     public void test() {
         logger.debug("before dubbo");
-        iDubboOrderService.createExchangeOrder(
-                new ExchangeOrderDto(
-                        112L,
-                        345L,
-                        1,
-                        100028L,
-                        "12300010002",
-                        "testuser",
-                        0L,
-                        "this is addr"));
+        AftersaleDto aftersaleDto = iDubboOrderService.getAfterSaleByOrderItemId(1L);
+        logger.debug(aftersaleDto.toString());
         logger.debug("after dubbo");
     }
 
@@ -214,15 +211,17 @@ public class AftersaleService {
         if(aftersalePo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
         if(!aftersalePo.getShopId().equals(shopId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
 
-        return new AftersaleBo(aftersalePo).createRetVo();
+        return new AftersaleBo(aftersalePo).setDTO(iDubboOrderService.getAfterSaleByOrderItemId(aftersalePo.getOrderItemId())).createRetVo();
     }
 
     public ResponseCode confirmAftersaleEnd(Long userId, Long id) {
         AftersalePo aftersalePo = aftersaleDao.getAftersaleById(id);
 
+        System.out.println(aftersalePo.toString());
+
         if(aftersalePo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
         if(!aftersalePo.getCustomerId().equals(userId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
-        if(!aftersalePo.getState().equals((byte) 5)) return ResponseCode.AFTERSALE_STATENOTALLOW;
+        if(!aftersalePo.getState().equals((byte) 5) && !aftersalePo.getState().equals((byte) 3)) return ResponseCode.AFTERSALE_STATENOTALLOW;
 
         aftersalePo.setState((byte) 8);
         aftersaleDao.updateAftersale(aftersalePo);

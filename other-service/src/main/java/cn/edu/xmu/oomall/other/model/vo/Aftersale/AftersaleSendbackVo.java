@@ -13,5 +13,5 @@ import javax.validation.constraints.NotBlank;
 public class AftersaleSendbackVo {
     @NotBlank
     @ApiModelProperty(name = "运单号", value = "002")
-    private String logsn;
+    private String logSn;
 }

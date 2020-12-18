@@ -275,6 +275,7 @@ public class UserController {
             logger.debug("User login success");
             logger.debug("token:" + returnObject.getData());
 
+            httpServletResponse.setStatus(HttpServletResponse.SC_CREATED);
             return ResponseUtil.ok(returnObject.getData());
         } else {
             logger.debug("User login failed");
