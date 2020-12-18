@@ -44,21 +44,6 @@ public class FootprintService {
     @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
     IGoodsService iGoodsService;
 
-    @Resource
-    RocketMQTemplate rocketMQTemplate;
-
-    public ResponseCode addFootprint(Long userId, Long id)
-    {
-        FootPrintVo footPrintVo = new FootPrintVo();
-        footPrintVo.setCustomerId(userId);
-        footPrintVo.setGoodsSkuId(id);
-        String json = JacksonUtil.toJson(footPrintVo);
-        Message message = MessageBuilder.withPayload(json).build();
-        rocketMQTemplate.sendOneWay("footprint-topic",message);
-        logger.debug(json);
-        return ResponseCode.OK;
-    }
-
     public ReturnObject<PageInfo<VoObject>> getFootprints(Long userId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
         List<FootPrintPo> footPrintPos = footprintDao.getFootprints(userId, beginTime, endTime, page, pageSize);
         List<VoObject> footprints = footPrintPos.stream().map(FootPrintBo::new).map(x->{
