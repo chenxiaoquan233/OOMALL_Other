@@ -77,7 +77,7 @@ public class AddressController {
            else if(returnObj.getCode().equals(ResponseCode.REGION_OBSOLETE))
            {
                httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-               return new ResponseUtil().fail(ResponseCode.FIELD_NOTVALID);
+               return new ResponseUtil().fail(ResponseCode.REGION_OBSOLETE);
            }
            else{
                return ResponseUtil.fail(returnObj.getCode(),returnObj.getErrmsg());
@@ -187,9 +187,13 @@ public class AddressController {
         {
             return ResponseUtil.ok();
         }
+        else if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)){
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST);
+        }
         else if(responseCode.equals(ResponseCode.REGION_OBSOLETE)){
             httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtil.ok(ResponseCode.REGION_OBSOLETE);
+            return ResponseUtil.fail(ResponseCode.REGION_OBSOLETE);
         }
         else if(responseCode.equals(ResponseCode.RESOURCE_ID_OUTSCOPE))
         {

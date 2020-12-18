@@ -50,7 +50,6 @@ public class FootprintDao {
                 return ResponseCode.INTERNAL_SERVER_ERR;
             }else{
                 logger.debug("insertFootprint: insert footprint" + footPrintPo.getCustomerId() +" " + footPrintPo.getGoodsSkuId());
-                footPrintPo.setId(footPrintPo.getId());
                 return ResponseCode.OK;
             }
         }catch (DataAccessException e)
