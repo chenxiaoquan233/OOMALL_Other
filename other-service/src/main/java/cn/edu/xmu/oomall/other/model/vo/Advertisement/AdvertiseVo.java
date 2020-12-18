@@ -4,6 +4,7 @@ import cn.edu.xmu.oomall.other.model.bo.AdvertiseBo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
@@ -44,6 +45,7 @@ public class AdvertiseVo {
 
     @NotBlank
     @Pattern(regexp = "(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]")
+    @URL
     @ApiModelProperty(name = "link", value = "https://www.baidu.com")
     private String link;
 

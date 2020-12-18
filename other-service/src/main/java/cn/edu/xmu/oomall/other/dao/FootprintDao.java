@@ -69,7 +69,9 @@ public class FootprintDao {
      * @param pageSize 每页大小
      * @return ReturnObject<List> 角色列表
      */
-    public PageInfo<FootPrintPo> getFootprints(Long userId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
+    public List<FootPrintPo> getFootprints(Long userId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
+        System.out.println("entry dao");
+        PageHelper.startPage(page,pageSize,true,true,null);
         FootPrintPoExample example=new FootPrintPoExample();
         FootPrintPoExample.Criteria criteria=example.createCriteria();
         if(userId!=null)
@@ -79,7 +81,8 @@ public class FootprintDao {
         if(endTime!=null)
             criteria.andGmtCreateLessThan(endTime);
         List<FootPrintPo> footPrints = footPrintPoMapper.selectByExample(example);
-        return new PageInfo<>(footPrints);
+        System.out.println("exit dao");
+        return footPrints;
     }
 
     

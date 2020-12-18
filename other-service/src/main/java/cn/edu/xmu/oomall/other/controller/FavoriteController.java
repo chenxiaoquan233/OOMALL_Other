@@ -119,7 +119,7 @@ public class FavoriteController {
             return ResponseUtil.ok();
         } else {
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
-            return ResponseUtil.fail(ResponseCode.OK,"您没有该收藏");
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST,"您没有该收藏");
         }
     }
 }

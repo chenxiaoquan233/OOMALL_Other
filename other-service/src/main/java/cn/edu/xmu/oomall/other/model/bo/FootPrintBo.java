@@ -32,10 +32,9 @@ public class FootPrintBo implements VoObject {
     public Object createVo() {
         FootPrintRetVo footPrintRetVo = new FootPrintRetVo();
         footPrintRetVo.setId(this.getId());
-        footPrintRetVo.setGoodsRetVo(this.getSkuSimpleVo());
-        footPrintRetVo.setGmtCreate("2020-12-17 12:13:14");
+        footPrintRetVo.setGoodsSku(this.getSkuSimpleVo());
+        footPrintRetVo.setGmtCreate(this.getGmtCreate());
         return footPrintRetVo;
-
     }
 
     @Override

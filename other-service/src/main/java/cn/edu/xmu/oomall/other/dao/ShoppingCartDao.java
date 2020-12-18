@@ -117,8 +117,23 @@ public class ShoppingCartDao {
 
 
     public ResponseCode modifyCart(Long cartId, Long userId, Long goodsSkuId,Integer quantity,Long price){
+        ShoppingCartPoExample oldExample=new ShoppingCartPoExample();
+        ShoppingCartPoExample.Criteria oldCriteria=oldExample.createCriteria();
+        oldCriteria.andCustomerIdEqualTo(userId);
+        oldCriteria.andGoodsSkuIdEqualTo(goodsSkuId);
+        List<ShoppingCartPo> oldPos=shoppingCartPoMapper.selectByExample(oldExample);
+        if(oldPos.size()>0&&!oldPos.get(0).getId().equals(cartId)){
+            ShoppingCartPo po=oldPos.get(0);
+            po.setQuantity(po.getQuantity()+quantity);
+            po.setPrice(price);
+            po.setGmtModified(LocalDateTime.now());
+            shoppingCartPoMapper.updateByPrimaryKeySelective(po);
+            shoppingCartPoMapper.deleteByPrimaryKey(cartId);
+            return ResponseCode.OK;
+        }
         ShoppingCartPo po=new ShoppingCartPo();
         po.setId(cartId);
+        po.setGoodsSkuId(goodsSkuId);
         po.setQuantity(quantity);
         po.setPrice(price);
         po.setGmtModified(LocalDateTime.now());

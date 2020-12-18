@@ -94,6 +94,12 @@ public class AdvertiseController {
             logger.debug("UserSignUpVo:" + advertiseVo);
             return object;
         }
+        if(advertiseVo.getBeginDate()!=null&&advertiseVo.getEndDate()!=null){
+            if(advertiseVo.getBeginDate().isAfter(advertiseVo.getEndDate())){
+                httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
+            }
+        }
         if(advertiseVo.getLink()!=null)
             if(!advertiseVo.getLink().matches("(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]")){
                 httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
