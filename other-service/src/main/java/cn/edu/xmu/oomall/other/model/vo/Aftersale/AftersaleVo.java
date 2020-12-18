@@ -43,7 +43,7 @@ public class AftersaleVo {
     private String consignee;
 
     @NotBlank
-    @Pattern(regexp = "[+]?[0-9*#]*")
+    @Pattern(regexp = "[0-9]{11}")
     @ApiModelProperty(name = "手机号", value = "12300000000")
     private String mobile;
 

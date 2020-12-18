@@ -56,16 +56,9 @@ spring:
         - id: address
           uri: http://localhost:9999
           predicates:
-            - Path=/addresses,/addresses/{id}/default,/addresses/{id},/region/{id}/ancestor
+            - Path=/addresses,/addresses/{id}/default,/addresses/{id},/region/{id}/ancestor,/shops/{did}/regions/{id}/subregions,/shops/{did}/regions/{id}
           filters:
             - Auth=authorization
-        - id: region
-          uri: http://localhost:9999
-          predicates:
-            - Path=/shops/{did}/regions/{id}/subregions,/shops/{did}/regions/{id}
-          filters:
-            - Auth=authorization
-
 management:
   endpoint:
     gateway:

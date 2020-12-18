@@ -156,13 +156,14 @@ public class UserBo implements VoObject {
         UserRetVo userRetVo= new UserRetVo();
         userRetVo.setId(this.id);
         userRetVo.setUserName(this.userName);
-        userRetVo.setRealName(this.realName);
+        userRetVo.setName(this.realName);
         userRetVo.setMobile(this.mobile);
         userRetVo.setEmail(this.email);
         userRetVo.setGender(this.gender.code);
         userRetVo.setBirthday(this.birthday);
         userRetVo.setGmtCreate(this.gmtCreate);
         userRetVo.setGmtModified(this.gmtModified);
+        userRetVo.setState(this.getState().getCode());
         return userRetVo;
     }
 

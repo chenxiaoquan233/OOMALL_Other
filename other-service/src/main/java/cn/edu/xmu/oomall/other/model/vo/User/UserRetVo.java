@@ -13,8 +13,9 @@ import java.time.LocalDateTime;
 @Data
 public class UserRetVo {
     private Long id;
+    private Integer state;
     private String userName;
-    private String realName;
+    private String name;
     private String mobile;
     private String email;
     private Integer gender;
