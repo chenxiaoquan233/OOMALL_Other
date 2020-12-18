@@ -77,7 +77,7 @@ public class AddressController {
            else if(returnObj.getCode().equals(ResponseCode.REGION_OBSOLETE))
            {
                httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-               return new ResponseUtil().fail(ResponseCode.REGION_OBSOLETE);
+               return new ResponseUtil().fail(ResponseCode.FIELD_NOTVALID);
            }
            else{
                return ResponseUtil.fail(returnObj.getCode(),returnObj.getErrmsg());
