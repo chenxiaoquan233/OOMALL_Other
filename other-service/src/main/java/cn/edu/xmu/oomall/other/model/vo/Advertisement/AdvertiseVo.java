@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.text.DateFormat;
@@ -41,6 +42,8 @@ public class AdvertiseVo {
     @ApiModelProperty(name = "repeat", value = "0")
     private Boolean repeat;
 
+    @NotBlank
+    @Pattern(regexp = "(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]")
     @ApiModelProperty(name = "link", value = "https://www.baidu.com")
     private String link;
 

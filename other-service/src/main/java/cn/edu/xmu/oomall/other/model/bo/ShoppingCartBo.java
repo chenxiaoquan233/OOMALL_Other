@@ -44,7 +44,8 @@ public class ShoppingCartBo implements VoObject {
         shoppingCartRetVo.setQuantity(this.quantity);
         shoppingCartRetVo.setPrice(this.price);
         shoppingCartRetVo.setSkuName(this.skuName);
-        shoppingCartRetVo.setAddTime(this.gmtCreate);
+        shoppingCartRetVo.setGmtCreate(this.gmtCreate);
+        shoppingCartRetVo.setGmtModified(this.gmtModified);
         shoppingCartRetVo.setCouponActivity(this.couponActivity);
         return shoppingCartRetVo;
     }

@@ -83,7 +83,6 @@ public class AdvertiseDao {
             return ResponseCode.Log_Bigger;
         AdvertisementPo advertisementPo = advertiseBo.getAdvertisePo();
         advertisementPo.setGmtModified(LocalDateTime.now());
-        advertisementPo.setState(AdvertiseBo.State.BACK.getCode().byteValue());
         try{
             advertisementPoMapper.updateByPrimaryKeySelective(advertisementPo);
         }catch (Exception e){
@@ -100,7 +99,7 @@ public class AdvertiseDao {
         catch (Exception e){
             return ResponseCode.INTERNAL_SERVER_ERR;
         }
-        return deleteNum==1?ResponseCode.OK:ResponseCode.RESOURCE_ID_NOTEXIST;
+        return deleteNum>0?ResponseCode.OK:ResponseCode.RESOURCE_ID_NOTEXIST;
     }
 
 
@@ -157,12 +156,9 @@ public class AdvertiseDao {
             criteria.andBeginDateEqualTo(beginDate);
         if(endDate!=null)
             criteria.andEndDateEqualTo(endDate);
-        example.setOrderByClause("weight DESC");
+        //example.setOrderByClause("weight DESC");
         List<AdvertisementPo> advertisementPoList=advertisementPoMapper.selectByExample(example);
-        if(advertisementPoList.size()<=8)
-            return advertisementPoList;
-        else
-            return advertisementPoList.subList(0,8);
+        return advertisementPoList;
     }
 
     /*根据id查seg*/
@@ -177,6 +173,7 @@ public class AdvertiseDao {
         AdvertisementPo advertisementPo=bo.getAdvertisePo();
         advertisementPo.setGmtCreate(LocalDateTime.now());
         advertisementPo.setSegId(segId);
+        advertisementPo.setBeDefault((byte)0);
         advertisementPo.setState(AdvertiseBo.State.BACK.getCode().byteValue());
         advertisementPoMapper.insertSelective(advertisementPo);
         return new AdvertiseBo(advertisementPo);

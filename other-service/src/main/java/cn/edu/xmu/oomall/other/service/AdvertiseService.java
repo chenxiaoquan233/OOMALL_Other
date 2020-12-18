@@ -13,6 +13,7 @@ import cn.edu.xmu.oomall.other.model.bo.TimeSegmentBo;
 import cn.edu.xmu.oomall.other.model.po.AdvertisementPo;
 import cn.edu.xmu.oomall.other.model.po.FavouriteGoodsPo;
 import cn.edu.xmu.oomall.other.model.po.TimeSegmentPo;
+import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseAuditVo;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseRetVo;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseStatesRetVo;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseVo;
@@ -83,6 +84,7 @@ public class AdvertiseService {
             bo.setBeginDate(oldBo.getBeginDate());
         if(bo.getEndDate()==null)
             bo.setEndDate(oldBo.getEndDate());
+        bo.setState(AdvertiseBo.State.BACK);
         return advertiseDao.updateAdvertisementById(bo);
     }
 
@@ -111,6 +113,7 @@ public class AdvertiseService {
                 return returnObject.getCode();
             String oldFilename = bo.getImageUrl();
             bo.setImageUrl(baseUrl+returnObject.getData().toString());
+            bo.setState(AdvertiseBo.State.BACK);
             ResponseCode updateRetCode=advertiseDao.updateAdvertisementById(bo);
             if(!updateRetCode.equals(ResponseCode.OK)){
                 ImgHelper.deleteRemoteImg(returnObject.getData().toString(),davUsername,davPassword,"");
@@ -125,8 +128,14 @@ public class AdvertiseService {
         return ResponseCode.OK;
     }
 
-    public ReturnObject<PageInfo<VoObject>> getAdvertiseByTimeSegmentId(Long id, LocalDate beginDate, LocalDate endDate, Integer page, Integer pageSize) {
-        List<AdvertisementPo> pos=advertiseDao.getAdvertiseByTimeSegmentId(id,beginDate,endDate,page,pageSize);
+    public ReturnObject<PageInfo<VoObject>> getAdvertiseByTimeSegmentId(Long segId, LocalDate beginDate, LocalDate endDate, Integer page, Integer pageSize) {
+        if(!segId.equals(0L))
+        {
+            TimeSegmentPo segPo = advertiseDao.getTimeSeg(segId);
+            if (segPo == null)
+                return null;
+        }
+        List<AdvertisementPo> pos=advertiseDao.getAdvertiseByTimeSegmentId(segId,beginDate,endDate,page,pageSize);
         PageInfo<AdvertisementPo> favoritesPoPage = PageInfo.of(pos);
         List<VoObject> ret=pos.stream().map(AdvertiseBo::new).collect(Collectors.toList());
         PageInfo<VoObject> favoritesPage = new PageInfo<>(ret);
@@ -138,16 +147,22 @@ public class AdvertiseService {
     }
 
     public Object createAdvertiseByTimeSegId(Long segId, AdvertiseVo advertiseVo) {
-        TimeSegmentPo segPo=advertiseDao.getTimeSeg(segId);
-        if(segPo==null)
-            return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if(!segId.equals(0L))
+        {
+            TimeSegmentPo segPo = advertiseDao.getTimeSeg(segId);
+            if (segPo == null || segPo.getType()==(TimeSegmentBo.Type.FLASHSALE.getCode().byteValue()))
+                return ResponseCode.RESOURCE_ID_NOTEXIST;
+        }
         return advertiseDao.createAdvertiseInTimeSegId(segId,advertiseVo.createBo()).createVo();
     }
 
     public Object addAdvertiseToSeg(Long segId, Long adId) {
-        TimeSegmentPo segPo=advertiseDao.getTimeSeg(segId);
-        if(segPo==null)
-            return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if(!segId.equals(0L))
+        {
+            TimeSegmentPo segPo = advertiseDao.getTimeSeg(segId);
+            if (segPo == null || segPo.getType()==(TimeSegmentBo.Type.FLASHSALE.getCode().byteValue()))
+                return ResponseCode.RESOURCE_ID_NOTEXIST;
+        }
         AdvertiseBo advertiseBo= advertiseDao.addAdvertiseToSeg(segId,adId);
         if(advertiseBo==null)
             return ResponseCode.RESOURCE_ID_NOTEXIST;
@@ -161,6 +176,8 @@ public class AdvertiseService {
             bo.setState(AdvertiseBo.State.NORM);
             return  advertiseDao.updateAdvertisementById(bo);
         }
+        else if (bo.getState()==AdvertiseBo.State.NORM)
+            return ResponseCode.OK;
         else return ResponseCode.ADVERTISEMENT_STATENOTALLOW;
     }
 
@@ -171,14 +188,19 @@ public class AdvertiseService {
             bo.setState(AdvertiseBo.State.FORBID);
             return  advertiseDao.updateAdvertisementById(bo);
         }
+        else if (bo.getState()==AdvertiseBo.State.FORBID)
+            return ResponseCode.OK;
         else return ResponseCode.ADVERTISEMENT_STATENOTALLOW;
     }
 
-    public ResponseCode auditAdvertisementById(Long id){
+    public ResponseCode auditAdvertisementById(Long id, AdvertiseAuditVo vo){
         AdvertiseBo bo = advertiseDao.getAdvertiseById(id);
-        if(bo==null)return ResponseCode.RESOURCE_ID_NOTEXIST;
-        if(bo.getState()==AdvertiseBo.State.BACK){
-            bo.setState(AdvertiseBo.State.FORBID);
+        if(bo==null)
+            return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if(bo.getState().equals(AdvertiseBo.State.BACK)){
+            bo.setMessage(vo.getMessage());
+            if(vo.getConclusion())
+                bo.setState(AdvertiseBo.State.FORBID);
             return  advertiseDao.updateAdvertisementById(bo);
         }
         else return ResponseCode.ADVERTISEMENT_STATENOTALLOW;

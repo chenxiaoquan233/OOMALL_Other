@@ -41,10 +41,6 @@ public class ShoppingCartService {
     @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
     IActivityService iActivityService;
 
-//    public Long getPrice(Long skuId){
-//        return skuId*10;
-//    }
-//
 
 
 
@@ -66,8 +62,9 @@ public class ShoppingCartService {
         List<VoObject> ret = cartPos.stream().map(ShoppingCartBo::new)
                 .map(x-> {
                     PriceDTO priceDTO=iGoodsService.getPrice(x.getGoodsSkuId());
+                    if(priceDTO==null) return x;
                     x.setSkuName(priceDTO.getName());
-                    x.setPrice(priceDTO.getPrePrice());
+                    //x.setPrice(priceDTO.getPrePrice());
                     x.setCouponActivity(coupon.get(x.getGoodsSkuId()).stream().collect(Collectors.toList()));
                     return x;})
                 .collect(Collectors.toList());
@@ -82,7 +79,7 @@ public class ShoppingCartService {
 
     public Object addCart(Long userId, Long goodsSkuId, Integer quantity){
         PriceDTO priceDTO=iGoodsService.getPrice(goodsSkuId);
-        if(priceDTO.getPrePrice()<=0)
+        if(priceDTO==null||priceDTO.getPrePrice()<=0)
             return null;
         ShoppingCartPo po=shoppingCartDao.addCart(userId,goodsSkuId,quantity,priceDTO.getPrePrice());
         if(po==null)
@@ -97,9 +94,9 @@ public class ShoppingCartService {
         ResponseCode judge=shoppingCartDao.judge(userId,cartId);
         if(judge!=null)
             return judge;
-        Long price=iGoodsService.getPrice(goodsSkuId).getPrePrice();
-        if(price<=0)
+        PriceDTO priceDTO=iGoodsService.getPrice(goodsSkuId);
+        if(priceDTO==null||priceDTO.getPrePrice()<=0)
             return null;
-        return shoppingCartDao.modifyCart(cartId,userId,goodsSkuId,quantity,price);
+        return shoppingCartDao.modifyCart(cartId,userId,goodsSkuId,quantity,priceDTO.getPrePrice());
     }
 }

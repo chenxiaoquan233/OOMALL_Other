@@ -2,12 +2,16 @@ package cn.edu.xmu.oomall.other.controller;
 
 import cn.edu.xmu.ooad.annotation.Audit;
 import cn.edu.xmu.ooad.annotation.LoginUser;
+import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
+import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.model.bo.AdvertiseBo;
+import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseAuditVo;
 import cn.edu.xmu.oomall.other.model.vo.Advertisement.AdvertiseVo;
 import cn.edu.xmu.oomall.other.service.AdvertiseService;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,9 +50,8 @@ public class AdvertiseController {
     @ApiResponses({
             @ApiResponse(code = 0,   message = "成功")
     })
-    @Audit
     @GetMapping("/advertisement/states")
-    public Object getAdvertisementStates(@LoginUser Long userId){
+    public Object getAdvertisementStates(){
           return ResponseUtil.ok(advertiseService.getAllAdvertisementStates());
     }
 
@@ -91,10 +94,23 @@ public class AdvertiseController {
             logger.debug("UserSignUpVo:" + advertiseVo);
             return object;
         }
+        if(advertiseVo.getLink()!=null)
+            if(!advertiseVo.getLink().matches("(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]")){
+                httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+                return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
+            }
         ResponseCode responseCode=advertiseService.updateAdvertisementById(id,advertiseVo);
-        if(responseCode.equals(ResponseCode.OK))
+        if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)){
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(responseCode);
+        }
+        if(responseCode.equals(ResponseCode.Log_Bigger)){
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtil.fail(responseCode);
+        }
+        else {
             return ResponseUtil.ok();
-        else return ResponseUtil.fail(responseCode);
+        }
     }
 
     @ApiOperation(value = "管理员删除某一个广告", produces = "application/json")
@@ -108,7 +124,13 @@ public class AdvertiseController {
     @Audit
     @DeleteMapping("/shops/{did}/advertisement/{id}")
     public Object deleteAdvertisementById(@LoginUser Long user, @PathVariable("id") Long id){
-        return advertiseService.deleteAdvertisementById(id);
+        ResponseCode responseCode= advertiseService.deleteAdvertisementById(id);
+        if(responseCode.equals(ResponseCode.OK))
+            return ResponseUtil.ok();
+        else {
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(responseCode);
+        }
     }
 
 
@@ -140,7 +162,10 @@ public class AdvertiseController {
         ResponseCode responseCode=advertiseService.uploadAdvertiseImgById(id,multipartFile);
         if(responseCode.equals(ResponseCode.OK))
             return ResponseUtil.ok();
-        else return ResponseUtil.fail(responseCode);
+        else {
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(responseCode);
+        }
     }
 
 
@@ -159,8 +184,12 @@ public class AdvertiseController {
     public Object onshelvesAdvertisementById(@LoginUser Long user, @PathVariable("id") Long id){
         ResponseCode responseCode=advertiseService.onshelvesAdvertisementById(id);
         if(responseCode.equals(ResponseCode.OK))
-            return ResponseUtil.ok();
-        else return ResponseUtil.fail(responseCode);
+            ResponseUtil.ok();
+        else if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)){
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(responseCode);
+        }
+        return ResponseUtil.fail(responseCode);
     }
 
 
@@ -178,8 +207,12 @@ public class AdvertiseController {
     public Object offshelvesAdvertisementById(@LoginUser Long user, @PathVariable("id") Long id){
         ResponseCode responseCode=advertiseService.offshelvesAdvertisementById(id);
         if(responseCode.equals(ResponseCode.OK))
-            return ResponseUtil.ok();
-        else return ResponseUtil.fail(responseCode);
+            ResponseUtil.ok();
+        else if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)){
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(responseCode);
+        }
+        return ResponseUtil.fail(responseCode);
     }
 
 
@@ -194,11 +227,22 @@ public class AdvertiseController {
     })
     @Audit
     @PutMapping("/shops/{did}/advertisement/{id}/audit")
-    public Object auditAdvertisementById(@LoginUser Long user, @PathVariable("id") Long id){
-        ResponseCode responseCode=advertiseService.auditAdvertisementById(id);
+    public Object auditAdvertisementById(@LoginUser Long user, @PathVariable("id") Long id,
+                                         @Validated @RequestBody AdvertiseAuditVo Vo, BindingResult bindingResult){
+        Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if(null != object) {
+            logger.debug("Validate failed");
+            logger.debug("UserSignUpVo:" + Vo);
+            return object;
+        }
+        ResponseCode responseCode=advertiseService.auditAdvertisementById(id,Vo);
         if(responseCode.equals(ResponseCode.OK))
-            return ResponseUtil.ok();
-        else return ResponseUtil.fail(responseCode);
+            ResponseUtil.ok();
+        else if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)){
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(responseCode);
+        }
+        return ResponseUtil.fail(responseCode);
     }
 
 
@@ -219,7 +263,12 @@ public class AdvertiseController {
                                                    @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate beginDate,
                                                    @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate endDate,
                                                    @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize){
-        return Common.getPageRetObject(advertiseService.getAdvertiseByTimeSegmentId(id, beginDate, endDate,page,pageSize));
+        ReturnObject<PageInfo<VoObject>> ret=advertiseService.getAdvertiseByTimeSegmentId(id, beginDate, endDate,page,pageSize);
+        if(ret==null){
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST);
+        }
+        return Common.getPageRetObject(ret);
     }
 
 
@@ -239,13 +288,18 @@ public class AdvertiseController {
     public Object createAdvertisementsByTimeSegmentId(@LoginUser Long user,  @PathVariable("did") Long did, @PathVariable("id") Long id, @Validated @RequestBody AdvertiseVo advertiseVo,BindingResult bindingResult){
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(null != object) {
-            logger.debug("Validate failed");
-            logger.debug("UserSignUpVo:" + advertiseVo);
-            return object;
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
+        }
+        if(advertiseVo.getBeginDate().isAfter(advertiseVo.getEndDate())){
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
         }
         Object ret=advertiseService.createAdvertiseByTimeSegId(id,advertiseVo);
-        if(ret.equals(ResponseCode.RESOURCE_ID_NOTEXIST))
-            return ret;
+        if(ret.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
+            httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST);
+        }
         return ResponseUtil.ok(ret);
     }
 
@@ -265,8 +319,10 @@ public class AdvertiseController {
     @PostMapping("/shops/{did}/timesegments/{tid}/advertisement/{id}")
     public Object createAdvertisementsByTimeSegmentIdAndId(@LoginUser Long user, @PathVariable("did") Long did, @PathVariable("tid") Long tid, @PathVariable("id") Long id){
         Object ret=advertiseService.addAdvertiseToSeg(tid,id);
-        if(ret.equals(ResponseCode.RESOURCE_ID_NOTEXIST))
+        if(ret.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST);
+        }
         return ResponseUtil.ok(ret);
     }
 }

@@ -106,8 +106,12 @@ public class ShoppingCartDao {
         if(po==null)
             return ResponseCode.RESOURCE_ID_NOTEXIST;
         /*资源id非自己对象*/
-        if(po.getCustomerId()!=userId)
+        if(!po.getCustomerId().equals(userId))
+        {
+            logger.debug(userId+" tried to use "+po.getCustomerId());
             return ResponseCode.RESOURCE_ID_OUTSCOPE;
+        }
+
         return null;
     }
 

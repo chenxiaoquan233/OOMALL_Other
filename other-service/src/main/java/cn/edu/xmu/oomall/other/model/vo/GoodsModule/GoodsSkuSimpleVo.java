@@ -26,6 +26,8 @@ public class GoodsSkuSimpleVo  {
     private Byte disable;
 
     public GoodsSkuSimpleVo(SkuDTO sku){
+        if(sku==null)
+            return;
         id=sku.getId();
         name=sku.getName();
         skuSn=sku.getSkuSn();

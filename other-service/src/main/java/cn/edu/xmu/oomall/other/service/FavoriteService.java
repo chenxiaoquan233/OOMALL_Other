@@ -38,7 +38,14 @@ public class FavoriteService {
     public ReturnObject<PageInfo<VoObject>> getFavorites(Long userId, int page, int pageSize) {
         List<FavouriteGoodsPo> favoritesPos=favoriteDao.getFavoritesByUserId(userId,page,pageSize);
         List<VoObject> ret = favoritesPos.stream().map(FavoriteBo::new).
-                map((x)->{x.setSkuSimpleVo(new GoodsSkuSimpleVo(iGoodsService.getSku(x.getGoodsSkuId())));return x;}).
+                map((x)->{
+                    System.out.println("1");
+                    System.out.println(x.getSkuSimpleVo());
+                    x.setSkuSimpleVo(new GoodsSkuSimpleVo(iGoodsService.getSku(x.getGoodsSkuId())));
+                    System.out.println("2");
+                    System.out.println(x.getSkuSimpleVo());
+                    return x;
+                }).
                 collect(Collectors.toList());
         PageInfo<FavouriteGoodsPo> favoritesPoPage = PageInfo.of(favoritesPos);
         PageInfo<VoObject> favoritesPage = new PageInfo<>(ret);

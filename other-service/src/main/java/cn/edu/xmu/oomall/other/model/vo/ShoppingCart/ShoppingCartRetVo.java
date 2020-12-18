@@ -16,7 +16,8 @@ public class ShoppingCartRetVo {
     private Long goodsSkuId;
     private String skuName; //dispatch goods module
     private Integer quantity;
-    private LocalDateTime addTime;
     private Long price;     //? history or now
     private List<Object> couponActivity; //dispatch goods module
+    private LocalDateTime gmtCreate;
+    private LocalDateTime gmtModified;
 }
