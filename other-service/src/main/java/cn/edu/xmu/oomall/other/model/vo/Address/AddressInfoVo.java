@@ -18,6 +18,6 @@ public class AddressInfoVo {
     private String consignee;
     private String mobile;
     private Boolean beDefault;
-    private String gmtCreate;
+    private LocalDateTime gmtCreate;
     private Integer state;
 }

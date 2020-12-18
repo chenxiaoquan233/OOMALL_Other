@@ -144,6 +144,11 @@ public class AddressController {
             httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
             return ResponseUtil.fail(responseCode);
         }
+        else if(responseCode.equals(ResponseCode.REGION_OBSOLETE))
+        {
+            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            return ResponseUtil.fail(ResponseCode.REGION_OBSOLETE);
+        }
         else {
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
             return ResponseUtil.fail(responseCode);
