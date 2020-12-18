@@ -42,6 +42,7 @@ public class TimeSegmentDao {
     public List<TimeSegmentDTO> getAdsSegments(){
         return getTimeSegments((byte)0);
     }
+
     public List<TimeSegmentDTO> getFlashSaleSegments() {
         return getTimeSegments((byte)1);
     }
@@ -121,6 +122,7 @@ public class TimeSegmentDao {
     public ResponseCode deleteAdsSegment(Long timeSegId){
         return deleteTimeSegment(timeSegId,(byte)0);
     }
+
     public ResponseCode deleteFlashSaleSegment(Long timeSegId){
         return deleteTimeSegment(timeSegId,(byte)1);
     }

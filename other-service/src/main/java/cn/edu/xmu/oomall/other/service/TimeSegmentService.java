@@ -47,7 +47,8 @@ public class TimeSegmentService {
     public ResponseCode deleteAdsSegmentById(Long timeSegId){
         return timeSegmentDao.deleteAdsSegment(timeSegId);
     }
+
     public ResponseCode deleteFlashSaleSegmentById(Long timeSegId){
-        return timeSegmentDao.deleteAdsSegment(timeSegId);
+        return timeSegmentDao.deleteFlashSaleSegment(timeSegId);
     }
 }

@@ -1,5 +1,6 @@
 package cn.edu.xmu.oomall.other.controller;
 
+import cn.edu.xmu.ooad.annotation.Audit;
 import cn.edu.xmu.ooad.annotation.LoginUser;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.Common;
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.events.Comment;
@@ -23,7 +25,7 @@ import javax.xml.stream.events.Comment;
  * @version 创建时间：2020/12/9 下午8:33
  */
 @RestController /*Restful的Controller对象*/
-@RequestMapping(value = "/time", produces = "application/json;charset=UTF-8")
+@RequestMapping(produces = "application/json;charset=UTF-8")
 public class TimeSegmentController {
     private static final Logger logger = LoggerFactory.getLogger(TimeSegmentController.class);
 
@@ -44,9 +46,11 @@ public class TimeSegmentController {
             @ApiResponse(code = 604, message = "时段冲突")
     })
     @PostMapping("/shops/{did}/advertisement/timesegments")
+    @Audit
     public Object addAdsTimeSegment(@LoginUser Long userId, @RequestBody TimeSegmentVo timeSegmentVo,@PathVariable("did") Long shopId) {
         return Common.getRetObject(timeSegmentService.addAdsSegment(timeSegmentVo));
     }
+
 
     @ApiOperation(value = "管理员获取广告时间段列表", produces = "application/json")
     @ApiImplicitParams({
@@ -59,10 +63,12 @@ public class TimeSegmentController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @GetMapping("/shops/{did}/advertisement/timesegments")
+    @Audit
     public Object getAllAdsTimeSegment(@LoginUser Long userId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize,@PathVariable("did") Long shopId) {
         ReturnObject<PageInfo<VoObject>> returnObject = timeSegmentService.getAdsSegments(page==null?1:page, pageSize==null?10:pageSize);
         return Common.getPageRetObject(returnObject);
     }
+
 
     @ApiOperation(value = "平台管理员新增秒杀时间段", produces = "application/json")
     @ApiImplicitParams({
@@ -75,8 +81,9 @@ public class TimeSegmentController {
             @ApiResponse(code = 604, message = "时段冲突")
     })
     @PostMapping("/shops/{did}/flashsale/timesegments")
+    @Audit
     public Object addFlashsaleTimeSegment(@LoginUser Long userId, @RequestBody TimeSegmentVo timeSegmentVo, @PathVariable("did") Long shopId) {
-        return Common.getRetObject(timeSegmentService.addAdsSegment(timeSegmentVo));
+        return Common.getRetObject(timeSegmentService.addFlashSaleSegment(timeSegmentVo));
     }
 
     @ApiOperation(value = "管理员获取秒杀时间段列表", produces = "application/json")
@@ -90,6 +97,7 @@ public class TimeSegmentController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @GetMapping("/shops/{did}/flashsale/timesegments")
+    @Audit
     public Object getAllFlashTimeSegment(@LoginUser Long userId, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize,@PathVariable("did") Long shopId) {
         ReturnObject<PageInfo<VoObject>> returnObject = timeSegmentService.getFlashSaleSegments(page==null?1:page, pageSize==null?10:pageSize);
         return Common.getPageRetObject(returnObject);
@@ -105,11 +113,13 @@ public class TimeSegmentController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @DeleteMapping("/shops/{did}/advertisement/timesegments/{id}")
+    @Audit
     public Object deleteAdsSegmentById(@LoginUser Long userId ,@PathVariable("did") Long shopId,@PathVariable("id") Long timeSegId){
         ResponseCode responseCode = timeSegmentService.deleteAdsSegmentById(timeSegId);
         if(responseCode.equals(ResponseCode.OK)){
             return ResponseUtil.ok();
         }else{
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(responseCode);
         }
     }
@@ -125,11 +135,13 @@ public class TimeSegmentController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @DeleteMapping("/shops/{did}/flashsale/timesegments/{id}")
+    @Audit
     public Object deleteFlashSaleSegmentById(@LoginUser Long userId ,@PathVariable("did") Long shopId,@PathVariable("id") Long timeSegId){
         ResponseCode responseCode = timeSegmentService.deleteFlashSaleSegmentById(timeSegId);
         if(responseCode.equals(ResponseCode.OK)){
             return ResponseUtil.ok();
         }else{
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(responseCode);
         }
     }
