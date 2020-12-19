@@ -105,6 +105,10 @@ public class TimeSegmentController {
         }
         timeSegmentVo.setBeginTime(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getBeginTime().toLocalTime()));
         timeSegmentVo.setEndTime(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getEndTime().toLocalTime()));
+        if(timeSegmentVo.getBeginTime().isAfter(timeSegmentVo.getEndTime())){
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.Log_Bigger);
+        }
         return (timeSegmentService.addFlashSaleSegment(timeSegmentVo));
     }
 
@@ -140,10 +144,17 @@ public class TimeSegmentController {
         ResponseCode responseCode = timeSegmentService.deleteAdsSegmentById(timeSegId);
         if(responseCode.equals(ResponseCode.OK)){
             return ResponseUtil.ok();
-        }else{
+        }
+        if(responseCode.equals(ResponseCode.RESOURCE_ID_OUTSCOPE))
+        {
+            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return ResponseUtil.fail(responseCode);
+        }
+        else {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(responseCode);
         }
+
     }
 
 
@@ -162,7 +173,13 @@ public class TimeSegmentController {
         ResponseCode responseCode = timeSegmentService.deleteFlashSaleSegmentById(timeSegId);
         if(responseCode.equals(ResponseCode.OK)){
             return ResponseUtil.ok();
-        }else{
+        }
+        if(responseCode.equals(ResponseCode.RESOURCE_ID_OUTSCOPE))
+        {
+            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return ResponseUtil.fail(responseCode);
+        }
+        else {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(responseCode);
         }

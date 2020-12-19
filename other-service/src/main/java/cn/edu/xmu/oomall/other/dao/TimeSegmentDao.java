@@ -112,10 +112,11 @@ public class TimeSegmentDao {
     private ResponseCode deleteTimeSegment(Long timeSegId, byte type){
         TimeSegmentPoExample timeSegmentPoExample=new TimeSegmentPoExample();
         TimeSegmentPoExample.Criteria criteria=timeSegmentPoExample.createCriteria();
-        criteria.andTypeEqualTo(type);
+        //criteria.andTypeEqualTo(type);
         criteria.andIdEqualTo(timeSegId);
         List<TimeSegmentPo> poList=timeSegmentPoMapper.selectByExample(timeSegmentPoExample);
         if(poList.size()==0)return ResponseCode.RESOURCE_ID_NOTEXIST;
+        if(poList.get(0).getType()!=type) return ResponseCode.RESOURCE_ID_OUTSCOPE;
         else{
             timeSegmentPoMapper.deleteByPrimaryKey(poList.get(0).getId());
             return ResponseCode.OK;
