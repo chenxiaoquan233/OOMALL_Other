@@ -71,7 +71,7 @@ public class AdvertiseDao {
         criteria.andBeDefaultEqualTo((byte)1);
         List<AdvertisementPo> poList = advertisementPoMapper.selectByExample(example);
         for(AdvertisementPo oldDefaultPo:poList){
-            po.setBeDefault((byte) 0);
+            oldDefaultPo.setBeDefault((byte) 0);
             advertisementPoMapper.updateByPrimaryKeySelective(oldDefaultPo);
         }
         po.setBeDefault((byte) 1);
