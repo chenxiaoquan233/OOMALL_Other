@@ -40,14 +40,14 @@ public class AuthFilter implements GatewayFilter, Ordered {
         Pattern p = Pattern.compile("/(0|[1-9][0-9]*)");
         Matcher matcher = p.matcher(exchange.getRequest().getPath().toString());
         String commonUrl = matcher.replaceAll("/{id}");
-        logger.debug("获取通用请求路径:" + commonUrl);
+        logger.info("获取通用请求路径:" + commonUrl);
 
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
         // 获取请求参数
         String token = request.getHeaders().getFirst(tokenName);
         // 判断token是否为空，无需token的url在配置文件中设置
-        logger.debug("filter: token = " + token);
+        logger.info("filter: token = " + token);
         if (StringUtil.isNullOrEmpty(token)){
             return getErrorResponse(HttpStatus.UNAUTHORIZED,ResponseCode.AUTH_NEED_LOGIN,response,"需要先登录");
         }
@@ -55,6 +55,7 @@ public class AuthFilter implements GatewayFilter, Ordered {
         JwtHelper.UserAndDepart userAndDepart = new JwtHelper().verifyTokenAndGetClaims(token);
         if (userAndDepart == null) {
             // 若token解析不合法
+            logger.debug("token解析不合法");
             return getErrorResponse(HttpStatus.UNAUTHORIZED,ResponseCode.AUTH_INVALID_JWT,response,"token解析不合法");
         }
         Long userId=userAndDepart.getUserId();
@@ -66,6 +67,7 @@ public class AuthFilter implements GatewayFilter, Ordered {
         Date expireTime=JWT.decode(token).getExpiresAt();
         Date nowTime=new Date();
         Long gapTime=expireTime.getTime()-nowTime.getTime();
+        logger.info("过期时间：" + expireTime.toString());
         logger.debug("当前token过期时间-现在时间= "+gapTime+"millis");
 
         //此处为增加userid到header
