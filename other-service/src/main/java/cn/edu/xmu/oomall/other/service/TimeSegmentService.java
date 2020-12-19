@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.other.service;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
+import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.dao.TimeSegmentDao;
 import cn.edu.xmu.oomall.other.model.bo.TimeSegmentBo;
@@ -24,16 +25,17 @@ public class TimeSegmentService {
     @Autowired
     private TimeSegmentDao timeSegmentDao;
 
-    public ReturnObject addAdsSegment(TimeSegmentVo timeSegmentVo){
+    public Object addAdsSegment(TimeSegmentVo timeSegmentVo){
          TimeSegmentBo timeSegmentBo=timeSegmentDao.addAdsSegment(timeSegmentVo);
-         if(timeSegmentBo==null)return new ReturnObject<>(ResponseCode.TIMESEG_CONFLICT);
-         else return new ReturnObject<>(timeSegmentBo.createVo());
+         if(timeSegmentBo==null)
+             return ResponseUtil.fail(ResponseCode.TIMESEG_CONFLICT);
+         else return ResponseUtil.ok(timeSegmentBo.createVo());
     }
 
-    public  ReturnObject addFlashSaleSegment(TimeSegmentVo timeSegmentVo){
+    public  Object addFlashSaleSegment(TimeSegmentVo timeSegmentVo){
         TimeSegmentBo timeSegmentBo = timeSegmentDao.addFlashSaleSegment(timeSegmentVo);
-        if(timeSegmentBo==null)return new ReturnObject<>(ResponseCode.TIMESEG_CONFLICT);
-        else return new ReturnObject<>(timeSegmentBo.createVo());
+        if(timeSegmentBo==null)return ResponseUtil.fail(ResponseCode.TIMESEG_CONFLICT);
+        else return ResponseUtil.ok(timeSegmentBo.createVo());
     }
 
     public ReturnObject<PageInfo<VoObject>> getAdsSegments(Integer page,Integer pageSize){

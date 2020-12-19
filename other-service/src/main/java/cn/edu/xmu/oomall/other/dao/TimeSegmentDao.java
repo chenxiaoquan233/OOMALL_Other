@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,12 +91,14 @@ public class TimeSegmentDao {
         criteria.andBeginTimeLessThan(timeSegmentVo.getEndTime());
         criteria.andEndTimeGreaterThan(timeSegmentVo.getBeginTime());
         criteria.andTypeEqualTo(type);
-        if(timeSegmentPoMapper.countByExample(timeSegmentPoExample)>0) {
+        if(timeSegmentPoMapper.countByExample(timeSegmentPoExample)==0) {
             TimeSegmentPo newVal = new TimeSegmentPo();
             newVal.setBeginTime(timeSegmentVo.getBeginTime());
             newVal.setEndTime(timeSegmentVo.getEndTime());
+            newVal.setGmtCreate(LocalDateTime.now());
             newVal.setType(type);
             timeSegmentPoMapper.insert(newVal);
+            System.out.println("3");
             return new TimeSegmentBo(newVal);
         }else return null;
     }

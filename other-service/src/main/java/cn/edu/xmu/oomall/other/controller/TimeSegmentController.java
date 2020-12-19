@@ -14,11 +14,14 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.events.Comment;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @author XQChen
@@ -47,8 +50,15 @@ public class TimeSegmentController {
     })
     @PostMapping("/shops/{did}/advertisement/timesegments")
     @Audit
-    public Object addAdsTimeSegment(@LoginUser Long userId, @RequestBody TimeSegmentVo timeSegmentVo,@PathVariable("did") Long shopId) {
-        return Common.getRetObject(timeSegmentService.addAdsSegment(timeSegmentVo));
+    public Object addAdsTimeSegment(@LoginUser Long userId, @RequestBody TimeSegmentVo timeSegmentVo, @PathVariable("did") Long shopId, BindingResult bindingResult) {
+        Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if(null != object) {
+            logger.debug("Validate failed");
+            return object;
+        }
+        timeSegmentVo.setBeginTime(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getBeginTime().toLocalTime()));
+        timeSegmentVo.setEndTime(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getEndTime().toLocalTime()));
+        return (timeSegmentService.addAdsSegment(timeSegmentVo));
     }
 
 
@@ -82,8 +92,15 @@ public class TimeSegmentController {
     })
     @PostMapping("/shops/{did}/flashsale/timesegments")
     @Audit
-    public Object addFlashsaleTimeSegment(@LoginUser Long userId, @RequestBody TimeSegmentVo timeSegmentVo, @PathVariable("did") Long shopId) {
-        return Common.getRetObject(timeSegmentService.addFlashSaleSegment(timeSegmentVo));
+    public Object addFlashsaleTimeSegment(@LoginUser Long userId, @RequestBody TimeSegmentVo timeSegmentVo, @PathVariable("did") Long shopId,BindingResult bindingResult) {
+        Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
+        if(null != object) {
+            logger.debug("Validate failed");
+            return object;
+        }
+        timeSegmentVo.setBeginTime(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getBeginTime().toLocalTime()));
+        timeSegmentVo.setEndTime(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getEndTime().toLocalTime()));
+        return (timeSegmentService.addFlashSaleSegment(timeSegmentVo));
     }
 
     @ApiOperation(value = "管理员获取秒杀时间段列表", produces = "application/json")

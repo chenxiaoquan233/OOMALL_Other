@@ -17,10 +17,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class TimeSegmentVo {
     @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @DateTimeFormat(iso= DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime beginTime;
 
     @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @DateTimeFormat(iso= DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime endTime;
 }
