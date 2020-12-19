@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -88,10 +89,23 @@ public class TimeSegmentDao {
     private TimeSegmentBo addTimeSegment(TimeSegmentVo timeSegmentVo, byte type){
         TimeSegmentPoExample timeSegmentPoExample=new TimeSegmentPoExample();
         TimeSegmentPoExample.Criteria criteria=timeSegmentPoExample.createCriteria();
-        criteria.andBeginTimeLessThan(timeSegmentVo.getEndTime());
-        criteria.andEndTimeGreaterThan(timeSegmentVo.getBeginTime());
+//        criteria.andBeginTimeLessThan(timeSegmentVo.getEndTime());
+//        criteria.andEndTimeGreaterThan(timeSegmentVo.getBeginTime());
         criteria.andTypeEqualTo(type);
-        if(timeSegmentPoMapper.countByExample(timeSegmentPoExample)==0) {
+        Boolean flag=false;
+        LocalDateTime beginTimeWithoutDate=(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getBeginTime().toLocalTime()));
+        LocalDateTime endTimeWithoutDate=(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getEndTime().toLocalTime()));
+        List<TimeSegmentPo> exsitedPoList=timeSegmentPoMapper.selectByExample(timeSegmentPoExample);
+        for(TimeSegmentPo x:exsitedPoList){
+            LocalDateTime beginTimeWithoutDate2=(LocalDateTime.of(LocalDate.of(2020,1,1),x.getBeginTime().toLocalTime()));
+            LocalDateTime endTimeWithoutDate2=(LocalDateTime.of(LocalDate.of(2020,1,1),x.getEndTime().toLocalTime()));
+            if(beginTimeWithoutDate2.isBefore(endTimeWithoutDate))
+                if(endTimeWithoutDate2.isAfter(beginTimeWithoutDate)){
+                    flag=true;
+                    break;
+                }
+        }
+        if(flag==false) {
             TimeSegmentPo newVal = new TimeSegmentPo();
             newVal.setBeginTime(timeSegmentVo.getBeginTime());
             newVal.setEndTime(timeSegmentVo.getEndTime());
@@ -102,6 +116,7 @@ public class TimeSegmentDao {
             return new TimeSegmentBo(newVal);
         }else return null;
     }
+
     public TimeSegmentBo addAdsSegment(TimeSegmentVo timeSegmentVo){
         return addTimeSegment(timeSegmentVo,(byte)0);
     }

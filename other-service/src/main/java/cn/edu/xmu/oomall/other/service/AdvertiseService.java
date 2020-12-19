@@ -130,7 +130,9 @@ public class AdvertiseService {
         }
         List<AdvertisementPo> pos=advertiseDao.getAdvertiseByTimeSegmentId(segId,beginDate,endDate,page,pageSize);
         PageInfo<AdvertisementPo> favoritesPoPage = PageInfo.of(pos);
-        List<VoObject> ret=pos.stream().map(AdvertiseBo::new).collect(Collectors.toList());
+        List<VoObject> ret=pos.stream().map(AdvertiseBo::new)
+                //.filter(x -> x.getRepeats() ||(x.getBeginDate().isAfter(beginDate)&&x.getEndDate().isBefore(endDate)))
+                .collect(Collectors.toList());
         PageInfo<VoObject> favoritesPage = new PageInfo<>(ret);
         favoritesPage.setPages(favoritesPoPage.getPages());
         favoritesPage.setPageNum(favoritesPoPage.getPageNum());

@@ -57,9 +57,9 @@ public class TimeSegmentController {
             logger.debug("Validate failed");
             return object;
         }
-        timeSegmentVo.setBeginTime(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getBeginTime().toLocalTime()));
-        timeSegmentVo.setEndTime(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getEndTime().toLocalTime()));
-        if(timeSegmentVo.getBeginTime().isAfter(timeSegmentVo.getEndTime())){
+        LocalDateTime beginTimeWithoutDate=(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getBeginTime().toLocalTime()));
+        LocalDateTime endTimeWithoutDate=(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getEndTime().toLocalTime()));
+        if(beginTimeWithoutDate.isAfter(endTimeWithoutDate)){
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return ResponseUtil.fail(ResponseCode.Log_Bigger);
         }
@@ -103,9 +103,9 @@ public class TimeSegmentController {
             logger.debug("Validate failed");
             return object;
         }
-        timeSegmentVo.setBeginTime(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getBeginTime().toLocalTime()));
-        timeSegmentVo.setEndTime(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getEndTime().toLocalTime()));
-        if(timeSegmentVo.getBeginTime().isAfter(timeSegmentVo.getEndTime())){
+        LocalDateTime beginTimeWithoutDate=(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getBeginTime().toLocalTime()));
+        LocalDateTime endTimeWithoutDate=(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getEndTime().toLocalTime()));
+        if(beginTimeWithoutDate.isAfter(endTimeWithoutDate)){
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return ResponseUtil.fail(ResponseCode.Log_Bigger);
         }
