@@ -87,7 +87,7 @@ public class AdvertiseController {
     })
     @Audit
     @PutMapping("/shops/{did}/advertisement/{id}")
-    public Object updateAdvertisementById(@LoginUser Long user, @PathVariable("id") Long id, @RequestBody AdvertiseVo advertiseVo, BindingResult bindingResult){
+    public Object updateAdvertisementById(@LoginUser Long user, @PathVariable("id") Long id, @RequestBody @Validated AdvertiseVo advertiseVo, BindingResult bindingResult){
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(null != object) {
             logger.debug("Validate failed");
