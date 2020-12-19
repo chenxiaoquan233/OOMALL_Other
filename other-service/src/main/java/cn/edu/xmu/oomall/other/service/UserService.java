@@ -39,7 +39,7 @@ public class UserService {
     private UserDao userDao;
 
     @Autowired
-    private RedisTemplate<String, Serializable> redisTemplate;
+    private RedisTemplate redisTemplate;
 
     private final MailUtil mailUtil = new MailUtil();
 
@@ -59,7 +59,7 @@ public class UserService {
 
         ReturnObject<Object> returnObject = userDao.login(userBo);
         if(returnObject.getCode().equals(ResponseCode.OK)) {
-            String token = jwtHelper.createToken(userBo.getId(), -2L,200000);
+            String token = jwtHelper.createToken(userBo.getId(), -2L,1000000);
             return new ReturnObject<>(token);
         } else {
             return returnObject;

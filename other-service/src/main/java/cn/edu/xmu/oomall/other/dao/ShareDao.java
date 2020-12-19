@@ -68,7 +68,7 @@ public class ShareDao implements InitializingBean {
     RocketMQTemplate rocketMQTemplate;
 
     @Autowired
-    RedisTemplate<String, Serializable> redisTemplate;
+    RedisTemplate redisTemplate;
 
     @Autowired
     CalcPointFactory calcPointFactory;
