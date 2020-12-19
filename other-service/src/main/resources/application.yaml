@@ -27,6 +27,8 @@ dubbo:
   consumer:
     timeout: 4000
     check: false
+  scan:
+    base-packages: cn.edu.xmu.oomall.other.service.provide
 
 spring:
   cloud:
