@@ -175,7 +175,7 @@ spring:
         - id: all-payment
           uri: http://${order-ip.payment}
           predicates:
-            - Path=/payments/status,/payments/patterns
+            - Path=/payments/states,/payments/patterns
 
         - id: customer-payment
           uri: http://${order-ip.payment}
