@@ -8,7 +8,6 @@
         <module>other-service</module>
         <module>other-gateway</module>
         <module>order-other-client</module>
-        <module>other-order-client</module>
         <module>other-goods-client</module>
         <module>goods-other-client</module>
     </modules>

@@ -2,11 +2,14 @@ server:
   port: 8089
 
 other-ip: localhost:9999
-order-ip: 1.2.3.4
+order-ip:
+  order: 192.168.43.239:9900
+  payment: 192.168.43.239:9400
+  freight: 192.168.43.50:9800
 gateway:
-  activity: http://localhost:8988/
-  goods: http://localhost:8907/
-  falshsale: http://localhost:8188/
+  activity: http://192.168.43.25:8988
+  goods: http://192.168.43.25:8907
+  falshsale: http://192.168.43.25:8188
 
 
 spring:
@@ -26,12 +29,14 @@ spring:
               - HEAD
               - OPTIONS
       routes:
+        #权限模块
         - id: adminuserlogin
           uri: http://localhost:8081/
           predicates:
             - Path=/adminusers,/adminusers/login
           filters:
             - PrefixPath=/privilege
+
         - id: adminusers
           uri: http://localhost:8081/
           predicates:
@@ -39,15 +44,19 @@ spring:
           filters:
             - PrefixPath=/privilege
             - Auth=authorization
+
+        #用户模块
         - id: userregist
           uri: http://${other-ip}
           predicates:
             - Path=/users
             - Method=POST
+
         - id: userlogin
           uri: http://${other-ip}
           predicates:
             - Path=/users/login
+
         - id: share
           uri: http://${other-ip}
           predicates:
@@ -55,96 +64,140 @@ spring:
           filters:
             - PrefixPath=/share
             - Auth=authorization
+
         - id: footprint
           uri: http://${other-ip}
           predicates:
             - Path=/shops/{did}/footprints
           filters:
             - Auth=authorization
+
         - id: address
           uri: http://${other-ip}
           predicates:
             - Path=/addresses,/addresses/{id}/default,/addresses/{id},/region/{id}/ancestor,/shops/{did}/regions/{id}/subregions,/shops/{did}/regions/{id}
           filters:
             - Auth=authorization
-        - id: userWithToken
+
+
+        - id: user-token
           uri: http://${other-ip}
           predicates:
             - Path=/users,/users/password,/usr/all,/user/logout,/users/{id},/shops/{did}/users/{id}/ban,/shops/{did}/users/{id}/release
           filters:
             - Auth=authorization
-        - id: userWithToken
+
+        - id: user
           uri: http://${other-ip}
           predicates:
             - Path=/users/states,/users/password/reset
-        - id: aftersaleWithToken
+
+        - id: aftersale-token
           uri: http://${other-ip}
           predicates:
-            - Path=/orderItems/{id}/aftersales,/aftersales,/shops/{id}/aftersales,/aftersales/{id},/aftersales/{id}/sendback,/aftersale/{id}/confirm,/shops/{shopId}/aftersales/{id},/shops/{shopId}/aftersales/{id}/confirm,/shops/{shopId}/aftersales/{id}/receive,/shops/{shopId}/aftersales/{id}/deliver
+            - Path=/orderItems/{id}/aftersales,/aftersales,/shops/{id}/aftersales,/aftersales/{id},/aftersales/{id}/sendback,/aftersales/{id}/confirm,/shops/{shopId}/aftersales/{id},/shops/{shopId}/aftersales/{id}/confirm,/shops/{shopId}/aftersales/{id}/receive,/shops/{shopId}/aftersales/{id}/deliver
           filters:
             - Auth=authorization
-        - id: aftersaleWithoutToken
+
+        - id: share-token
           uri: http://${other-ip}
           predicates:
-            - Path=/aftersales/states
+            - Path=/skus/{id}/shares,/shares,/shops/{did}/skus/{id}/shares,/beshared,/shops/{did}/skus/{id}/beshared,/shops/{shopId}/skus/{id}/shareactivities,/shareactivities,/shops/{shopId}/shareactivities/{id},/shops/{shopId}/shareactivities/{id},/shops/{shopId}/shareactivities/{id}/online
+          filters:
+            - PrefixPath=/share
+            - Auth=authorization
+
+        - id: cart
+          uri: http://${other-ip}
+          predicates:
+            - Path=/carts,/carts/{id}
+          filters:
+            - Auth=authorization
+
+        - id: ads-token
+          uri: http://${other-ip}
+          predicates:
+            - Path=/shops/{did}/advertisement/{id}/default,/shops/{did}/advertisement/{id},/advertisement/current, /shops/{did}/advertisement/{id}/**,/shops/{did}/timesegments/{id}/**
+          filters:
+            - Auth=authorization
+
+        - id: favorite-token
+          uri: http://${other-ip}
+          predicates:
+            - Path=/favorites, /favorites/goods/{skuId},/favorites/{id}
+
+        - id: getstate
+          uri: http://${other-ip}
+          predicates:
+            - Path=/advertisement/states,/aftersales/states
+
+        - id: shopandpaltform
+          uri: http://${other-ip}
+          predicates:
+            - Path=/shops/{did}/advertisement/{id}/**,/shop/{did}/advertisement/timesegments,/shop/{did}/flashsale/timesegments
+          filters:
+            - Auth=authorization
+
+        #订单模块
         - id: admin-freight
-            uri: http://${order-ip}
-            predicates:
-              - Path=/freightmodels/**,/shops/{id}/freightmodels,/shops/{shopId}/freightmodels/{id}/**,/shops/{shopId}/freightmodels/{id},/shops/{shopId}/freightmodels/{id}/weightItems,/shops/{shopId}/freightmodels/{id}/**,/shops/{shopId}/pieceItems/{id},/shops/{shopId}/weightItems/{id},/shops/{shopId}/freightmodels/{id}
-            filters:
-              - Auth=authorization
+          uri: http://${order-ip.freight}
+          predicates:
+            - Path=/freightmodels/**,/shops/{id}/freightmodels,/shops/{shopId}/freightmodels/{id}/**,/shops/{shopId}/freightmodels/{id},/shops/{shopId}/freightmodels/{id}/weightItems,/shops/{shopId}/freightmodels/{id}/**,/shops/{shopId}/pieceItems/{id},/shops/{shopId}/weightItems/{id},/shops/{shopId}/freightmodels/{id}
+          filters:
+            - Auth=authorization
 
         - id: customer-freight
-          uri: http://${order-ip}
+          uri: http://${order-ip.freight}
           predicates:
             - Path=/region/{rid}/price
           filters:
             - Auth=authorization
-            -
+
         - id: all-order
-            uri: http://${order-ip}
-            predicates:
-              - Path=/orders/states
+          uri: http://${order-ip.order}
+          predicates:
+            - Path=/orders/states
 
         - id: customer-order
-          uri: http://${order-ip}
+          uri: http://${order-ip.order}
           predicates:
             - Path=/orders,/orders/{id},/orders/{id}/confirm,/orders/{id}/groupon-normal
           filters:
             - Auth=authorization
 
         - id: admin-order
-          uri: http://${order-ip}
+          uri: http://${order-ip.order}
           predicates:
             - Path=/shops/{shopId}/orders,/shops/{shopId}/orders/{id},/shops/{shopId}/orders/{id}/deliver
           filters:
             - Auth=authorization
 
         - id: all-payment
-            uri: http://${order-ip}
-            predicates:
-              - Path=/payments/status,/payments/patterns
+          uri: http://${order-ip.payment}
+          predicates:
+            - Path=/payments/status,/payments/patterns
 
         - id: customer-payment
-            uri: http://${order-ip}
-            predicates:
-              - Path=/orders/{id}/payments,/aftersales​/{id}​/payments,/orders/{id}/refunds,/aftersales/{id}/refunds
-            filters:
-              - Auth=authorization
+          uri: http://${order-ip.payment}
+          predicates:
+            - Path=/orders/{id}/payments,/aftersales/{id}/payments,/orders/{id}/refunds,/aftersales/{id}/refunds
+          filters:
+            - Auth=authorization
 
         - id: admin-payment
-            uri: http://${order-ip}
-            predicates:
-              - Path=/shops/{shopId}/orders/{id}/payments,/shops/{shopId}/aftersales/{id}/payments,/shops/{shopId}/orders/{id}/refunds,/shops/{shopId}/aftersales/{id}/refunds
-            filters:
-              - Auth=authorization
+          uri: http://${order-ip.payment}
+          predicates:
+            - Path=/shops/{shopId}/orders/{id}/payments,/shops/{shopId}/aftersales/{id}/payments,/shops/{shopId}/orders/{id}/refunds,/shops/{shopId}/aftersales/{id}/refunds
+          filters:
+            - Auth=authorization
 
+        #商品模块
         - id: presale
-            uri: ${gateway.activity}
-            predicates:
-              - Path=/presales/states,/presales,/shops/{shopId}/skus/{id}/presales,/shops/{shopId}/presales/{id},/shops/{shopId}/presales,/shops/{shopId}/presales/{id}/**
-            filters:
-              - PrefixPath=/presale
+          uri: ${gateway.activity}
+          predicates:
+            - Path=/presales/states,/presales,/shops/{shopId}/skus/{id}/presales,/shops/{shopId}/presales/{id},/shops/{shopId}/presales,/shops/{shopId}/presales/{id}/**
+          filters:
+            - PrefixPath=/presale
 
         - id: shop
           uri: ${gateway.goods}
@@ -187,7 +240,6 @@ spring:
             - Path=/skus/states,/skus,/brands,/shops/{shopId}/brands/**,/skus/**,/spus/**,/shops/{shopId}/floatPrices/**,/shops/{shopId}/spus/**,/shops/{shopId}/skus/**,/categories/{id}/subcategories,/shops/{shopId}/categories/**
           filters:
             - PrefixPath=/goods
-
 management:
   endpoint:
     gateway:
