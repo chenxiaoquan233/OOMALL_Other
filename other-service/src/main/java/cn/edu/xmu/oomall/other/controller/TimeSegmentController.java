@@ -59,6 +59,10 @@ public class TimeSegmentController {
         }
         timeSegmentVo.setBeginTime(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getBeginTime().toLocalTime()));
         timeSegmentVo.setEndTime(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getEndTime().toLocalTime()));
+        if(timeSegmentVo.getBeginTime().isAfter(timeSegmentVo.getEndTime())){
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return ResponseUtil.fail(ResponseCode.Log_Bigger);
+        }
         return (timeSegmentService.addAdsSegment(timeSegmentVo));
     }
 
