@@ -16,8 +16,6 @@ import cn.edu.xmu.oomall.other.model.po.ShareActivityPo;
 import cn.edu.xmu.oomall.other.model.po.SharePo;
 import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
 import cn.edu.xmu.oomall.other.model.vo.ShareActivity.ShareActivityVo;
-import cn.edu.xmu.oomall.other.util.ServiceStub.GoodsService;
-import cn.edu.xmu.oomall.other.util.ServiceStub.OrderService;
 import cn.edu.xmu.goods.client.IGoodsService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -46,7 +44,7 @@ public class ShareService {
     @Autowired
     private UserDao userDao;
     @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
-    IDubboOrderService orderService=new OrderService();
+    IDubboOrderService orderService;
 
     public void retPointToCustomer(){
         List<EffectiveShareDto> shareDTOS=orderService.getEffectiveShareRecord();

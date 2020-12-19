@@ -14,7 +14,6 @@ import cn.edu.xmu.oomall.other.model.vo.GoodsModule.GoodsSkuSimpleVo;
 import cn.edu.xmu.oomall.other.service.factory.CalcPoint;
 import cn.edu.xmu.oomall.other.service.factory.CalcPointFactory;
 import cn.edu.xmu.oomall.other.util.DefaultRedisFinder;
-import cn.edu.xmu.oomall.other.util.ServiceStub.GoodsService;
 import cn.edu.xmu.oomall.other.util.ShareActivityRedisFinder;
 import cn.edu.xmu.oomall.other.util.ShopRedisFinder;
 import cn.edu.xmu.oomall.other.util.SkuRedisFinder;

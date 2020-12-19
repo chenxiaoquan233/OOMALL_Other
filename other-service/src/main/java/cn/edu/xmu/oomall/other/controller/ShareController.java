@@ -11,7 +11,6 @@ import cn.edu.xmu.oomall.other.service.factory.CalcPointFactory;
 import cn.edu.xmu.goods.client.IGoodsService;
 import cn.edu.xmu.goods.client.dubbo.ShopDTO;
 import cn.edu.xmu.oomall.other.util.PageInfoHelper;
-import cn.edu.xmu.oomall.other.util.ServiceStub.GoodsService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
