@@ -1,7 +1,7 @@
 package cn.edu.xmu.oomall.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
-import cn.edu.xmu.oomall.dto.AftersaleDto;
+import cn.edu.xmu.oomall.dto.AfterSaleDto;
 import cn.edu.xmu.oomall.other.model.vo.Aftersale.AftersaleSkuRetVo;
 import cn.edu.xmu.oomall.other.model.po.AftersalePo;
 import cn.edu.xmu.oomall.other.model.vo.Aftersale.AftersaleRetVo;
@@ -148,7 +148,7 @@ public class AftersaleBo implements VoObject {
         this.id = po.getId();
     }
 
-    public void setDTO(AftersaleDto aftersaleDTO) {
+    public void setDTO(AfterSaleDto aftersaleDTO) {
         System.out.println("DTO:" + aftersaleDTO);
 
         this.orderId = aftersaleDTO.getOrderId();

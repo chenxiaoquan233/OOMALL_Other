@@ -1,9 +1,6 @@
 package cn.edu.xmu.oomall.other.util.ServiceStub;
 
-import cn.edu.xmu.oomall.dto.AftersaleDto;
-import cn.edu.xmu.oomall.dto.EffectiveShareDto;
-import cn.edu.xmu.oomall.dto.ExchangeOrderDto;
-import cn.edu.xmu.oomall.dto.OrderItemDto;
+import cn.edu.xmu.oomall.dto.*;
 import cn.edu.xmu.oomall.service.IDubboOrderService;
 
 import java.util.List;
@@ -15,7 +12,7 @@ import java.util.List;
  */
 public class OrderService implements IDubboOrderService {
     @Override
-    public AftersaleDto getAfterSaleByOrderItemId(Long orderItemId) {
+    public AfterSaleDto getAfterSaleByOrderItemId(Long orderItemId) {
         return null;
     }
 
@@ -61,6 +58,16 @@ public class OrderService implements IDubboOrderService {
 
     @Override
     public Integer createExchangeOrder(ExchangeOrderDto dto) {
+        return null;
+    }
+
+    @Override
+    public Boolean changeOrderState(OrderStateDto dto) {
+        return null;
+    }
+
+    @Override
+    public Long priceOrderCanBePaid(Long customerId, Long orderId) {
         return null;
     }
 }

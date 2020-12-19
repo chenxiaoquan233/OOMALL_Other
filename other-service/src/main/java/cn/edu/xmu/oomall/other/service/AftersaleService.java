@@ -1,7 +1,7 @@
 package cn.edu.xmu.oomall.other.service;
 
 import cn.edu.xmu.ooad.util.ResponseCode;
-import cn.edu.xmu.oomall.dto.AftersaleDto;
+import cn.edu.xmu.oomall.dto.AfterSaleDto;
 import cn.edu.xmu.oomall.dto.ExchangeOrderDto;
 import cn.edu.xmu.oomall.service.IDubboOrderService;
 import cn.edu.xmu.oomall.service.IDubboPaymentService;
@@ -59,7 +59,7 @@ public class AftersaleService {
         aftersaleBo.setState(AftersaleBo.State.WAIT_ADMIN_AUDIT);
         aftersaleBo.setBeDeleted((byte) 0);
 
-        AftersaleDto aftersaleDTO = null;
+        AfterSaleDto aftersaleDTO = null;
 
         //TODO dubbo
         //if(orderItemId.equals(1L))
@@ -110,7 +110,7 @@ public class AftersaleService {
         if(!aftersalePo.getCustomerId().equals(userId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
 
         AftersaleBo bo = new AftersaleBo(aftersalePo);
-        AftersaleDto dto = iDubboOrderService.getAfterSaleByOrderItemId(aftersalePo.getOrderItemId());
+        AfterSaleDto dto = iDubboOrderService.getAfterSaleByOrderItemId(aftersalePo.getOrderItemId());
         bo.setDTO(dto);
         logger.debug("bo:" + bo);
         AftersaleSkuRetVo vo = bo.createSkuRetVo();
@@ -149,7 +149,7 @@ public class AftersaleService {
 
     public void test() {
         logger.debug("before dubbo");
-        AftersaleDto aftersaleDto = iDubboOrderService.getAfterSaleByOrderItemId(1L);
+        AfterSaleDto aftersaleDto = iDubboOrderService.getAfterSaleByOrderItemId(1L);
         logger.debug(aftersaleDto.toString());
         logger.debug("after dubbo");
     }
@@ -222,7 +222,7 @@ public class AftersaleService {
         if(!aftersalePo.getShopId().equals(shopId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
 
         AftersaleBo bo = new AftersaleBo(aftersalePo);
-        AftersaleDto dto = iDubboOrderService.getAfterSaleByOrderItemId(aftersalePo.getOrderItemId());
+        AfterSaleDto dto = iDubboOrderService.getAfterSaleByOrderItemId(aftersalePo.getOrderItemId());
         bo.setDTO(dto);
         logger.debug("bo:" + bo);
         AftersaleSkuRetVo vo = bo.createSkuRetVo();

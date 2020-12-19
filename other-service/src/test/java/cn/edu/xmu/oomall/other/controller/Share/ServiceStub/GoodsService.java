@@ -64,6 +64,11 @@ public class GoodsService implements IGoodsService {
     }
 
     @Override
+    public List<PriceDTO> getPriceAndNameByOther(List<Long> skuIds) {
+        return null;
+    }
+
+    @Override
     public PriceDTO getPrice(Long skuId) {
         return null;
     }
