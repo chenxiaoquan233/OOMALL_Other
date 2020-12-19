@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -117,8 +118,8 @@ public class AdvertiseDao {
     public TimeSegmentPo getNowTimeSegment(){
         TimeSegmentPoExample timeSegmentPoExample=new TimeSegmentPoExample();
         TimeSegmentPoExample.Criteria timeCriteria=timeSegmentPoExample.createCriteria();
-        timeCriteria.andBeginTimeLessThan(LocalDateTime.now());
-        timeCriteria.andEndTimeGreaterThan(LocalDateTime.now());
+        timeCriteria.andBeginTimeLessThan(LocalDateTime.of(LocalDate.of(2020,1,1), LocalTime.now()));
+        timeCriteria.andEndTimeGreaterThan(LocalDateTime.of(LocalDate.of(2020,1,1), LocalTime.now()));
         timeCriteria.andTypeEqualTo(TimeSegmentBo.Type.ADS.getCode().byteValue());
         List<TimeSegmentPo> timePoList=timeSegmentPoMapper.selectByExample(timeSegmentPoExample);
         if(timePoList.size()==0)
