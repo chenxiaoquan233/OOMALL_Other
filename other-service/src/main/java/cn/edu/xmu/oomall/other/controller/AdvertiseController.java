@@ -97,7 +97,7 @@ public class AdvertiseController {
         if(advertiseVo.getBeginDate()!=null&&advertiseVo.getEndDate()!=null){
             if(advertiseVo.getBeginDate().isAfter(advertiseVo.getEndDate())){
                 httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-                return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
+                return ResponseUtil.fail(ResponseCode.Log_Bigger);
             }
         }
         ResponseCode responseCode=advertiseService.updateAdvertisementById(id,advertiseVo);
@@ -297,7 +297,7 @@ public class AdvertiseController {
         }
         if(advertiseVo.getBeginDate().isAfter(advertiseVo.getEndDate())){
             httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
+            return ResponseUtil.fail(ResponseCode.Log_Bigger);
         }
         Object ret=advertiseService.createAdvertiseByTimeSegId(id,advertiseVo);
         if(ret.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
