@@ -175,7 +175,7 @@ public class AddressController {
     })
     @Audit
     @PutMapping("/addresses/{id}")
-    public Object updateAddress(@LoginUser Long userId, @PathVariable("id") Long id,@RequestBody AddressVo addressVo,BindingResult result) {
+    public Object updateAddress(@LoginUser Long userId, @PathVariable("id") Long id,@RequestBody @Validated AddressVo addressVo,BindingResult result) {
         if(result.hasErrors()){
             return Common.processFieldErrors(result,httpServletResponse);
         }
