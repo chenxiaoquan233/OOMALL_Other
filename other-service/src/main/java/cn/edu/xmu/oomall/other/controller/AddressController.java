@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -50,7 +51,7 @@ public class AddressController {
     })
     @Audit
     @PostMapping("/addresses")
-    public Object addAddress(@LoginUser Long userId, @RequestBody AddressVo addressVo, BindingResult result)
+    public Object addAddress(@LoginUser Long userId, @RequestBody @Validated AddressVo addressVo, BindingResult result)
     {
         Object object = Common.processFieldErrors(result,httpServletResponse);
         if(null != object)

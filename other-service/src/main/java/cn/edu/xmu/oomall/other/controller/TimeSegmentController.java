@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -50,7 +51,7 @@ public class TimeSegmentController {
     })
     @PostMapping("/shops/{did}/advertisement/timesegments")
     @Audit
-    public Object addAdsTimeSegment(@LoginUser Long userId, @RequestBody TimeSegmentVo timeSegmentVo, @PathVariable("did") Long shopId, BindingResult bindingResult) {
+    public Object addAdsTimeSegment(@LoginUser Long userId, @RequestBody @Validated TimeSegmentVo timeSegmentVo, @PathVariable("did") Long shopId, BindingResult bindingResult) {
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(null != object) {
             logger.debug("Validate failed");
@@ -92,7 +93,7 @@ public class TimeSegmentController {
     })
     @PostMapping("/shops/{did}/flashsale/timesegments")
     @Audit
-    public Object addFlashsaleTimeSegment(@LoginUser Long userId, @RequestBody TimeSegmentVo timeSegmentVo, @PathVariable("did") Long shopId,BindingResult bindingResult) {
+    public Object addFlashsaleTimeSegment(@LoginUser Long userId, @RequestBody @Validated TimeSegmentVo timeSegmentVo, @PathVariable("did") Long shopId, BindingResult bindingResult) {
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(null != object) {
             logger.debug("Validate failed");

@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -18,7 +19,8 @@ import javax.validation.constraints.Pattern;
 @Data
 public class AddressVo {
     @NotNull
-    @ApiModelProperty(name = "区域ID", value = "t001")
+    @Min(1)
+    @ApiModelProperty(name = "区域ID", value = "0")
     private Long regionId;
 
     @NotBlank

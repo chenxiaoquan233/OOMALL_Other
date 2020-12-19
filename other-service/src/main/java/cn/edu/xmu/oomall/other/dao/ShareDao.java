@@ -97,6 +97,7 @@ public class ShareDao implements InitializingBean {
         beSharePo.setShareActivityId(sharePo.getShareActivityId());
         beSharePo.setShareId(sharePo.getId());
         beSharePo.setSharerId(sharePo.getSharerId());
+        beSharePo.setRebate(0);
         String message=JacksonUtil.toJson(beSharePo);
         rocketMQTemplate.sendOneWay("createBeShare-topic",message);
         return true;
