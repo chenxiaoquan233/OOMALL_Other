@@ -180,6 +180,7 @@ public class ShareDao implements InitializingBean {
         criteria.andEndTimeGreaterThan(LocalDateTime.now());
         List<ShareActivityPo> pos=shareActivityPoMapper.selectByExample(example);
         if(pos==null) return null;
+
         return new ShareActivityBo(pos.get(0));
     }
 

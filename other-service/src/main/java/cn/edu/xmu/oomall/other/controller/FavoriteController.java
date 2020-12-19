@@ -53,11 +53,11 @@ public class FavoriteController {
     @Audit
     @GetMapping
     public Object getFavorites(@LoginUser Long UserId, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
-        if(page<=0||pageSize<=0)
-        {
-            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtil.fail(ResponseCode.OK,"page或pageSize格式不符");
-        }
+//        if(page<=0||pageSize<=0)
+//        {
+//            httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+//            return ResponseUtil.fail(ResponseCode.OK,"page或pageSize格式不符");
+//        }
         ReturnObject<PageInfo<VoObject>> returnObject = favoriteService.getFavorites(UserId,page, pageSize);
         return Common.getPageRetObject(returnObject);
     }
@@ -113,14 +113,19 @@ public class FavoriteController {
         if(id<=0)
         {
             httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-            return ResponseUtil.fail(ResponseCode.OK,"id格式不符");
+            return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
         }
         ResponseCode responseCode = favoriteService.deleteFavorites(UserId,id);
-        if(responseCode.equals(ResponseCode.OK)){
-            return ResponseUtil.ok();
-        } else {
+        if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)){
             httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
-            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST,"您没有该收藏");
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST);
+        }
+        if(responseCode.equals(ResponseCode.RESOURCE_ID_OUTSCOPE)) {
+            httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
+            return ResponseUtil.fail(ResponseCode.RESOURCE_ID_OUTSCOPE);
+        }
+        else {
+            return ResponseUtil.ok();
         }
     }
 }
