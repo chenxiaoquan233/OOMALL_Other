@@ -82,6 +82,7 @@ public class ShareDao implements InitializingBean {
 
     private Byte online = 1;
 
+    //what the hell with github push
     public boolean createBeShare(Long customerId,Long shareId,Long skuId){
         SharePoExample example=new SharePoExample();
         SharePoExample.Criteria criteria =example.createCriteria();
