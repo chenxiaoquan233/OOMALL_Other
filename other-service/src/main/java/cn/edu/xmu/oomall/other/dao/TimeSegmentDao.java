@@ -100,8 +100,8 @@ public class TimeSegmentDao {
         LocalTime endTimeWithoutDate=timeSegmentVo.getEndTime().toLocalTime();
         List<TimeSegmentPo> exsitedPoList=timeSegmentPoMapper.selectByExample(timeSegmentPoExample);
         for(TimeSegmentPo x:exsitedPoList){
-            LocalTime beginTimeWithoutDate2=timeSegmentVo.getBeginTime().toLocalTime();
-            LocalTime endTimeWithoutDate2=timeSegmentVo.getEndTime().toLocalTime();
+            LocalTime beginTimeWithoutDate2=x.getBeginTime().toLocalTime();
+            LocalTime endTimeWithoutDate2=x.getEndTime().toLocalTime();
             if(beginTimeWithoutDate2.isBefore(endTimeWithoutDate))
                 if(endTimeWithoutDate2.isAfter(beginTimeWithoutDate)){
                     flag=true;

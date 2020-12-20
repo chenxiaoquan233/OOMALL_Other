@@ -25,17 +25,18 @@ public class TimeSegmentService {
     @Autowired
     private TimeSegmentDao timeSegmentDao;
 
-    public Object addAdsSegment(TimeSegmentVo timeSegmentVo){
+    public TimeSegmentBo addAdsSegment(TimeSegmentVo timeSegmentVo){
          TimeSegmentBo timeSegmentBo=timeSegmentDao.addAdsSegment(timeSegmentVo);
          if(timeSegmentBo==null)
-             return ResponseUtil.fail(ResponseCode.TIMESEG_CONFLICT);
-         else return ResponseUtil.ok(timeSegmentBo.createVo());
+             return null;
+         else return (timeSegmentBo);
     }
 
-    public  Object addFlashSaleSegment(TimeSegmentVo timeSegmentVo){
+    public  TimeSegmentBo addFlashSaleSegment(TimeSegmentVo timeSegmentVo){
         TimeSegmentBo timeSegmentBo = timeSegmentDao.addFlashSaleSegment(timeSegmentVo);
-        if(timeSegmentBo==null)return ResponseUtil.fail(ResponseCode.TIMESEG_CONFLICT);
-        else return ResponseUtil.ok(timeSegmentBo.createVo());
+        if(timeSegmentBo==null)
+            return null;
+        else return (timeSegmentBo);
     }
 
     public ReturnObject<PageInfo<VoObject>> getAdsSegments(Integer page,Integer pageSize){

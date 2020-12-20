@@ -7,6 +7,7 @@ import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
+import cn.edu.xmu.oomall.other.model.bo.TimeSegmentBo;
 import cn.edu.xmu.oomall.other.model.vo.TimeSegment.TimeSegmentVo;
 import cn.edu.xmu.oomall.other.service.TimeSegmentService;
 import com.github.pagehelper.PageInfo;
@@ -64,7 +65,12 @@ public class TimeSegmentController {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return ResponseUtil.fail(ResponseCode.Log_Bigger);
         }
-        return (timeSegmentService.addAdsSegment(timeSegmentVo));
+        TimeSegmentBo bo=timeSegmentService.addAdsSegment(timeSegmentVo);
+        if(bo==null){
+            return ResponseUtil.fail(ResponseCode.TIMESEG_CONFLICT);
+        }
+        httpServletResponse.setStatus(HttpServletResponse.SC_CREATED);
+        return ResponseUtil.ok(bo.createVo());
     }
 
 
@@ -110,7 +116,12 @@ public class TimeSegmentController {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return ResponseUtil.fail(ResponseCode.Log_Bigger);
         }
-        return (timeSegmentService.addFlashSaleSegment(timeSegmentVo));
+        TimeSegmentBo bo=timeSegmentService.addFlashSaleSegment(timeSegmentVo);
+        if(bo==null){
+            return ResponseUtil.fail(ResponseCode.TIMESEG_CONFLICT);
+        }
+        httpServletResponse.setStatus(HttpServletResponse.SC_CREATED);
+        return ResponseUtil.ok(bo.createVo());
     }
 
     @ApiOperation(value = "管理员获取秒杀时间段列表", produces = "application/json")
