@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.other.dao;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
+import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import cn.edu.xmu.oomall.other.dto.TimeSegmentDTO;
 import cn.edu.xmu.oomall.other.mapper.TimeSegmentPoMapper;
@@ -16,8 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,12 +96,12 @@ public class TimeSegmentDao {
 //        criteria.andEndTimeGreaterThan(timeSegmentVo.getBeginTime());
         criteria.andTypeEqualTo(type);
         Boolean flag=false;
-        LocalDateTime beginTimeWithoutDate=(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getBeginTime().toLocalTime()));
-        LocalDateTime endTimeWithoutDate=(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getEndTime().toLocalTime()));
+        LocalTime beginTimeWithoutDate=timeSegmentVo.getBeginTime().toLocalTime();
+        LocalTime endTimeWithoutDate=timeSegmentVo.getEndTime().toLocalTime();
         List<TimeSegmentPo> exsitedPoList=timeSegmentPoMapper.selectByExample(timeSegmentPoExample);
         for(TimeSegmentPo x:exsitedPoList){
-            LocalDateTime beginTimeWithoutDate2=(LocalDateTime.of(LocalDate.of(2020,1,1),x.getBeginTime().toLocalTime()));
-            LocalDateTime endTimeWithoutDate2=(LocalDateTime.of(LocalDate.of(2020,1,1),x.getEndTime().toLocalTime()));
+            LocalTime beginTimeWithoutDate2=timeSegmentVo.getBeginTime().toLocalTime();
+            LocalTime endTimeWithoutDate2=timeSegmentVo.getEndTime().toLocalTime();
             if(beginTimeWithoutDate2.isBefore(endTimeWithoutDate))
                 if(endTimeWithoutDate2.isAfter(beginTimeWithoutDate)){
                     flag=true;

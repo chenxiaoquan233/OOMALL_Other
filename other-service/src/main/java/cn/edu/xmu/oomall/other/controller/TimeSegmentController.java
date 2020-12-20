@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.events.Comment;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * @author XQChen
@@ -57,9 +58,8 @@ public class TimeSegmentController {
             logger.debug("Validate failed");
             return object;
         }
-
-        LocalDateTime beginTimeWithoutDate=(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getBeginTime().toLocalTime()));
-        LocalDateTime endTimeWithoutDate=(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getEndTime().toLocalTime()));
+        LocalTime beginTimeWithoutDate=timeSegmentVo.getBeginTime().toLocalTime();
+        LocalTime endTimeWithoutDate=timeSegmentVo.getEndTime().toLocalTime();
         if(beginTimeWithoutDate.isAfter(endTimeWithoutDate)){
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return ResponseUtil.fail(ResponseCode.Log_Bigger);
@@ -104,8 +104,8 @@ public class TimeSegmentController {
             logger.debug("Validate failed");
             return object;
         }
-        LocalDateTime beginTimeWithoutDate=(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getBeginTime().toLocalTime()));
-        LocalDateTime endTimeWithoutDate=(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getEndTime().toLocalTime()));
+        LocalTime beginTimeWithoutDate=timeSegmentVo.getBeginTime().toLocalTime();
+        LocalTime endTimeWithoutDate=timeSegmentVo.getEndTime().toLocalTime();
         if(beginTimeWithoutDate.isAfter(endTimeWithoutDate)){
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return ResponseUtil.fail(ResponseCode.Log_Bigger);
