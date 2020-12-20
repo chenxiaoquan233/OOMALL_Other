@@ -157,7 +157,11 @@ public class AdvertiseDao {
             criteria.andBeginDateGreaterThan(beginDate);
         if(endDate!=null)
             criteria.andEndDateLessThan(endDate);
-        //example.setOrderByClause("weight DESC");
+
+        AdvertisementPoExample.Criteria criteria2=example.createCriteria();
+        criteria2.andSegIdEqualTo(id);
+        criteria2.andRepeatsEqualTo((byte)1);
+        example.or(criteria2);
         List<AdvertisementPo> advertisementPoList=advertisementPoMapper.selectByExample(example);
         return advertisementPoList;
     }
