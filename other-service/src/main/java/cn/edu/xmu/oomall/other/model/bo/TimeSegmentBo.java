@@ -2,6 +2,7 @@ package cn.edu.xmu.oomall.other.model.bo;
 
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.oomall.other.model.po.TimeSegmentPo;
+import cn.edu.xmu.oomall.other.model.vo.TimeSegment.TimeSegmentRetVo;
 import cn.edu.xmu.oomall.other.model.vo.TimeSegment.TimeSegmentVo;
 import lombok.Data;
 
@@ -28,10 +29,14 @@ public class TimeSegmentBo implements VoObject {
     }
     @Override
     public Object createVo() {
-        TimeSegmentVo timeSegmentVo = new TimeSegmentVo();
-        timeSegmentVo.setBeginTime(beginTime);
-        timeSegmentVo.setEndTime(endTime);
-        return timeSegmentVo;
+        TimeSegmentRetVo vo=new TimeSegmentRetVo();
+        vo.setBeginTime(this.beginTime);
+        vo.setEndTime(this.endTime);
+        vo.setId(this.id);
+        vo.setGmtCreate(this.gmtCreate);
+        vo.setGmtModified(this.gmtModified);
+        return vo;
+
     }
 
     @Override

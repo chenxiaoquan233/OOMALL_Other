@@ -8,7 +8,6 @@ import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
-import cn.edu.xmu.oomall.other.model.vo.FootPrint.FootPrintVo;
 import cn.edu.xmu.oomall.other.service.FootprintService;
 import cn.edu.xmu.oomall.other.service.mq.FootprintConsumerListener;
 import com.github.pagehelper.PageInfo;

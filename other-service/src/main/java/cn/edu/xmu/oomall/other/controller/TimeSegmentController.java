@@ -57,6 +57,7 @@ public class TimeSegmentController {
             logger.debug("Validate failed");
             return object;
         }
+
         LocalDateTime beginTimeWithoutDate=(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getBeginTime().toLocalTime()));
         LocalDateTime endTimeWithoutDate=(LocalDateTime.of(LocalDate.of(2020,1,1),timeSegmentVo.getEndTime().toLocalTime()));
         if(beginTimeWithoutDate.isAfter(endTimeWithoutDate)){

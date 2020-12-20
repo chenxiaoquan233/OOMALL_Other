@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TimeSegementRetVo {
-    private Integer id;
+public class TimeSegmentRetVo {
+    private Long id;
     private LocalDateTime beginTime;
     private LocalDateTime endTime;
     private LocalDateTime gmtCreate;
