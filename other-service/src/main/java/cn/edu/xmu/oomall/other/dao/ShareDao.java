@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -82,9 +81,9 @@ public class ShareDao implements InitializingBean {
 
     private Byte online = 1;
 
-    public boolean createBeShare(Long customerId,Long skuId,Long shareId){
+    public boolean createBeShare(Long customerId,Long shareId,Long skuId){
         SharePoExample example=new SharePoExample();
-        SharePoExample.Criteria criteria=example.createCriteria();
+        SharePoExample.Criteria criteria =example.createCriteria();
         criteria.andGoodsSkuIdEqualTo(skuId);
         criteria.andIdEqualTo(shareId);
         List<SharePo> sharePos=sharePoMapper.selectByExample(example);
