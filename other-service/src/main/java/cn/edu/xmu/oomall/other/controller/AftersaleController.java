@@ -66,7 +66,7 @@ public class AftersaleController {
             @ApiResponse(code = 0,   message = "成功")
     })
     @Audit
-    @PostMapping("/orderItems/{id}/aftersales")
+    @PostMapping("/orderitems/{id}/aftersales")
     public Object createAftersale(@LoginUser Long userId, @Validated @RequestBody AftersaleVo vo, BindingResult bindingResult, @PathVariable("id") Long orderItemId) {
         logger.debug("hereherheere");
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
@@ -82,7 +82,11 @@ public class AftersaleController {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail((ResponseCode) retObject);
         }
-
+        if(retObject.equals(ResponseCode.RESOURCE_ID_OUTSCOPE)) {
+            logger.debug("outscope");
+            httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return ResponseUtil.fail((ResponseCode) object);
+        }
         httpServletResponse.setStatus(HttpServletResponse.SC_CREATED);
         if(retObject.equals(ResponseCode.OK)) {
             return ResponseUtil.ok();
@@ -187,6 +191,7 @@ public class AftersaleController {
     @Audit
     @GetMapping("/aftersales/{id}")
     public Object getAftersaleById(@LoginUser Long userId, @PathVariable("id") Long aftersaleId) {
+        logger.debug("getAftersaleById");
         Object object = aftersaleService.getAftersaleById(userId, aftersaleId);
 
         logger.debug("object: " + object);
@@ -458,7 +463,7 @@ public class AftersaleController {
             @Depart Long did,
             @PathVariable("shopId") Long shopId,
             @PathVariable("id") Long id,
-            @Validated @RequestBody AftersaleDeliverVo vo,
+            @Validated @RequestBody(required = false) AftersaleDeliverVo vo,
             BindingResult bindingResult) {
         Object object = Common.processFieldErrors(bindingResult, httpServletResponse);
         if(null != object) {
@@ -468,7 +473,7 @@ public class AftersaleController {
             return ResponseUtil.fail(ResponseCode.FIELD_NOTVALID);
         }
 
-        ResponseCode responseCode = aftersaleService.adminDeliver(id, shopId, vo.getShopLogSn());
+        ResponseCode responseCode = aftersaleService.adminDeliver(id, shopId, vo == null ? "" : vo.getShopLogSn());
 
         if(responseCode.equals(ResponseCode.RESOURCE_ID_NOTEXIST)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);

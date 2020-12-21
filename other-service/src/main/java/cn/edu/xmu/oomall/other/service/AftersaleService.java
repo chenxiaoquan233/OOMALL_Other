@@ -61,13 +61,19 @@ public class AftersaleService {
 
         AfterSaleDto aftersaleDTO = null;
 
+        logger.debug("before dubbo");
         //TODO dubbo
         //if(orderItemId.equals(1L))
         //    aftersaleDTO = new AftersaleDto(1L, "tset", 2L, "ttt", 10L, 20);
         aftersaleDTO = iDubboOrderService.getAfterSaleByOrderItemId(orderItemId);
 
+        logger.info("DTO: " + aftersaleDTO);
+
         if(aftersaleDTO == null)
             return ResponseCode.RESOURCE_ID_NOTEXIST;
+
+        if(!aftersaleDTO.getCustomerId().equals(userId))
+            return ResponseCode.RESOURCE_ID_OUTSCOPE;
 
         aftersaleBo.setOrderId(aftersaleDTO.getOrderId());
         aftersaleBo.setOrderSn(aftersaleDTO.getOrderSn());
@@ -162,7 +168,8 @@ public class AftersaleService {
         logger.info("asocnasiucbasi");
         logger.info("po:" + vo.getConfirm().equals(true));
 
-        aftersalePo.setConclusion(vo.getConclusion());
+        if(vo.getConclusion() != null && !vo.getConclusion().isBlank())
+            aftersalePo.setConclusion(vo.getConclusion());
         if(vo.getConfirm().equals(true)) {
             if(aftersalePo.getType().equals(AftersaleBo.Type.RETURN.getCode().byteValue())) {
                 logger.info("sjikbiausbcoasivuyabi");
@@ -175,6 +182,7 @@ public class AftersaleService {
                 logger.debug("po here:" + aftersalePo);
             } else if(aftersalePo.getType().equals(AftersaleBo.Type.EXCHANGE.getCode().byteValue())) {
                 //TODO dubbo
+                logger.info("exchange here");
                 iDubboOrderService.createExchangeOrder(
                         new ExchangeOrderDto(
                                 aftersalePo.getCustomerId(),
@@ -198,6 +206,8 @@ public class AftersaleService {
     }
 
     public ResponseCode adminConfirm(Long aftersaleId, Long shopId, AftersaleConfirmVo vo) {
+        logger.debug("confirm by admin start");
+
         AftersalePo aftersalePo = aftersaleDao.getAftersaleById(aftersaleId);
 
         if(aftersalePo == null) return ResponseCode.RESOURCE_ID_NOTEXIST;
@@ -249,6 +259,7 @@ public class AftersaleService {
         if(!aftersalePo.getCustomerId().equals(userId)) return ResponseCode.RESOURCE_ID_OUTSCOPE;
         if(!aftersalePo.getState().equals((byte) 1)) return ResponseCode.AFTERSALE_STATENOTALLOW;
 
+        aftersalePo.setState((byte) 2);
         aftersalePo.setCustomerLogSn(logSn);
         aftersaleDao.updateAftersale(aftersalePo);
         return ResponseCode.OK;

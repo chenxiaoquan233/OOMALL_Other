@@ -97,7 +97,7 @@ public class UserDao {
         criteria.andUserNameEqualTo(customerPo.getUserName());
 
         if(customerPoMapper.selectByExample(example).size() == 0) {
-            logger.debug("User not exist:" + customerPo);
+            logger.debug("User not exist:" + customerPo.getUserName() + "," + customerPo.getPassword());
             return new ReturnObject<>(ResponseCode.AUTH_INVALID_ACCOUNT);
         }
 
