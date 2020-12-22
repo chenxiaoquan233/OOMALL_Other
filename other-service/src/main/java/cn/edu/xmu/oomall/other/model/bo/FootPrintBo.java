@@ -32,7 +32,8 @@ public class FootPrintBo implements VoObject {
     public Object createVo() {
         FootPrintRetVo footPrintRetVo = new FootPrintRetVo();
         footPrintRetVo.setId(this.getId());
-        footPrintRetVo.setGoodsSku(this.getSkuSimpleVo());
+        footPrintRetVo.setSkuId(this.getSkuId());
+        //footPrintRetVo.setGoodsSku(this.getSkuSimpleVo());
         footPrintRetVo.setGmtCreate(this.getGmtCreate());
         return footPrintRetVo;
     }

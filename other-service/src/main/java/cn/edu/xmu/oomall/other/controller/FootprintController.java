@@ -40,8 +40,6 @@ public class FootprintController {
 
     @Autowired
     private HttpServletResponse httpServletResponse;
-
-
     /**
      * 管理员分页查询浏览记录
      * @param did 店铺ID
@@ -76,7 +74,6 @@ public class FootprintController {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return ResponseUtil.fail(ResponseCode.Log_Bigger);
         }
-        System.out.println("entry controller");
         ReturnObject<PageInfo<VoObject>> returnObject = footprintService.getFootprints(userId,beginTime,endTime,page, pageSize);
         return Common.getPageRetObject(returnObject);
     }
