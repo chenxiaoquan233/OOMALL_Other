@@ -57,7 +57,6 @@ public class FootprintDao {
             logger.debug("insertFootprint : insert footprint fail " + footPrintPo.getCustomerId() +" " + footPrintPo.getGoodsSkuId());
             return ResponseCode.INTERNAL_SERVER_ERR;
         }
-
     }
     /**
      * 分页查询所有足迹
@@ -69,7 +68,6 @@ public class FootprintDao {
      * @return ReturnObject<List> 角色列表
      */
     public List<FootPrintPo> getFootprints(Long userId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
-        System.out.println("entry dao");
         PageHelper.startPage(page,pageSize,true,true,null);
         FootPrintPoExample example=new FootPrintPoExample();
         FootPrintPoExample.Criteria criteria=example.createCriteria();
@@ -80,7 +78,6 @@ public class FootprintDao {
         if(endTime!=null)
             criteria.andGmtCreateLessThan(endTime);
         List<FootPrintPo> footPrints = footPrintPoMapper.selectByExample(example);
-        System.out.println("exit dao");
         return footPrints;
     }
 
