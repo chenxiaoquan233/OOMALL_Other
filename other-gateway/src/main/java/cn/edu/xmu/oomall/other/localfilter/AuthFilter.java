@@ -47,7 +47,7 @@ public class AuthFilter implements GatewayFilter, Ordered {
         // 获取请求参数
         String token = request.getHeaders().getFirst(tokenName);
         // 判断token是否为空，无需token的url在配置文件中设置
-        logger.info("filter: token = " + token);
+        logger.debug("filter: token = " + token);
         if (StringUtil.isNullOrEmpty(token)){
             return getErrorResponse(HttpStatus.UNAUTHORIZED,ResponseCode.AUTH_NEED_LOGIN,response,"需要先登录");
         }
@@ -67,7 +67,7 @@ public class AuthFilter implements GatewayFilter, Ordered {
         Date expireTime=JWT.decode(token).getExpiresAt();
         Date nowTime=new Date();
         Long gapTime=expireTime.getTime()-nowTime.getTime();
-        logger.info("过期时间：" + expireTime.toString());
+        logger.debug("过期时间：" + expireTime.toString());
         logger.debug("当前token过期时间-现在时间= "+gapTime+"millis");
 
         //此处为增加userid到header

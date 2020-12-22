@@ -108,7 +108,7 @@ public class UserBo implements VoObject {
     private String email;
     private Integer point;
     private Gender gender;
-    private Deleted deleted;// = Deleted.NOT_DELETED;
+    private Deleted deleted = Deleted.NOT_DELETED;
     private LocalDate birthday;
     private State state = State.NORM;
     private LocalDateTime gmtCreate;
@@ -147,6 +147,7 @@ public class UserBo implements VoObject {
         customerPo.setGmtCreate(this.gmtCreate);
         customerPo.setGmtModified(this.gmtModified);
         customerPo.setPoint(this.point);
+        customerPo.setBeDeleted(this.deleted.getCode().byteValue());
 
         return customerPo;
     }

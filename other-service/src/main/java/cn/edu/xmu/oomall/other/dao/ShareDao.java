@@ -84,6 +84,8 @@ public class ShareDao implements InitializingBean {
 
     //what the hell with github push
     public boolean createBeShare(Long customerId,Long shareId,Long skuId){
+        logger.debug("get dto and be ready to create be share");
+        logger.debug("customerId:"+customerId+"shareId"+shareId+"skuId"+skuId);
         SharePoExample example=new SharePoExample();
         SharePoExample.Criteria criteria =example.createCriteria();
         criteria.andGoodsSkuIdEqualTo(skuId);
@@ -100,6 +102,7 @@ public class ShareDao implements InitializingBean {
         beSharePo.setSharerId(sharePo.getSharerId());
         beSharePo.setRebate(0);
         String message=JacksonUtil.toJson(beSharePo);
+        logger.debug(message);
         rocketMQTemplate.sendOneWay("createBeShare-topic",message);
         return true;
     }

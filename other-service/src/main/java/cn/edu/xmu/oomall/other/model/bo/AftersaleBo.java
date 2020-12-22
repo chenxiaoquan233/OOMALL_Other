@@ -215,6 +215,8 @@ public class AftersaleBo implements VoObject {
         vo.setConsignee(this.consignee);
         vo.setCustomerId(this.customerId);
         vo.setCustomerLogSn(this.customerLogSn);
+        vo.setOrderId(this.orderId);
+        vo.setSkuName(this.skuName);
         vo.setDetail(this.detail);
         vo.setId(this.id);
         vo.setMobile(this.mobile);

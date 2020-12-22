@@ -24,6 +24,7 @@ public class ICustomerServiceImpl implements ICustomerService {
     @Override
     public CustomerDTO getCustomer(Long customerId) {
         UserBo userBo = userDao.findUserById(customerId);
+        System.out.println(userBo.getUserName() + "000" + userBo.getRealName());
         if(userBo == null) return null;
         return userBo.createCustomer();
     }

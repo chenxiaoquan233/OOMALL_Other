@@ -12,12 +12,12 @@ server:
 
 dubbo:
   registry:
-    address: nacos://47.115.162.144:8848
+    address: nacos://47.115.162.144:8847
     #address: nacos://domi.xqchen.site:8848
   # 配置服务信息
   application:
     name: other
-    logger: log4j2
+    #logger: log4j2
   # 配置注册中心
   # 设置协议-协议由提供方指定消费方被动接受
   protocol:
@@ -35,7 +35,7 @@ spring:
     nacos:
       discovery:
         #server-addr: domi.xqchen.site:8848
-        server-addr: 47.115.162.144:8848
+        server-addr: 47.115.162.144:8847
   main:
     # 解决Bean重复定义问题
     allow-bean-definition-overriding: true

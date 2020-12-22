@@ -25,7 +25,6 @@ public class AftersaleVo {
     @ApiModelProperty(name = "数量", value = "1")
     private Integer quantity;
 
-    @NotBlank
     @ApiModelProperty(name = "原因", value = "坏了")
     private String reason;
 
@@ -34,7 +33,6 @@ public class AftersaleVo {
     @ApiModelProperty(name = "区域ID", value = "123")
     private Long regionId;
 
-    @NotBlank
     @ApiModelProperty(name = "细节", value = "无")
     private String detail;
 

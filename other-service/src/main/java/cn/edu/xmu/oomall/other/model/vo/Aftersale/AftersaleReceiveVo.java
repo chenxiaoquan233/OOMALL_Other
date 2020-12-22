@@ -18,6 +18,5 @@ public class AftersaleReceiveVo {
     @NotNull
     private Boolean confirm;
 
-    @NotBlank
     private String conclusion;
 }

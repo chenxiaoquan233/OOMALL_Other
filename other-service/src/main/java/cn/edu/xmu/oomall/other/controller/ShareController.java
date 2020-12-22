@@ -385,6 +385,7 @@ public class ShareController {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return ResponseUtil.fail(ResponseCode.RESOURCE_ID_NOTEXIST,"商品不存在");
         }
+        logger.debug("get sku:"+skuId);
         ReturnObject ret=shareService.getShareLink(skuId,userId);
         if(ret==null){
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
