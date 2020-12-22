@@ -101,7 +101,6 @@ public class AddressDao {
             return new ReturnObject<>(ResponseCode.INTERNAL_SERVER_ERR);
         }
         PageInfo<AddressPo> addressesPoPage = new PageInfo<>(addressPos);
-        System.out.println("total:"+addressesPoPage.getTotal());
         List<VoObject> ret =addressPos.stream().map(AddressBo::new).map(x->{
             RegionPo region=regionPoMapper.selectByPrimaryKey(x.getRegionId());
             if(region==null)
