@@ -32,7 +32,6 @@ import java.util.List;
  * @author hardworking-qf
  * @version 创建时间：2020/12/12 上午10:44
  */
-//cccc
 @RestController
 @RequestMapping(produces = "application/json;charset=UTF-8")
 public class AdvertiseController {
