@@ -52,7 +52,6 @@ public class FootprintConsumerListener implements RocketMQListener<String>, Rock
             logger.error("footprint message errors.");
         }
     }
-
     @Override
     public void prepareStart(DefaultMQPushConsumer defaultMQPushConsumer) {
         logger.info("prepareStart: consumergroup =" + defaultMQPushConsumer.getConsumerGroup());

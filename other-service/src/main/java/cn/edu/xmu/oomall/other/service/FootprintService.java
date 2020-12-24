@@ -64,6 +64,4 @@ public class FootprintService {
         return new ReturnObject<>(retObj);
     }
 
-
-
 }

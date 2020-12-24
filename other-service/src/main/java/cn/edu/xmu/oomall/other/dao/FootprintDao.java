@@ -80,6 +80,4 @@ public class FootprintDao {
         List<FootPrintPo> footPrints = footPrintPoMapper.selectByExample(example);
         return footPrints;
     }
-
-
 }
