@@ -161,6 +161,5 @@ public class ShoppingCartController {
             return ResponseUtil.fail(ResponseCode.RESOURCE_ID_OUTSCOPE);
         }
         return ResponseUtil.ok();
-
     }
 }
