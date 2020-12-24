@@ -41,20 +41,20 @@ public class FootprintService {
     @Autowired
     private FootprintDao footprintDao;
 
-    @DubboReference(version = "0.0.1-SNAPSHOT", check = false)
-    IGoodsService iGoodsService;
-
-    public ReturnObject<PageInfo<VoObject>> getFootprints(Long userId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
+    @DubboReference(version = "0.0.2-SNAPSHOT", check = false)
+    IGoodsService iGoodsService; public ReturnObject<PageInfo<VoObject>> getFootprints(Long userId, LocalDateTime beginTime, LocalDateTime endTime, Integer page, Integer pageSize){
         List<FootPrintPo> footPrintPos = footprintDao.getFootprints(userId, beginTime, endTime, page, pageSize);
-        List<VoObject> footprints = footPrintPos.stream().map(FootPrintBo::new).map(x->{
-                //x.setSkuSimpleVo(new GoodsSkuSimpleVo(goodsService.getSku(x.getSkuId())));
-            System.out.println("1");
-            System.out.println(x.getSkuSimpleVo());
-            x.setSkuSimpleVo(new GoodsSkuSimpleVo(iGoodsService.getSku(x.getSkuId())));
-            System.out.println("2");
-            System.out.println(x.getSkuSimpleVo());
-            return x;
-        }).collect(Collectors.toList());
+        List<VoObject> footprints = footPrintPos.stream().map(FootPrintBo::new)
+//                .map(x->{
+//                //x.setSkuSimpleVo(new GoodsSkuSimpleVo(goodsService.getSku(x.getSkuId())));
+//            System.out.println("1");
+//            System.out.println(x.getSkuSimpleVo());
+//            x.setSkuSimpleVo(new GoodsSkuSimpleVo(iGoodsService.getSku(x.getSkuId())));
+//            System.out.println("2");
+//            System.out.println(x.getSkuSimpleVo());
+//            return x;
+//        })
+                .collect(Collectors.toList());
         PageInfo<FootPrintPo> footPoPage = PageInfo.of(footPrintPos);
         PageInfo<VoObject> retObj = new PageInfo<>(footprints);
         retObj.setPageNum(footPoPage.getPageNum());
@@ -63,5 +63,7 @@ public class FootprintService {
         retObj.setPages(footPoPage.getPages());
         return new ReturnObject<>(retObj);
     }
+
+
 
 }

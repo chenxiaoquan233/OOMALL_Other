@@ -70,10 +70,10 @@ public class FootprintController {
                                 @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") @RequestParam(required = false) LocalDateTime endTime,
                                 @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer pageSize) {
         if(beginTime!=null&&endTime!=null)
-        if(beginTime.isAfter(endTime)){
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return ResponseUtil.fail(ResponseCode.Log_Bigger);
-        }
+            if(beginTime.isAfter(endTime)){
+                httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return ResponseUtil.fail(ResponseCode.Log_Bigger);
+            }
         ReturnObject<PageInfo<VoObject>> returnObject = footprintService.getFootprints(userId,beginTime,endTime,page, pageSize);
         return Common.getPageRetObject(returnObject);
     }
