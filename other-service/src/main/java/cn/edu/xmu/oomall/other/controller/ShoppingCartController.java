@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 
-@RestController /*Restful的Controller对象*/
+@RestController
 @RequestMapping(value = "/carts", produces = "application/json;charset=UTF-8")
 public class ShoppingCartController {
     private static final Logger logger = LoggerFactory.getLogger(ShoppingCartController.class);
